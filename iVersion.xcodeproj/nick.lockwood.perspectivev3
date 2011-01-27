@@ -231,6 +231,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -276,7 +278,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>2</integer>
+									<integer>3</integer>
 									<integer>1</integer>
 									<integer>0</integer>
 								</array>
@@ -299,7 +301,7 @@
 							<real>249</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>81 59 1321 789 0 0 1440 878 </string>
+						<string>119 89 1321 789 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -310,14 +312,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>B22F021B12F028A800C7AA1E</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>iVersion.h</string>
+								<string>iVersion.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -325,11 +325,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>B22F021C12F028A800C7AA1E</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>iVersion.h</string>
-										<key>_historyCapacity</key>
-										<integer>0</integer>
-										<key>bookmark</key>
-										<string>B2220DD812F1E2AE009B3E81</string>
+										<string>iVersion.m</string>
 										<key>history</key>
 										<array>
 											<string>B22F035212F07E1B00C7AA1E</string>
@@ -340,10 +336,8 @@
 											<string>B22F04AB12F1906300C7AA1E</string>
 											<string>B22F04AC12F1906300C7AA1E</string>
 											<string>B239C9EE12F1D95300F27EF1</string>
-											<string>B239C9EF12F1D95300F27EF1</string>
 											<string>B239C9F012F1D95300F27EF1</string>
 											<string>B239C9F112F1D95300F27EF1</string>
-											<string>B239C9F312F1D95300F27EF1</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -357,18 +351,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1050, 456}}</string>
+								<string>{{0, 0}, {1050, 710}}</string>
 								<key>RubberWindowFrame</key>
-								<string>81 59 1321 789 0 0 1440 878 </string>
+								<string>119 89 1321 789 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>456pt</string>
+							<string>710pt</string>
 						</dict>
 						<dict>
 							<key>Proportion</key>
-							<string>287pt</string>
+							<string>33pt</string>
 							<key>Tabs</key>
 							<array>
 								<dict>
@@ -382,9 +376,9 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {1050, 260}}</string>
+										<string>{{10, 27}, {1050, 6}}</string>
 										<key>RubberWindowFrame</key>
-										<string>81 59 1321 789 0 0 1440 878 </string>
+										<string>119 89 1321 789 0 0 1440 878 </string>
 									</dict>
 									<key>Module</key>
 									<string>XCDetailModule</string>
@@ -466,11 +460,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>B2220DD912F1E2AE009B3E81</string>
+				<string>B239CA3712F1E94100F27EF1</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>B2220DDA12F1E2AE009B3E81</string>
+				<string>B239CA3812F1E94100F27EF1</string>
 				<string>B22F021B12F028A800C7AA1E</string>
-				<string>B2220DDB12F1E2AE009B3E81</string>
+				<string>B239CA3912F1E94100F27EF1</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -663,7 +657,7 @@
 		<string>/Users/nick.lockwood/Desktop/Open Source/cocoa/iVersion/trunk/iVersion.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>81 59 1321 789 0 0 1440 878 </string>
+	<string>119 89 1321 789 0 0 1440 878 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
