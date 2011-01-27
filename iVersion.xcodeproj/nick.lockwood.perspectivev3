@@ -299,7 +299,7 @@
 							<real>249</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>342 89 1321 789 0 0 1440 878 </string>
+						<string>81 59 1321 789 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -329,7 +329,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>B22F05EB12F1AD1A00C7AA1E</string>
+										<string>B2220DD812F1E2AE009B3E81</string>
 										<key>history</key>
 										<array>
 											<string>B22F035212F07E1B00C7AA1E</string>
@@ -339,11 +339,11 @@
 											<string>B22F04AA12F1906300C7AA1E</string>
 											<string>B22F04AB12F1906300C7AA1E</string>
 											<string>B22F04AC12F1906300C7AA1E</string>
-											<string>B22F05E112F1AC9100C7AA1E</string>
-											<string>B22F05E312F1AC9100C7AA1E</string>
-											<string>B22F05E912F1AD1A00C7AA1E</string>
-											<string>B22F05EA12F1AD1A00C7AA1E</string>
-											<string>B22F05E212F1AC9100C7AA1E</string>
+											<string>B239C9EE12F1D95300F27EF1</string>
+											<string>B239C9EF12F1D95300F27EF1</string>
+											<string>B239C9F012F1D95300F27EF1</string>
+											<string>B239C9F112F1D95300F27EF1</string>
+											<string>B239C9F312F1D95300F27EF1</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -357,18 +357,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1050, 472}}</string>
+								<string>{{0, 0}, {1050, 456}}</string>
 								<key>RubberWindowFrame</key>
-								<string>342 89 1321 789 0 0 1440 878 </string>
+								<string>81 59 1321 789 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>472pt</string>
+							<string>456pt</string>
 						</dict>
 						<dict>
 							<key>Proportion</key>
-							<string>271pt</string>
+							<string>287pt</string>
 							<key>Tabs</key>
 							<array>
 								<dict>
@@ -382,9 +382,9 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {1050, 244}}</string>
+										<string>{{10, 27}, {1050, 260}}</string>
 										<key>RubberWindowFrame</key>
-										<string>342 89 1321 789 0 0 1440 878 </string>
+										<string>81 59 1321 789 0 0 1440 878 </string>
 									</dict>
 									<key>Module</key>
 									<string>XCDetailModule</string>
@@ -466,11 +466,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>B22F05E512F1AC9100C7AA1E</string>
+				<string>B2220DD912F1E2AE009B3E81</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>B22F05E612F1AC9100C7AA1E</string>
+				<string>B2220DDA12F1E2AE009B3E81</string>
 				<string>B22F021B12F028A800C7AA1E</string>
-				<string>B22F05E712F1AC9100C7AA1E</string>
+				<string>B2220DDB12F1E2AE009B3E81</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -619,14 +619,14 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>B22F036712F07E1B00C7AA1E</string>
+				<string>B239C9D312F1D70700F27EF1</string>
 				<string>1CCC7628064C1048000F2A68</string>
 				<string>1CCC7629064C1048000F2A68</string>
-				<string>B22F036812F07E1B00C7AA1E</string>
-				<string>B22F036912F07E1B00C7AA1E</string>
-				<string>B22F036A12F07E1B00C7AA1E</string>
-				<string>B22F036B12F07E1B00C7AA1E</string>
-				<string>B22F036C12F07E1B00C7AA1E</string>
+				<string>B239C9D412F1D70700F27EF1</string>
+				<string>B239C9D512F1D70700F27EF1</string>
+				<string>B239C9D612F1D70700F27EF1</string>
+				<string>B239C9D712F1D70700F27EF1</string>
+				<string>B239C9D812F1D70700F27EF1</string>
 			</array>
 			<key>ToolbarConfigUserDefaultsMinorVersion</key>
 			<string>2</string>
@@ -660,10 +660,10 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>/Users/nick.lockwood/Desktop/Misc/Open Source/cocoa/iVersion/trunk/iVersion.xcodeproj</string>
+		<string>/Users/nick.lockwood/Desktop/Open Source/cocoa/iVersion/trunk/iVersion.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>342 89 1321 789 0 0 1440 878 </string>
+	<string>81 59 1321 789 0 0 1440 878 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>

@@ -1,7 +1,7 @@
 Purpose
 --------------
 
-The App Store app updated notification system is somewhat cumbersome and disconnected from the apps themselves. Users often fail to notice when new versions of the app are released, and if they do notice, the App Store's 'download all' mechanism means that users often won't see the release notes for the new version.
+The App Store app updates notification system is somewhat cumbersome and disconnected from the apps themselves. Users often fail to notice when new versions of the app are released, and if they do notice, the App Store's 'download all' mechanism means that users often won't see the release notes for the new version.
 
 Whilst it is not possible to bypass the App Store and update an app from within the app itself as this violates the App Store terms and conditions, there is no reason why an app should not inform the user that the new release is ready, and direct them to the correct page in the App Store.
 
@@ -106,6 +106,8 @@ IVERSION_REMOTE_VERSIONS_URL - This is the URL of the remotely hosted plist that
 
 IVERSION_LOCAL_VERSIONS_FILE - The file name of your local release notes plist used to tell users about new features when they first launch a new update. Set this value to nil if you do not want your app to display release notes for the current version.
 
+IVERSION_SHOW_ON_FIRST_LAUNCH - Specify whether the release notes for the current version should be shown the first time the user launches the app. If set to no it means that users who, for example, download version 1.1 of your app but never installed a previous version, won't be shown the new features in version 1.1.
+
 IVERSION_GROUP_NOTES_BY_VERSION - If your release notes files contains multiple versions, this option will group the release notes by their version number in the alert shown to the user. If set to NO, the release notes will be shown as a single list.
 
 IVERSION_NEW_IN_THIS_VERSION_TITLE - The title displayed for features in the current version (i.e. feature sin the local version plist file).
@@ -121,3 +123,17 @@ IVERSION_DOWNLOAD_BUTTON - The button label for the button the user presses if t
 IVERSION_LOCAL_DEBUG - If set to YES, iVersion will always display the contents of the local versions plist, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
 
 IVERSION_REMOTE_DEBUG - If set to YES, iVersion will always display the contents of the remote versions plist, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
+
+
+Example Project
+---------------
+
+When you build and run the example project for the first time, it will show an alert saying that a new version is available. This is because it has downloaded the remote versions.plist file and determined that the latest version is newer than the currently running app.
+
+Quit the app, go into the iVersion-Info.plist file and edit the bundle version to 1.2. Now rebuild the app.
+
+This time it will not say that a new version is available. In effect you have simulated an upgrade. Instead it will tell you about the new features in your currently installed version. This is because it has found that the bundle version of the current app is newer than the last recorded version that was launched, and has checked the local versions.plist file for a release notes entry for the new version.
+
+If you dismiss the dialog and then quit and relaunch the app you should now see nothing. This is because the app has detected that the bundle version hasn't changed since you last launched the app.
+
+To show the alerts again, delete the app from the simulator and reset the bundle  version to 1.1. Alternatively, enabled the debug settings to force the alerts to appear on launch.
