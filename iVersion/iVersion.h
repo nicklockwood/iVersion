@@ -22,8 +22,8 @@
 #define IVERSION_IGNORE_BUTTON @"Ignore"
 #define IVERSION_DOWNLOAD_BUTTON @"Get It"
 
-#define IVERSION_LOCAL_DEBUG YES //always shows local version alert
-#define IVERSION_REMOTE_DEBUG YES //always shows remote version alert
+#define IVERSION_LOCAL_DEBUG NO //always shows local version alert
+#define IVERSION_REMOTE_DEBUG NO //always shows remote version alert
 
 
 @interface NSString(iVersion)
