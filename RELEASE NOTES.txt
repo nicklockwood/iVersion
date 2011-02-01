@@ -1,0 +1,9 @@
+Version 1.1
+
+- Added optional remind me button.
+- Added ability to specify update period.
+- Local versions file path can now be set to nil.
+
+Version 1.0
+
+- Initial release.
