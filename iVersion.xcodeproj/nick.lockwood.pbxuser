@@ -311,17 +311,17 @@
 	};
 	B22F049E12F18FA700C7AA1E /* iVersion.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1042, 598}}";
-			sepNavSelRange = "{367, 0}";
-			sepNavVisRange = "{31, 1194}";
+			sepNavIntBoundsRect = "{{0, 0}, {1042, 572}}";
+			sepNavSelRange = "{995, 49}";
+			sepNavVisRange = "{135, 1123}";
 			sepNavWindowFrame = "{{15, 131}, {1142, 742}}";
 		};
 	};
 	B22F049F12F18FA700C7AA1E /* iVersion.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1132, 4979}}";
-			sepNavSelRange = "{10074, 0}";
-			sepNavVisRange = "{9353, 1122}";
+			sepNavIntBoundsRect = "{{0, 0}, {1260, 5070}}";
+			sepNavSelRange = "{3062, 0}";
+			sepNavVisRange = "{3286, 496}";
 		};
 	};
 	B22F04AA12F1906300C7AA1E /* PBXTextBookmark */ = {
