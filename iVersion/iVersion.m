@@ -151,7 +151,7 @@ static iVersion *sharedInstance = nil;
 		//default message text, don't edit these here; if you want to provide your
 		//own message text then configure them using the setters/getters
 		self.newInThisVersionTitle = @"New in this version";
-		self.newVersionAvailableTitle = [NSString stringWithFormat:@"A new version of %@ is available to download", applicationName];
+		self.newVersionAvailableTitle = nil; //set lazily so that appname can be included
 		self.versionLabelFormat = @"Version %@";
 		self.okButtonLabel = @"OK";
 		self.ignoreButtonLabel = @"Ignore";
@@ -159,6 +159,15 @@ static iVersion *sharedInstance = nil;
 		self.downloadButtonLabel = @"Download";
 	}
 	return self;
+}
+
+- (NSString *)newVersionAvailableTitle
+{
+	if (newVersionAvailableTitle == nil)
+	{
+		self.newVersionAvailableTitle = [NSString stringWithFormat:@"A new version of %@ is available to download", applicationName];
+	}
+	return newVersionAvailableTitle;
 }
 
 - (void)dealloc
@@ -180,7 +189,7 @@ static iVersion *sharedInstance = nil;
 }
 
 #pragma mark -
-#pragma mark Private methodså
+#pragma mark Private methods
 
 - (NSDictionary *)localVersionsData
 {
