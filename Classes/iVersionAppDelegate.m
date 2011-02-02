@@ -20,6 +20,14 @@
 #pragma mark -
 #pragma mark Application lifecycle
 
++ (void)initialize
+{
+	//configure iVersion
+	[iVersion sharedInstance].appStoreID = 355313284;
+	[iVersion sharedInstance].remoteVersionsPlistURL = @"http://charcoaldesign.co.uk/iVersion/versions.plist";
+	[iVersion sharedInstance].localVersionsPlistPath = @"versions.plist";
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {    
     // Override point for customization after application launch.
@@ -27,19 +35,9 @@
     // Add the view controller's view to the window and display.
     [self.window addSubview:viewController.view];
     [self.window makeKeyAndVisible];
-	
-	//iVersion init
-	[iVersion appLaunched];
 
     return YES;
 }
-
-- (void)applicationWillEnterForeground:(UIApplication *)application
-{
-	//iVersion init
-	[iVersion appEnteredForeground];
-}
-
 
 #pragma mark -
 #pragma mark Memory management

@@ -9,27 +9,6 @@
 #import <Foundation/Foundation.h>
 
 
-#define IVERSION_APP_STORE_ID 355313284
-#define IVERSION_APP_NAME [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleNameKey]
-#define IVERSION_REMOTE_VERSIONS_URL @"http://charcoaldesign.co.uk/iVersion/versions.plist"
-#define IVERSION_LOCAL_VERSIONS_FILE @"versions.plist"
-
-#define IVERSION_SHOW_ON_FIRST_LAUNCH NO //show release notes the first time app is launched
-#define IVERSION_GROUP_NOTES_BY_VERSION YES
-#define IVERSION_CHECK_PERIOD 0.5 //measured in days
-#define IVERSION_REMIND_PERIOD 1 //measured in days
-
-#define IVERSION_NEW_IN_THIS_VERSION_TITLE @"New in this version"
-#define IVERSION_NEW_VERSION_AVAILABLE_TITLE [NSString stringWithFormat:@"A new version of %@ is available to download", IVERSION_APP_NAME]
-#define IVERSION_OK_BUTTON @"OK"
-#define IVERSION_IGNORE_BUTTON @"Ignore"
-#define IVERSION_REMIND_BUTTON @"Remind Me Later"
-#define IVERSION_DOWNLOAD_BUTTON @"Get It"
-
-#define IVERSION_LOCAL_DEBUG NO //always shows local version alert
-#define IVERSION_REMOTE_DEBUG NO //always shows remote version alert
-
-
 @interface NSString(iVersion)
 
 - (NSComparisonResult)compareVersion:(NSString *)version;
@@ -44,7 +23,36 @@
 @interface iVersion : NSObject
 #endif
 
-+ (void)appLaunched;
-+ (void)appEnteredForeground;
++ (iVersion *)sharedInstance;
+
+//app-specific settings - always set these
+@property (nonatomic, assign) NSUInteger appStoreID;
+@property (nonatomic, retain) NSString *remoteVersionsPlistURL;
+@property (nonatomic, retain) NSString *localVersionsPlistPath;
+
+//application name and version - these are set automatically
+@property (nonatomic, retain) NSString *applicationName;
+@property (nonatomic, retain) NSString *applicationVersion;
+
+//usage settings - these have sensible defaults
+@property (nonatomic, assign) BOOL showOnFirstLaunch;
+@property (nonatomic, assign) BOOL groupNotesByVersion;
+@property (nonatomic, assign) float checkPeriod;
+@property (nonatomic, assign) float remindPeriod;
+
+//message text, you may wish to customise these, e.g. for localisation
+@property (nonatomic, retain) NSString *newInThisVersionTitle;
+@property (nonatomic, retain) NSString *newVersionAvailableTitle;
+@property (nonatomic, retain) NSString *versionLabelFormat;
+@property (nonatomic, retain) NSString *okButtonLabel;
+@property (nonatomic, retain) NSString *ignoreButtonLabel;
+@property (nonatomic, retain) NSString *remindButtonLabel;
+@property (nonatomic, retain) NSString *downloadButtonLabel;
+
+//debugging and disabling
+@property (nonatomic, assign) BOOL localChecksDisabled;
+@property (nonatomic, assign) BOOL remoteChecksDisabled;
+@property (nonatomic, assign) BOOL localDebug;
+@property (nonatomic, assign) BOOL remoteDebug;
 
 @end
