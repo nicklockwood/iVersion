@@ -343,6 +343,18 @@ static iVersion *sharedInstance = nil;
 
 - (void)checkIfNewVersion
 {
+	
+#ifndef __IPHONE_OS_VERSION_MAX_ALLOWED
+	
+	//only show when main window is available
+	if (![[NSApplication sharedApplication] mainWindow])
+	{
+		[self performSelector:@selector(checkIfNewVersion) withObject:nil afterDelay:0.5];
+		return;
+	}
+	
+#endif
+	
 	NSString *lastVersion = [[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastVersionKey];
 	if (lastVersion != nil || showOnFirstLaunch || localDebug)
 	{
@@ -432,7 +444,7 @@ static iVersion *sharedInstance = nil;
 - (void)localAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
 	//record this as last viewed release
-	[[NSUserDefaults standardUserDefaults] setObject:[self thisVersion] forKey:iVersionLastVersionKey];
+	[[NSUserDefaults standardUserDefaults] setObject:applicationVersion forKey:iVersionLastVersionKey];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
