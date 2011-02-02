@@ -1,3 +1,10 @@
+Version 1.2
+
+- Configuration no longer involves modifying iVersion.h file
+- Now detects application launch and app switching events automatically
+- No longer requires release notes to be included in update notifications
+- Simpler to localise
+
 Version 1.1
 
 - Added optional remind me button.
