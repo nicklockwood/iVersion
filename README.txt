@@ -1,7 +1,7 @@
 Purpose
 --------------
 
-The App Store app updates notification system is somewhat cumbersome and disconnected from the apps themselves. Users often fail to notice when new versions of the app are released, and if they do notice, the App Store's 'download all' mechanism means that users often won't see the release notes for the new version.
+The App Store app updates mechanism is somewhat cumbersome and disconnected from the apps themselves. Users often fail to notice when new versions of an app are released, and if they do notice, the App Store's "download all" mechanism means that users often won't see the release notes for the new version.
 
 Whilst it is not possible to bypass the App Store and update an app from within the app itself as this violates the App Store terms and conditions, there is no reason why an app should not inform the user that the new release is ready, and direct them to the correct page in the App Store.
 
@@ -17,27 +17,19 @@ Installation
 
 To install iVersion into your app, drag the iVersion.h and .m files into your project.
 
-To enable iVersion in your application, add a call to [iVersion appLaunched] to your app delegate's applicationDidFinishLaunching method, and (on the iPhone only) add a call to [iVersion appEnteredForeground] to the applicationWillEnterForeground method. The resultant code will look something like this:
+To enable iVersion in your application you need to instantiate and configure iVersion *before* the app has finished launching. The easiest way to do this is to add the iVersion configuration code in your AppDelegate's initialize method, like this:
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{    
-    // Override point for customization after application launch.
-
-    // Add the view controller's view to the window and display.
-    [self.window addSubview:viewController.view];
-    [self.window makeKeyAndVisible];
-	
-	//iVersion init
-	[iVersion appLaunched];
-
-    return YES;
-}
-
-- (void)applicationWillEnterForeground:(UIApplication *)application
++ (void)initialize
 {
-	//iVersion init
-	[iVersion appEnteredForeground];
+	//configure iVersion
+	[iVersion sharedInstance].appStoreID = 355313284;
+	[iVersion sharedInstance].remoteVersionsPlistURL = @"http://example.com/versions.plist";
+	[iVersion sharedInstance].localVersionsPlistPath = @"versions.plist";
 }
+
+The above code represents the minimum configuration needed to make iVersion work, although there are other configuration options you may wish to add (documented below).
+
+The exact same configuration code will work for both Mac and iPhone/iPad.
 
 You will also need to add a plist file to your app containing the release notes for the current version, and host another copy on a web-facing server somewhere. The format for these plists is as follows:
 
@@ -62,7 +54,7 @@ The root node of the plist is a dictionary containing one or more items. Each it
 
 The key for each value must be a numerical version number consisting of one or more positive integers separated by decimal points. These should match the values you set for the Bundle Version (CFBundleVersion) key in your application's info.plist.
 
-Each value should be an array of one or more strings, each representing a single bullet point in your release notes. There is no restriction to the format of each release note - the approach in the example above is just a suggestion. You may prefer to put all your notes into a single string and add your own line formatting or indenting.
+Each value should be an array of strings, each representing a single bullet point in your release notes. There is no restriction to the format of each release note - the approach in the example above is just a suggestion. You may prefer to put all your notes into a single string and add your own line formatting or indenting. You can also omit the release notes if you want and just have an empty <array/>.
 
 
 Plist Tips
@@ -96,33 +88,53 @@ Also don't always feel you have to include the local release notes file. If ther
 Configuration
 --------------
 
-To configure iVersion, there are a number of constants in the iVersion.h file
-that can alter the behaviour and appearance. These should be mostly self-
-explanatory, but key ones are documented below:
+To configure iVersion, there are a number of properties of the iVersion class that can alter the behaviour and appearance of iVersion. These should be mostly self- explanatory, but they are documented below:
 
-IVERSION_APP_ID - this should match the iTunes app ID of your application, which you can get from iTunes connect after setting up your app. This is only used for remote version updates, so you can ignore this if you do not intend to use that feature (although it should still be set to a valid integer value).
+appStoreID - this should match the iTunes app ID of your application, which you can get from iTunes connect after setting up your app. This is only used for remote version updates, so you can ignore this if you do not intend to use that feature (although it should still be set to a valid integer value).
 
-IVERSION_REMOTE_VERSIONS_URL - This is the URL of the remotely hosted plist that iVersion will check for new releases. As noted above, make sure you only update this file after your new release has been approved by Apple and appeared in the store or you will have some very confused customers. For testing purposes, you may wish to create a separate copy of the file at a different address and use a build constant to switch which version the app points at. Set this value to nil if you do not want your app to check for updates automatically. Do not set it to an invalid URL such as example.com because this will waste battery, CPU and bandwidth as the app tries to check the invalid URL each time it launches.
+remoteVersionsPlistURL - This is the URL of the remotely hosted plist that iVersion will check for new releases. As noted above, make sure you only update this file after your new release has been approved by Apple and appeared in the store or you will have some very confused customers. For testing purposes, you may wish to create a separate copy of the file at a different address and use a build constant to switch which version the app points at. Set this value to nil if you do not want your app to check for updates automatically. Do not set it to an invalid URL such as example.com because this will waste battery, CPU and bandwidth as the app tries to check the invalid URL each time it launches.
 
-IVERSION_LOCAL_VERSIONS_FILE - The file name of your local release notes plist used to tell users about new features when they first launch a new update. Set this value to nil if you do not want your app to display release notes for the current version.
+localVersionsPlistPath - The file name of your local release notes plist used to tell users about new features when they first launch a new update. Set this value to nil if you do not want your app to display release notes for the current version.
 
-IVERSION_SHOW_ON_FIRST_LAUNCH - Specify whether the release notes for the current version should be shown the first time the user launches the app. If set to no it means that users who, for example, download version 1.1 of your app but never installed a previous version, won't be shown the new features in version 1.1.
+applicationName - This is the name of the app displayed in the alert. It is set automatically from the info.plist, but you may wish to override it with a shorter or longer version.
 
-IVERSION_GROUP_NOTES_BY_VERSION - If your release notes files contains multiple versions, this option will group the release notes by their version number in the alert shown to the user. If set to NO, the release notes will be shown as a single list.
+applicationVersion - The current version number of the app. This is set automatically from the info.plist and it's probably not a good ideas to change it unless you know what you are doing. In some cases your bundle version may not match the publicly known "display" version of your app, in which case use the display version here. Note that the version numbers in the plist will be compared to this value, not the one in the info.plist.
 
-IVERSION_NEW_IN_THIS_VERSION_TITLE - The title displayed for features in the current version (i.e. feature sin the local version plist file).
+showOnFirstLaunch - Specify whether the release notes for the current version should be shown the first time the user launches the app. If set to no it means that users who, for example, download version 1.1 of your app but never installed a previous version, won't be shown the new features in version 1.1.
 
-IVERSION_NEW_VERSION_AVAILABLE_TITLE - The title displayed when iVersion detects a new version of the app is available for download.
+groupNotesByVersion - If your release notes files contains multiple versions, this option will group the release notes by their version number in the alert shown to the user. If set to NO, the release notes will be shown as a single list.
 
-IVERSION_OK_BUTTON - The dismissal button label for the "new in this version" modal alert.
+checkPeriod - Sets how frequently the app will check for new versions. This is measured in days but can be set to a fractional value, e.g. 0.5. Set this to a higher value to avoid excessive traffic to your server. A value of zero means the app will check every time it's launched.
 
-IVERSION_IGNORE_BUTTON - The button label for the button the user presses if they do not want to download a new update.
+remindPeriod - How long the app should wait before reminding a user of a new version after they select the "remind me later" option. A value of zero means the app will remind the user every launch. Note that this value supersedes the check period, so once a reminder is set, the app won't check for new versions during the reminder period, even if new version are released in the meantime.
 
-IVERSION_DOWNLOAD_BUTTON - The button label for the button the user presses if they want to download a new update.
+newInThisVersionTitle - The title displayed for features in the current version (i.e. features in the local version s plist file).
 
-IVERSION_LOCAL_DEBUG - If set to YES, iVersion will always display the contents of the local versions plist, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
+newVersionAvailableTitle - The title displayed when iVersion detects a new version of the app has appeared in the remote versions plist.
 
-IVERSION_REMOTE_DEBUG - If set to YES, iVersion will always display the contents of the remote versions plist, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
+versionLabelFormat - The dismissal button label for the "new in this version" modal alert.
+
+okButtonLabel - The button label for the button to dismiss the "new in this version" modal.
+
+ignoreButtonLabel - The button label for the button the user presses if they do not want to download a new update.
+
+remindButtonLabel - The button label for the button the user presses if they don't want to download a new update immediately, but do want to be reminded about it in future. Set this to nil if you don't want to display the remind me button - e.g. if you don't have space on screen.
+
+downloadButtonLabel - The button label for the button the user presses if they want to download a new update.
+
+localChecksDisabled - Set this to true to disable checking for local release notes. This is equivalent to setting the localVersionsPlistPath to nil, but may be more convenient.
+
+remoteChecksDisabled - Set this to true to disable checking for new releases. This is equivalent to setting the remoteVersionsPlistURL to nil, but may be more convenient. You might connect this to an in-app user setting for toggling checks for updates.
+
+localDebug - If set to YES, iVersion will always display the contents of the local versions plist, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
+
+remoteDebug - If set to YES, iVersion will always display the contents of the remote versions plist, irrespective of the version number of the current build or the check/remind period settings. Use this to proofread your release notes during testing, but disable it for the final release.
+
+
+Localisation
+---------------
+
+Although iVersion isn't localised, it is easy to localise without making any modifications to the library itself. All you need to do is provide localised values for all of the message strings by setting the properties above using NSLocalizedString(...). If you need to provide localised release notes, the simplest way to do this is to localise the remoteVersionsPlistURL property in the same way, providing a different URL for each language.
 
 
 Example Project
