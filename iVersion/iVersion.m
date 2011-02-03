@@ -10,9 +10,9 @@
 
 
 NSString * const iVersionLastVersionKey = @"iVersionLastVersionChecked";
-NSString * const iVersionIgnoreVersionKey = @"iVersionIgnoreVersionKey";
-NSString * const iVersionLastCheckedVersionKey = @"iVersionLastCheckedVersionKey";
-NSString * const iVersionLastRemindedVersionKey = @"iVersionLastRemindedVersionKey";
+NSString * const iVersionIgnoreVersionKey = @"iVersionIgnoreVersion";
+NSString * const iVersionLastCheckedVersionKey = @"iVersionLastCheckedVersion";
+NSString * const iVersionLastRemindedVersionKey = @"iVersionLastRemindedVersion";
 
 NSString * const iVersionAppStoreURLFormat = @"http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=%i&mt=8";
 NSString * const iVersionMacAppStoreURLFormat = @"http://itunes.apple.com/us/app/app-name/id%i?mt=12&ls=1";
