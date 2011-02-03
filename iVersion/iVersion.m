@@ -272,7 +272,7 @@ static iVersion *sharedInstance = nil;
 		{
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 			
-			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:newVersionAvailableTitle
+			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:self.newVersionAvailableTitle
 															message:versionDetails
 														   delegate:self
 												  cancelButtonTitle:ignoreButtonLabel
@@ -285,7 +285,7 @@ static iVersion *sharedInstance = nil;
 			[alert show];
 			[alert release];
 #else
-			NSAlert *alert = [NSAlert alertWithMessageText:newVersionAvailableTitle
+			NSAlert *alert = [NSAlert alertWithMessageText:self.newVersionAvailableTitle
 											 defaultButton:downloadButtonLabel
 										   alternateButton:ignoreButtonLabel
 											   otherButton:nil
