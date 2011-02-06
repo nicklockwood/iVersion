@@ -112,7 +112,7 @@ newInThisVersionTitle - The title displayed for features in the current version 
 
 newVersionAvailableTitle - The title displayed when iVersion detects a new version of the app has appeared in the remote versions plist.
 
-versionLabelFormat - The dismissal button label for the "new in this version" modal alert.
+versionLabelFormat - The format string for the release notes version separators. This should include a %@ placeholder for the version number, e.g "Version %@".
 
 okButtonLabel - The button label for the button to dismiss the "new in this version" modal.
 
