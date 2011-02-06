@@ -13,14 +13,19 @@ NSString * const iVersionLastVersionKey = @"iVersionLastVersionChecked";
 NSString * const iVersionIgnoreVersionKey = @"iVersionIgnoreVersion";
 NSString * const iVersionLastCheckedVersionKey = @"iVersionLastCheckedVersion";
 NSString * const iVersionLastRemindedVersionKey = @"iVersionLastRemindedVersion";
+NSString * const macAppStoreBundleID = @"com.apple.appstore";
 
-NSString * const iVersionAppStoreURLFormat = @"http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=%i&mt=8";
-NSString * const iVersionMacAppStoreURLFormat = @"http://itunes.apple.com/us/app/app-name/id%i?mt=12&ls=1";
+//note, these aren't ideal as they link to the app page, not the update page
+//there may be some way to link directly to the app store updates tab, but I don't know what it is
+NSString * const iVersioniPhoneAppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%i";
+NSString * const iVersioniPadAppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%i";
+NSString * const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/app/id%i";
 
 static iVersion *sharedInstance = nil;
 
 
 #define SECONDS_IN_A_DAY 86400.0
+#define MAC_APP_STORE_REFRESH_DELAY 1
 
 
 @implementation NSString(iVersion)
@@ -190,6 +195,28 @@ static iVersion *sharedInstance = nil;
 
 #pragma mark -
 #pragma mark Private methods
+
+- (NSURL *)updateURL
+{
+	
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+	
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	{
+		return [NSURL URLWithString:[NSString stringWithFormat:iVersioniPadAppStoreURLFormat, appStoreID]];
+	}
+	else
+	{
+		return [NSURL URLWithString:[NSString stringWithFormat:iVersioniPhoneAppStoreURLFormat, appStoreID]];
+	}
+	
+#else
+	
+	return [NSURL URLWithString:[NSString stringWithFormat:iVersionMacAppStoreURLFormat, appStoreID]];
+	
+#endif
+	
+}
 
 - (NSDictionary *)localVersionsData
 {
@@ -442,8 +469,7 @@ static iVersion *sharedInstance = nil;
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		//go to download page
-		NSString *downloadURL = [NSString stringWithFormat:iVersionAppStoreURLFormat, appStoreID];
-		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:downloadURL]];
+		[[UIApplication sharedApplication] openURL:[self updateURL]];
 	}
 	
 }
@@ -455,6 +481,28 @@ static iVersion *sharedInstance = nil;
 	//record this as last viewed release
 	[[NSUserDefaults standardUserDefaults] setObject:applicationVersion forKey:iVersionLastVersionKey];
 	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)openAppPageWhenAppStoreLaunched
+{
+	//check if app store is running
+    ProcessSerialNumber psn = { kNoProcess, kNoProcess };
+    while (GetNextProcess(&psn) == noErr)
+	{
+        CFDictionaryRef cfDict = ProcessInformationCopyDictionary(&psn,  kProcessDictionaryIncludeAllInformationMask);
+		NSString *bundleID = [(NSDictionary *)cfDict objectForKey:(NSString *)kCFBundleIdentifierKey];
+		if ([macAppStoreBundleID isEqualToString:bundleID])
+		{
+			//open app page
+			[[NSWorkspace sharedWorkspace] performSelector:@selector(openURL:) withObject:[self updateURL] afterDelay:MAC_APP_STORE_REFRESH_DELAY];
+			CFRelease(cfDict);
+			return;
+		}
+		CFRelease(cfDict);
+    }
+	
+	//try again
+	[self performSelector:@selector(openAppPageWhenAppStoreLaunched) withObject:nil afterDelay:0];
 }
 
 - (void)remoteAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
@@ -475,9 +523,9 @@ static iVersion *sharedInstance = nil;
 			[[NSUserDefaults standardUserDefaults] setObject:nil forKey:iVersionLastRemindedVersionKey];
 			[[NSUserDefaults standardUserDefaults] synchronize];
 			
-			//go to download page
-			NSString *downloadURL = [NSString stringWithFormat:iVersionMacAppStoreURLFormat, appStoreID];
-			[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:downloadURL]];
+			//launch mac app store
+			[[NSWorkspace sharedWorkspace] openURL:[self updateURL]];
+			[self openAppPageWhenAppStoreLaunched];
 			break;
 		}
 		default:
