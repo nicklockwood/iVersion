@@ -132,10 +132,14 @@ static iVersion *sharedInstance = nil;
 												 selector:@selector(applicationLaunched:)
 													 name:UIApplicationDidFinishLaunchingNotification
 												   object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(applicationWillEnterForeground:)
-													 name:UIApplicationWillEnterForegroundNotification
-												   object:nil];
+		
+		if (&UIApplicationWillEnterForegroundNotification)
+		{
+			[[NSNotificationCenter defaultCenter] addObserver:self
+													 selector:@selector(applicationWillEnterForeground:)
+														 name:UIApplicationWillEnterForegroundNotification
+													   object:nil];
+		}
 #else
 		//register for mac application events
 		[[NSNotificationCenter defaultCenter] addObserver:self
@@ -229,7 +233,7 @@ static iVersion *sharedInstance = nil;
 		}
 		else
 		{
-			NSString *versionsFile = [[NSBundle mainBundle] pathForResource:localVersionsPlistPath ofType:@""];
+			NSString *versionsFile = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:localVersionsPlistPath];
 			versionsData = [[NSDictionary alloc] initWithContentsOfFile:versionsFile];
 		}
 	}

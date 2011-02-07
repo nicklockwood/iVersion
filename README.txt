@@ -1,15 +1,15 @@
 Purpose
 --------------
 
-The App Store app updates mechanism is somewhat cumbersome and disconnected from the apps themselves. Users often fail to notice when new versions of an app are released, and if they do notice, the App Store's "download all" mechanism means that users often won't see the release notes for the new version.
+The App Store app updates mechanism is somewhat cumbersome and disconnected from the apps themselves. Users often fail to notice when new versions of an app are released, and if they do notice, the App Store's "download all" option means that users often won't see the release notes for the new version.
 
-Whilst it is not possible to bypass the App Store and update an app from within the app itself as this violates the App Store terms and conditions, there is no reason why an app should not inform the user that the new release is ready, and direct them to the correct page in the App Store.
+Whilst it is not possible to bypass the App Store and update an app from within the app itself, as this violates the App Store terms and conditions, there is no reason why an app should not inform the user that the new release is ready, and direct them to the App Store to download the update.
 
 iVersion is a simple, drop-in class to allow iPhone and Mac App Store apps to automatically check for updates and inform the user about new features.
 
 iVersion has an additional function, which is to tell users about important new features when they first run an app after downloading a new version.
 
-NOTE: iVersion cannot tell if a given release is available to download, so make sure that you only update the remote version file after apple has approved your app and it has appeared in the store. In principle you could create a web service that scrapes the iTunes latest releases RSS feed and generates the remote version plist file for your app automatically, but this is outside the scope of this project currently.
+NOTE: iVersion cannot tell if a given release is available to download, so make sure that you only update the remote versions file after apple has approved your app and it has appeared in the store. In principle you could create a web service that scrapes the iTunes latest releases RSS feed and generates the remote versions plist file for your app automatically, but this is outside the scope of this project currently.
 
 
 Installation
@@ -82,7 +82,7 @@ Check out the new sound options in the settings panel. You can access the settin
 
 There's no point in mentioning the bug fix or new graphics because the user can see this easily enough just by using the app. On the other hand, they might not notice the new sound options, or know how to find them.
 
-Also don't always feel you have to include the local release notes file. If there are no features that need drawing attention to in the new release, just omit the file - it won't prevent you adding the remote file to prompt users to upgrade, and it won't prevent local release notes in future releases from working correctly.
+Also don't always feel you have to include the local release notes file. If there are no features that need drawing attention to in the new release, just omit the file - it won't prevent you adding the remote versions file to prompt users to upgrade, and it won't prevent local release notes in future releases from working correctly.
 
 
 Configuration
@@ -104,9 +104,9 @@ showOnFirstLaunch - Specify whether the release notes for the current version sh
 
 groupNotesByVersion - If your release notes files contains multiple versions, this option will group the release notes by their version number in the alert shown to the user. If set to NO, the release notes will be shown as a single list.
 
-checkPeriod - Sets how frequently the app will check for new versions. This is measured in days but can be set to a fractional value, e.g. 0.5. Set this to a higher value to avoid excessive traffic to your server. A value of zero means the app will check every time it's launched.
+checkPeriod - Sets how frequently the app will check for new releases. This is measured in days but can be set to a fractional value, e.g. 0.5. Set this to a higher value to avoid excessive traffic to your server. A value of zero means the app will check every time it's launched.
 
-remindPeriod - How long the app should wait before reminding a user of a new version after they select the "remind me later" option. A value of zero means the app will remind the user every launch. Note that this value supersedes the check period, so once a reminder is set, the app won't check for new versions during the reminder period, even if new version are released in the meantime.
+remindPeriod - How long the app should wait before reminding a user of a new version after they select the "remind me later" option. A value of zero means the app will remind the user every launch. Note that this value supersedes the check period, so once a reminder is set, the app won't check for new releases during the reminder period, even if new version are released in the meantime.
 
 newInThisVersionTitle - The title displayed for features in the current version (i.e. features in the local version s plist file).
 
