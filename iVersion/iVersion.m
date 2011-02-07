@@ -13,7 +13,7 @@ NSString * const iVersionLastVersionKey = @"iVersionLastVersionChecked";
 NSString * const iVersionIgnoreVersionKey = @"iVersionIgnoreVersion";
 NSString * const iVersionLastCheckedVersionKey = @"iVersionLastCheckedVersion";
 NSString * const iVersionLastRemindedVersionKey = @"iVersionLastRemindedVersion";
-NSString * const macAppStoreBundleID = @"com.apple.appstore";
+NSString * const iVersionMacAppStoreBundleID = @"com.apple.appstore";
 
 //note, these aren't ideal as they link to the app page, not the update page
 //there may be some way to link directly to the app store updates tab, but I don't know what it is
@@ -491,7 +491,7 @@ static iVersion *sharedInstance = nil;
 	{
         CFDictionaryRef cfDict = ProcessInformationCopyDictionary(&psn,  kProcessDictionaryIncludeAllInformationMask);
 		NSString *bundleID = [(NSDictionary *)cfDict objectForKey:(NSString *)kCFBundleIdentifierKey];
-		if ([macAppStoreBundleID isEqualToString:bundleID])
+		if ([iVersionMacAppStoreBundleID isEqualToString:bundleID])
 		{
 			//open app page
 			[[NSWorkspace sharedWorkspace] performSelector:@selector(openURL:) withObject:[self updateURL] afterDelay:MAC_APP_STORE_REFRESH_DELAY];

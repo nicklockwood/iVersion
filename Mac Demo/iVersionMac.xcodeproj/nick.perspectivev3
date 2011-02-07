@@ -297,7 +297,7 @@
 							<real>185</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>-33 157 1850 1000 0 0 1920 1178 </string>
+						<string>59 162 1850 1000 0 0 1920 1178 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -327,7 +327,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>01D0D19A12FF4A6400F15064</string>
+										<string>01D0D1CF12FF774600F15064</string>
 										<key>history</key>
 										<array>
 											<string>01D0D14812FF435D00F15064</string>
@@ -351,7 +351,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {1643, 636}}</string>
 								<key>RubberWindowFrame</key>
-								<string>-33 157 1850 1000 0 0 1920 1178 </string>
+								<string>59 162 1850 1000 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -392,7 +392,7 @@
 										<key>Frame</key>
 										<string>{{10, 27}, {1643, 291}}</string>
 										<key>RubberWindowFrame</key>
-										<string>-33 157 1850 1000 0 0 1920 1178 </string>
+										<string>59 162 1850 1000 0 0 1920 1178 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXProjectFindModule</string>
@@ -652,13 +652,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>01D0D19B12FF4A6400F15064</string>
 		<string>01D0D16E12FF436900F15064</string>
 		<string>01D0D16F12FF436900F15064</string>
 		<string>/Users/nick/Documents/Programming Projects/Open Source/cocoa/iVersion/trunk/Mac Demo/iVersionMac.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>-33 157 1850 1000 0 0 1920 1178 </string>
+	<string>59 162 1850 1000 0 0 1920 1178 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
