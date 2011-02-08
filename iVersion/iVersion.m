@@ -17,8 +17,7 @@ NSString * const iVersionMacAppStoreBundleID = @"com.apple.appstore";
 
 //note, these aren't ideal as they link to the app page, not the update page
 //there may be some way to link directly to the app store updates tab, but I don't know what it is
-NSString * const iVersioniPhoneAppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%i";
-NSString * const iVersioniPadAppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%i";
+NSString * const iVersioniOSAppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%i";
 NSString * const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/app/id%i";
 
 static iVersion *sharedInstance = nil;
@@ -202,24 +201,15 @@ static iVersion *sharedInstance = nil;
 
 - (NSURL *)updateURL
 {
-	
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 	
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-	{
-		return [NSURL URLWithString:[NSString stringWithFormat:iVersioniPadAppStoreURLFormat, appStoreID]];
-	}
-	else
-	{
-		return [NSURL URLWithString:[NSString stringWithFormat:iVersioniPhoneAppStoreURLFormat, appStoreID]];
-	}
+	return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOSAppStoreURLFormat, appStoreID]];
 	
 #else
 	
 	return [NSURL URLWithString:[NSString stringWithFormat:iVersionMacAppStoreURLFormat, appStoreID]];
 	
-#endif
-	
+#endif	
 }
 
 - (NSDictionary *)localVersionsData
