@@ -9,7 +9,9 @@ iVersion is a simple, drop-in class to allow iPhone and Mac App Store apps to au
 
 iVersion has an additional function, which is to tell users about important new features when they first run an app after downloading a new version.
 
-NOTE: iVersion cannot tell if a given release is available to download, so make sure that you only update the remote versions file after apple has approved your app and it has appeared in the store. In principle you could create a web service that scrapes the iTunes latest releases RSS feed and generates the remote versions plist file for your app automatically, but this is outside the scope of this project currently.
+NOTE: iVersion cannot tell if a given release is available to download, so make sure that you only update the remote versions file after apple has approved your app and it has appeared in the store.
+
+One way to do this automatically is to replace the remote versions file witha  web service that dynamically polls the iTunes app page for your app and scrapes the version number and release notes. A sample implementation of such a service (written in PHP) is included as an example.
 
 
 Installation
@@ -135,6 +137,25 @@ Localisation
 ---------------
 
 Although iVersion isn't localised, it is easy to localise without making any modifications to the library itself. All you need to do is provide localised values for all of the message strings by setting the properties above using NSLocalizedString(...). If you need to provide localised release notes, the simplest way to do this is to localise the remoteVersionsPlistURL property in the same way, providing a different URL for each language.
+
+
+Web Service
+---------------
+
+Included with the source is a sample web service for automatically detecting app updates. The service is written in PHP, but is simple enough that it can be easily ported to other web scripting language. The service uses two configuration constants:
+
+$app_store_id - the app store ID of the application
+$store_locale - the two-letter locale code for the iTunes store you wish to poll.
+
+These constants could be set by URL parameter, but it may be unwise for you to host a general-purpose iVersion service URL in case other developers hot-link to it and use it for their own purposes.
+
+The service is currently very simplistic. Notably it only works on some iTunes store locales because it relies on matching specific text strings. It should be easy to add support for other locales if you are reasonably familiar with regular expressions. Otherwise it's recommended that you hard code for the US store.
+
+The service is quite fragile in that it will cease to work if Apple makes significant structural or copy changes to the iTunes page. It will fail gracefully in this instance however - if the page layout changes then the service will return a valid plist file that simply contains no versions in the dictionary. If something more serious goes wrong, the iVersion library will silently ignore malformed version plists anyway, so it's pretty unlikely that using this service will break your app.
+
+You may also find that the use of file_get_contents() for accessing a remote URL is not supported on your server. If that is the case, check out the PHP manual page for file_get_contents for suggestions on alternative implementations:
+
+http://php.net/manual/en/function.file-get-contents.php 
 
 
 Example Project
