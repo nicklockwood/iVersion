@@ -11,7 +11,7 @@ iVersion has an additional function, which is to tell users about important new 
 
 NOTE: iVersion cannot tell if a given release is available to download, so make sure that you only update the remote versions file after apple has approved your app and it has appeared in the store.
 
-One way to do this automatically is to replace the remote versions file witha  web service that dynamically polls the iTunes app page for your app and scrapes the version number and release notes. A sample implementation of such a service (written in PHP) is included as an example.
+One way to do this automatically is to replace the remote versions file with a  web service that dynamically polls the iTunes app page for your app and scrapes the version number and release notes. A sample implementation of such a service (written in PHP) is included as an example, however it is not clear whether doing this is in compliance with Apple's guidelines. See the Web Service heading below for more information.
 
 
 Installation
@@ -142,7 +142,19 @@ Although iVersion isn't localised, it is easy to localise without making any mod
 Web Service
 ---------------
 
-Included with the source is a sample web service for automatically detecting app updates. The service is written in PHP, but is simple enough that it can be easily ported to other web scripting language. The service uses two configuration constants:
+Included with the source is a sample web service for automatically detecting app updates. The service is written in PHP, but is simple enough that it can be easily ported to other web scripting language.
+
+---
+
+WARNING: Apple's developer licence agreement states:
+
+"Neither You nor Your Application may perform any functions or link to any content, services, information or data or use any robot, spider, site search or other retrieval application or device to scrape, mine, retrieve, cache, analyze or index software, data or services provided by Apple or its licensors, or obtain (or try to obtain) any such data, except the data that Apple expressly provides or makes available to You in connection with such services. You agree that You will not collect, disseminate or use any such data for any unauthorized purpose."
+
+It is not clear whether use of a scraping script such as the one included with this project is in violation of terms, but linking to such a service from an App Store app is at your own discretion and is neither recommended nor endorsed by the developer.
+
+---
+
+The service uses two configuration constants:
 
 $app_store_id - the app store ID of the application
 $store_locale - the two-letter locale code for the iTunes store you wish to poll.

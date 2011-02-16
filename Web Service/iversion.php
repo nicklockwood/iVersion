@@ -1,5 +1,15 @@
 <?php
 
+/*
+
+WARNING: Apple's developer licence agreement states:
+
+"Neither You nor Your Application may perform any functions or link to any content, services, information or data or use any robot, spider, site search or other retrieval application or device to scrape, mine, retrieve, cache, analyze or index software, data or services provided by Apple or its licensors, or obtain (or try to obtain) any such data, except the data that Apple expressly provides or makes available to You in connection with such services. You agree that You will not collect, disseminate or use any such data for any unauthorized purpose."
+
+It is not clear whether use of a scraping script such as this one is in violation of these terms, but linking to such a service from an App Store app is at your own discretion and is neither recommended nor endorsed by the developer.
+
+*/
+
 //app-specific config
 $app_store_id = 355313284;
 $store_locale = 'us';
