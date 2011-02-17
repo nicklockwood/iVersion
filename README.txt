@@ -133,6 +133,56 @@ localDebug - If set to YES, iVersion will always display the contents of the loc
 remoteDebug - If set to YES, iVersion will always display the contents of the remote versions plist, irrespective of the version number of the current build or the check/remind period settings. Use this to proofread your release notes during testing, but disable it for the final release.
 
 
+Advanced properties
+---------------
+
+If the default iVersion behaviour doesn't meet your requirements, you can implement your own by using the advanced properties, methods and delegate. The properties below let you access internal state and override it:
+
+updateURL - The URL that the app will direct the user to if an update is detected and they choose to download it. You can use this to implement your own download button.
+
+ignoredVersion - The version string of the last app version that the user ignored. If the user hasn't ignored any releases, this will be nil. Set this to nil to clear the ignored version.
+
+lastChecked - The last date on which iVersion check for an update. You can use this in combination with the checkPeriod to determine if the app should check again.
+
+lastReminded - The last date on which the user was reminded of a new version. You can use this in combination with the remindPeriod to determine if the app should check again. Set this to nil to clear the reminder delay.
+
+delegate - An object you have supplied that implemented the iVersionDelegate protocol, documented below. Use this to detect and/or override iVersion's default behaviour. 
+
+
+Advanced methods
+---------------
+
+- (void)checkForNewVersion;
+
+This method will trigger a new check for new versions, ignoring the checkPeriod and remindPeriod properties.
+
+
+Delegate methods
+---------------
+
+The iVersionDelegate protocol provides the following methods that can be used intercept iVersion events and override the default behaviour. All methods are optional.
+
+- (BOOL)iVersionShouldCheckForNewVersion;
+
+This is called if the checking criteria have all been met and iVersion is about to check for a new version. If you return NO, the check will not be performed. This method is not called if you trigger the check manually with the checkForNewVersion method.
+
+- (void)iVersionDidNotDetectNewVersion;
+
+This is called if the version check did not detect any new versions of the application.
+
+- (void)iVersionVersionCheckFailed:(NSError *)error;
+
+This is called if the version check failed due to network issues or because the versions file was missing or corrupt.
+
+- (void)iVersionDetectedNewVersion:(NSString *)version details:(NSString *)versionDetails;
+
+This is called if a new version was detected.
+
+- (BOOL)iVersionShouldDisplayNewVersion:(NSString *)version details:(NSString *)versionDetails;
+
+This is called immediately before the new version alert is displayed. Return NO to prevent the alert from being displayed. Note that if you are implementing the alert yourself you will need to set the lastChecked, lastReminded and ignoredVersion properties yourself, depending on the user response.
+
+
 Localisation
 ---------------
 
@@ -170,10 +220,10 @@ You may also find that the use of file_get_contents() for accessing a remote URL
 http://php.net/manual/en/function.file-get-contents.php 
 
 
-Example Project
+Example Projects
 ---------------
 
-When you build and run the example project for the first time, it will show an alert saying that a new version is available. This is because it has downloaded the remote versions.plist file and determined that the latest version is newer than the currently running app.
+When you build and run the basic Mac or iPhone example project for the first time, it will show an alert saying that a new version is available. This is because it has downloaded the remote versions.plist file and determined that the latest version is newer than the currently running app.
 
 Quit the app, go into the iVersion-Info.plist file and edit the bundle version to 1.2. Now rebuild the app.
 
@@ -182,3 +232,11 @@ This time it will not say that a new version is available. In effect you have si
 If you dismiss the dialog and then quit and relaunch the app you should now see nothing. This is because the app has detected that the bundle version hasn't changed since you last launched the app.
 
 To show the alerts again, delete the app from the simulator and reset the bundle  version to 1.1. Alternatively, enabled the debug settings to force the alerts to appear on launch.
+
+
+Advanced Example
+---------------
+
+The advanced example demonstrates how you might implement a completely bespoke iVersion interface. Automatic version checking is disabled and instead the user can trigger a check by pressing the "Check for new version" button.
+
+When pressed, the app display a progress wheel and then prints the result in a console underneath the button.

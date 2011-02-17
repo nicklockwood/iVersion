@@ -1,3 +1,9 @@
+Version 1.5
+
+- Added PHP web service example for automatically scraping version from iTunes
+- Added delegate and additional accessor properties for custom behaviour
+- Added advanced example project to demonstrate use of the delegate protocol
+
 Version 1.4
 
 - Now compatible with iOS 3.x
