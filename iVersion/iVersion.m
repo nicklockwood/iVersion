@@ -458,7 +458,7 @@ static iVersion *sharedInstance = nil;
 				NSPropertyListFormat format;
 				versionsDetails = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:&format error:&error];
 			}
-			self.downloadError = error;
+			[self performSelectorOnMainThread:@selector(setDownloadError:) withObject:error waitUntilDone:YES];
 			[self performSelectorOnMainThread:@selector(setRemoteVersionsDict:) withObject:versionsDetails waitUntilDone:YES];
 			[self performSelectorOnMainThread:@selector(updateLastCheckedDate) withObject:nil waitUntilDone:YES];
 			[self performSelectorOnMainThread:@selector(downloadedVersionsData) withObject:nil waitUntilDone:YES];		

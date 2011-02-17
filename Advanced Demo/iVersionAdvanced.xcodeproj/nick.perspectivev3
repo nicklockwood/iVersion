@@ -274,8 +274,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>6</integer>
-									<integer>4</integer>
+									<integer>2</integer>
+									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -327,15 +327,14 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>01387AF0130DD735002CEC5B</string>
+										<string>01387B1A130DDE0E002CEC5B</string>
 										<key>history</key>
 										<array>
 											<string>01D0D14812FF435D00F15064</string>
 											<string>01D0D18612FF486700F15064</string>
 											<string>01387ABC130DD39A002CEC5B</string>
-											<string>01387ABD130DD39A002CEC5B</string>
 											<string>01387AC7130DD4E8002CEC5B</string>
-											<string>01387AE5130DD6C8002CEC5B</string>
+											<string>01387B19130DDE0E002CEC5B</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -652,7 +651,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>01387AF1130DD735002CEC5B</string>
 		<string>01387AAD130DD037002CEC5B</string>
 		<string>01387AAE130DD037002CEC5B</string>
 		<string>/Users/nick/Documents/Programming Projects/Open Source/cocoa/iVersion/trunk/Advanced Demo/iVersionAdvanced.xcodeproj</string>
