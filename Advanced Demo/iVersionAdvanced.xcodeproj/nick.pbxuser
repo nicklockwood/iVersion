@@ -233,6 +233,26 @@
 		vrLen = 1284;
 		vrLoc = 326;
 	};
+	01387B19130DDE0E002CEC5B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 256AC3D90F4B6AC300CF3369 /* iVersionMacAppDelegate.m */;
+		name = "iVersionMacAppDelegate.m: 48";
+		rLen = 0;
+		rLoc = 1171;
+		rType = 0;
+		vrLen = 1268;
+		vrLoc = 350;
+	};
+	01387B1A130DDE0E002CEC5B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 256AC3D90F4B6AC300CF3369 /* iVersionMacAppDelegate.m */;
+		name = "iVersionMacAppDelegate.m: 48";
+		rLen = 0;
+		rLoc = 1171;
+		rType = 0;
+		vrLen = 1268;
+		vrLoc = 350;
+	};
 	01D0D11C12FF412700F15064 /* iVersionAdvanced */ = {
 		isa = PBXExecutable;
 		activeArgIndices = (
@@ -281,9 +301,9 @@
 	};
 	01D0D13712FF41C000F15064 /* iVersion.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1582, 1170}}";
-			sepNavSelRange = "{222, 0}";
-			sepNavVisRange = "{0, 1270}";
+			sepNavIntBoundsRect = "{{0, 0}, {1582, 1053}}";
+			sepNavSelRange = "{874, 0}";
+			sepNavVisRange = "{805, 1834}";
 		};
 	};
 	01D0D13812FF41C000F15064 /* iVersion.m */ = {
@@ -363,8 +383,8 @@
 	256AC3D90F4B6AC300CF3369 /* iVersionMacAppDelegate.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1582, 884}}";
-			sepNavSelRange = "{1001, 0}";
-			sepNavVisRange = "{326, 1284}";
+			sepNavSelRange = "{1171, 0}";
+			sepNavVisRange = "{350, 1268}";
 		};
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
@@ -430,6 +450,8 @@
 			01387AE6130DD6C8002CEC5B /* PBXTextBookmark */ = 01387AE6130DD6C8002CEC5B /* PBXTextBookmark */;
 			01387AEB130DD6F0002CEC5B /* PBXTextBookmark */ = 01387AEB130DD6F0002CEC5B /* PBXTextBookmark */;
 			01387AF0130DD735002CEC5B /* PBXTextBookmark */ = 01387AF0130DD735002CEC5B /* PBXTextBookmark */;
+			01387B19130DDE0E002CEC5B /* PBXTextBookmark */ = 01387B19130DDE0E002CEC5B /* PBXTextBookmark */;
+			01387B1A130DDE0E002CEC5B /* PBXTextBookmark */ = 01387B1A130DDE0E002CEC5B /* PBXTextBookmark */;
 			01D0D14812FF435D00F15064 = 01D0D14812FF435D00F15064 /* PlistBookmark */;
 			01D0D14912FF435D00F15064 = 01D0D14912FF435D00F15064 /* PBXTextBookmark */;
 			01D0D14C12FF435D00F15064 = 01D0D14C12FF435D00F15064 /* PBXTextBookmark */;
