@@ -26,6 +26,7 @@
 	[iVersion sharedInstance].appStoreID = 355313284;
 	[iVersion sharedInstance].remoteVersionsPlistURL = @"http://charcoaldesign.co.uk/iVersion/versions.plist";
 	[iVersion sharedInstance].localVersionsPlistPath = @"versions.plist";
+	[iVersion sharedInstance].remoteDebug = YES;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
