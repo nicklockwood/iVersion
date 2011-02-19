@@ -142,11 +142,11 @@ updateURL - The URL that the app will direct the user to if an update is detecte
 
 ignoredVersion - The version string of the last app version that the user ignored. If the user hasn't ignored any releases, this will be nil. Set this to nil to clear the ignored version.
 
-lastChecked - The last date on which iVersion check for an update. You can use this in combination with the checkPeriod to determine if the app should check again.
+lastChecked - The last date on which iVersion checked for an update. You can use this in combination with the checkPeriod to determine if the app should check again.
 
 lastReminded - The last date on which the user was reminded of a new version. You can use this in combination with the remindPeriod to determine if the app should check again. Set this to nil to clear the reminder delay.
 
-delegate - An object you have supplied that implemented the iVersionDelegate protocol, documented below. Use this to detect and/or override iVersion's default behaviour. 
+delegate - An object you have supplied that implements the iVersionDelegate protocol, documented below. Use this to detect and/or override iVersion's default behaviour. 
 
 
 Advanced methods
@@ -172,7 +172,7 @@ This is called if the version check did not detect any new versions of the appli
 
 - (void)iVersionVersionCheckFailed:(NSError *)error;
 
-This is called if the version check failed due to network issues or because the versions file was missing or corrupt.
+This is called if the version check failed due to network issues or because the remote versions plist file was missing or corrupt.
 
 - (void)iVersionDetectedNewVersion:(NSString *)version details:(NSString *)versionDetails;
 

@@ -315,7 +315,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>01D0D12112FF412900F15064</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>iVersionMacAppDelegate.m</string>
+								<string>iVersion.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -323,18 +323,19 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>01D0D12212FF412900F15064</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>iVersionMacAppDelegate.m</string>
+										<string>iVersion.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>01387B1A130DDE0E002CEC5B</string>
+										<string>01387B90130DFEFC002CEC5B</string>
 										<key>history</key>
 										<array>
 											<string>01D0D14812FF435D00F15064</string>
 											<string>01D0D18612FF486700F15064</string>
 											<string>01387ABC130DD39A002CEC5B</string>
 											<string>01387AC7130DD4E8002CEC5B</string>
-											<string>01387B19130DDE0E002CEC5B</string>
+											<string>01387B8D130DFEFC002CEC5B</string>
+											<string>01387B8E130DFEFC002CEC5B</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
