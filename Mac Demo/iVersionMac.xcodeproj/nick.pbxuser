@@ -46,6 +46,13 @@
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
 	};
+	01D0D13712FF41C000F15064 /* iVersion.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1582, 1157}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 1271}";
+		};
+	};
 	01D0D13812FF41C000F15064 /* iVersion.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1582, 7033}}";
@@ -104,7 +111,7 @@
 		);
 		name = "/Users/nick/Documents/Programming Projects/Open Source/cocoa/iVersion/trunk/Mac Demo/iVersionMac-Info.plist";
 		rLen = 0;
-		rLoc = 9223372036854775807;
+		rLoc = 9223372036854775808;
 	};
 	01D0D1F312FF7BAA00F15064 /* PlistBookmark */ = {
 		isa = PlistBookmark;
@@ -115,7 +122,7 @@
 		);
 		name = "/Users/nick/Documents/Programming Projects/Open Source/cocoa/iVersion/trunk/Mac Demo/iVersionMac-Info.plist";
 		rLen = 0;
-		rLoc = 9223372036854775807;
+		rLoc = 9223372036854775808;
 	};
 	089C165DFE840E0CC02AAC07 /* English */ = {
 		uiCtxt = {
@@ -174,16 +181,16 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 318718819;
-			PBXWorkspaceStateSaveDate = 318718819;
+			PBXPerProjectTemplateStateSaveDate = 319811264;
+			PBXWorkspaceStateSaveDate = 319811264;
 		};
 		perUserProjectItems = {
-			01D0D14812FF435D00F15064 /* PlistBookmark */ = 01D0D14812FF435D00F15064 /* PlistBookmark */;
-			01D0D14912FF435D00F15064 /* PBXTextBookmark */ = 01D0D14912FF435D00F15064 /* PBXTextBookmark */;
-			01D0D14C12FF435D00F15064 /* PBXTextBookmark */ = 01D0D14C12FF435D00F15064 /* PBXTextBookmark */;
-			01D0D18612FF486700F15064 /* PBXTextBookmark */ = 01D0D18612FF486700F15064 /* PBXTextBookmark */;
-			01D0D1F112FF7B6900F15064 /* PlistBookmark */ = 01D0D1F112FF7B6900F15064 /* PlistBookmark */;
-			01D0D1F312FF7BAA00F15064 /* PlistBookmark */ = 01D0D1F312FF7BAA00F15064 /* PlistBookmark */;
+			01D0D14812FF435D00F15064 = 01D0D14812FF435D00F15064 /* PlistBookmark */;
+			01D0D14912FF435D00F15064 = 01D0D14912FF435D00F15064 /* PBXTextBookmark */;
+			01D0D14C12FF435D00F15064 = 01D0D14C12FF435D00F15064 /* PBXTextBookmark */;
+			01D0D18612FF486700F15064 = 01D0D18612FF486700F15064 /* PBXTextBookmark */;
+			01D0D1F112FF7B6900F15064 = 01D0D1F112FF7B6900F15064 /* PlistBookmark */;
+			01D0D1F312FF7BAA00F15064 = 01D0D1F312FF7BAA00F15064 /* PlistBookmark */;
 		};
 		sourceControlManager = 01D0D12712FF412900F15064 /* Source Control */;
 		userBuildSettings = {
