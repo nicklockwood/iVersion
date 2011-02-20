@@ -33,6 +33,34 @@
 @interface iVersion : NSObject<UIAlertViewDelegate>
 #else
 @interface iVersion : NSObject
+#ifdef __i386__
+{
+	NSDictionary *remoteVersionsDict;
+	NSError *downloadError;
+	NSUInteger appStoreID;
+	NSString *remoteVersionsPlistURL;
+	NSString *localVersionsPlistPath;
+	NSString *applicationName;
+	NSString *applicationVersion;
+	BOOL showOnFirstLaunch;
+	BOOL groupNotesByVersion;
+	float checkPeriod;
+	float remindPeriod;
+	NSString *newInThisVersionTitle;
+	NSString *newVersionAvailableTitle;
+	NSString *versionLabelFormat;
+	NSString *okButtonLabel;
+	NSString *ignoreButtonLabel;
+	NSString *remindButtonLabel;
+	NSString *downloadButtonLabel;
+	BOOL localChecksDisabled;
+	BOOL remoteChecksDisabled;
+	BOOL localDebug;
+	BOOL remoteDebug;
+	NSURL * updateURL;
+	id<iVersionDelegate> delegate;
+}
+#endif
 #endif
 
 + (iVersion *)sharedInstance;

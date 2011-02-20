@@ -1,5 +1,46 @@
 // !$*UTF8*$!
 {
+	0177CB0813103007006CB927 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 8D1107310486CEB800E47090 /* iVersionMac-Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = "/Users/nick/Documents/Programming Projects/Open Source/cocoa/iVersion/trunk/Mac Demo/iVersionMac-Info.plist";
+		rLen = 0;
+		rLoc = 9223372036854775807;
+	};
+	0177CB0913103007006CB927 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 01D0D13812FF41C000F15064 /* iVersion.m */;
+		name = "iVersion.m: 267";
+		rLen = 0;
+		rLoc = 7385;
+		rType = 0;
+		vrLen = 1208;
+		vrLoc = 6361;
+	};
+	0177CB0A13103007006CB927 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 01D0D13712FF41C000F15064 /* iVersion.h */;
+		name = "iVersion.h: 29";
+		rLen = 0;
+		rLoc = 705;
+		rType = 0;
+		vrLen = 1212;
+		vrLoc = 0;
+	};
+	0177CB0B13103007006CB927 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 01D0D13712FF41C000F15064 /* iVersion.h */;
+		name = "iVersion.h: 20";
+		rLen = 0;
+		rLoc = 366;
+		rType = 0;
+		vrLen = 1212;
+		vrLoc = 0;
+	};
 	01D0D11C12FF412700F15064 /* iVersionMac */ = {
 		isa = PBXExecutable;
 		activeArgIndices = (
@@ -48,16 +89,16 @@
 	};
 	01D0D13712FF41C000F15064 /* iVersion.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1582, 1157}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 1271}";
+			sepNavIntBoundsRect = "{{0, 0}, {1582, 1170}}";
+			sepNavSelRange = "{366, 0}";
+			sepNavVisRange = "{0, 1212}";
 		};
 	};
 	01D0D13812FF41C000F15064 /* iVersion.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1582, 7033}}";
-			sepNavSelRange = "{15171, 0}";
-			sepNavVisRange = "{13960, 1551}";
+			sepNavIntBoundsRect = "{{0, 0}, {1582, 8138}}";
+			sepNavSelRange = "{7385, 0}";
+			sepNavVisRange = "{6361, 1208}";
 		};
 	};
 	01D0D14812FF435D00F15064 /* PlistBookmark */ = {
@@ -101,28 +142,6 @@
 		rType = 0;
 		vrLen = 45;
 		vrLoc = 0;
-	};
-	01D0D1F112FF7B6900F15064 /* PlistBookmark */ = {
-		isa = PlistBookmark;
-		fRef = 8D1107310486CEB800E47090 /* iVersionMac-Info.plist */;
-		fallbackIsa = PBXBookmark;
-		isK = 0;
-		kPath = (
-		);
-		name = "/Users/nick/Documents/Programming Projects/Open Source/cocoa/iVersion/trunk/Mac Demo/iVersionMac-Info.plist";
-		rLen = 0;
-		rLoc = 9223372036854775808;
-	};
-	01D0D1F312FF7BAA00F15064 /* PlistBookmark */ = {
-		isa = PlistBookmark;
-		fRef = 8D1107310486CEB800E47090 /* iVersionMac-Info.plist */;
-		fallbackIsa = PBXBookmark;
-		isK = 0;
-		kPath = (
-		);
-		name = "/Users/nick/Documents/Programming Projects/Open Source/cocoa/iVersion/trunk/Mac Demo/iVersionMac-Info.plist";
-		rLen = 0;
-		rLoc = 9223372036854775808;
 	};
 	089C165DFE840E0CC02AAC07 /* English */ = {
 		uiCtxt = {
@@ -185,12 +204,14 @@
 			PBXWorkspaceStateSaveDate = 319811264;
 		};
 		perUserProjectItems = {
-			01D0D14812FF435D00F15064 = 01D0D14812FF435D00F15064 /* PlistBookmark */;
-			01D0D14912FF435D00F15064 = 01D0D14912FF435D00F15064 /* PBXTextBookmark */;
-			01D0D14C12FF435D00F15064 = 01D0D14C12FF435D00F15064 /* PBXTextBookmark */;
-			01D0D18612FF486700F15064 = 01D0D18612FF486700F15064 /* PBXTextBookmark */;
-			01D0D1F112FF7B6900F15064 = 01D0D1F112FF7B6900F15064 /* PlistBookmark */;
-			01D0D1F312FF7BAA00F15064 = 01D0D1F312FF7BAA00F15064 /* PlistBookmark */;
+			0177CB0813103007006CB927 /* PlistBookmark */ = 0177CB0813103007006CB927 /* PlistBookmark */;
+			0177CB0913103007006CB927 /* PBXTextBookmark */ = 0177CB0913103007006CB927 /* PBXTextBookmark */;
+			0177CB0A13103007006CB927 /* PBXTextBookmark */ = 0177CB0A13103007006CB927 /* PBXTextBookmark */;
+			0177CB0B13103007006CB927 /* PBXTextBookmark */ = 0177CB0B13103007006CB927 /* PBXTextBookmark */;
+			01D0D14812FF435D00F15064 /* PlistBookmark */ = 01D0D14812FF435D00F15064 /* PlistBookmark */;
+			01D0D14912FF435D00F15064 /* PBXTextBookmark */ = 01D0D14912FF435D00F15064 /* PBXTextBookmark */;
+			01D0D14C12FF435D00F15064 /* PBXTextBookmark */ = 01D0D14C12FF435D00F15064 /* PBXTextBookmark */;
+			01D0D18612FF486700F15064 /* PBXTextBookmark */ = 01D0D18612FF486700F15064 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 01D0D12712FF412900F15064 /* Source Control */;
 		userBuildSettings = {
