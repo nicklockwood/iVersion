@@ -25,6 +25,7 @@
 - (void)iVersionVersionCheckFailed:(NSError *)error;
 - (void)iVersionDetectedNewVersion:(NSString *)version details:(NSString *)versionDetails;
 - (BOOL)iVersionShouldDisplayNewVersion:(NSString *)version details:(NSString *)versionDetails;
+- (BOOL)iVersionShouldDisplayCurrentVersionDetails:(NSString *)versionDetails;
 
 @end
 
@@ -46,8 +47,8 @@
 	BOOL groupNotesByVersion;
 	float checkPeriod;
 	float remindPeriod;
-	NSString *newInThisVersionTitle;
-	NSString *newVersionAvailableTitle;
+	NSString *inThisVersionTitle;
+	NSString *updateAvailableTitle;
 	NSString *versionLabelFormat;
 	NSString *okButtonLabel;
 	NSString *ignoreButtonLabel;
@@ -57,7 +58,8 @@
 	BOOL remoteChecksDisabled;
 	BOOL localDebug;
 	BOOL remoteDebug;
-	NSURL * updateURL;
+	NSURL *updateURL;
+	NSString *versionDetails;
 	id<iVersionDelegate> delegate;
 }
 #endif
@@ -81,8 +83,8 @@
 @property (nonatomic, assign) float remindPeriod;
 
 //message text, you may wish to customise these, e.g. for localisation
-@property (nonatomic, copy) NSString *newInThisVersionTitle;
-@property (nonatomic, copy) NSString *newVersionAvailableTitle;
+@property (nonatomic, copy) NSString *inThisVersionTitle;
+@property (nonatomic, copy) NSString *updateAvailableTitle;
 @property (nonatomic, copy) NSString *versionLabelFormat;
 @property (nonatomic, copy) NSString *okButtonLabel;
 @property (nonatomic, copy) NSString *ignoreButtonLabel;
@@ -100,9 +102,12 @@
 @property (nonatomic, retain) NSDate *lastChecked;
 @property (nonatomic, retain) NSDate *lastReminded;
 @property (nonatomic, retain) NSURL *updateURL;
+@property (nonatomic, assign) BOOL viewedVersionDetails;
 @property (nonatomic, assign) id<iVersionDelegate> delegate;
 
-//manually trigger new version check
+//manually control behaviour
+- (void)openAppPageInAppStore;
 - (void)checkForNewVersion;
+- (NSString *)versionDetails;
 
 @end

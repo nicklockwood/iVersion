@@ -1,3 +1,10 @@
+Version 1.6
+
+- Added openAppPageInAppStore method for more reliably opening Mac App Store
+- Fixed issue with local versions plist path on Mac OS
+- Renamed a couple of configuration settings names to comply with Cocoa conventions and prevent static analyzer warnings
+- Added explicit ivars to support i386 (32bit x86) targets
+
 Version 1.5
 
 - Added PHP web service example for automatically scraping version from iTunes
@@ -24,10 +31,10 @@ Version 1.2
 
 Version 1.1
 
-- Added optional remind me button.
-- Added ability to specify update period.
-- Local versions file path can now be set to nil.
+- Added optional remind me button
+- Added ability to specify update period
+- Local versions file path can now be set to nil
 
 Version 1.0
 
-- Initial release.
+- Initial release

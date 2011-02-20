@@ -110,9 +110,9 @@ checkPeriod - Sets how frequently the app will check for new releases. This is m
 
 remindPeriod - How long the app should wait before reminding a user of a new version after they select the "remind me later" option. A value of zero means the app will remind the user every launch. Note that this value supersedes the check period, so once a reminder is set, the app won't check for new releases during the reminder period, even if new version are released in the meantime.
 
-newInThisVersionTitle - The title displayed for features in the current version (i.e. features in the local version s plist file).
+inThisVersionTitle - The title displayed for features in the current version (i.e. features in the local version s plist file).
 
-newVersionAvailableTitle - The title displayed when iVersion detects a new version of the app has appeared in the remote versions plist.
+updateAvailableTitle - The title displayed when iVersion detects a new version of the app has appeared in the remote versions plist.
 
 versionLabelFormat - The format string for the release notes version separators. This should include a %@ placeholder for the version number, e.g "Version %@".
 
@@ -138,7 +138,7 @@ Advanced properties
 
 If the default iVersion behaviour doesn't meet your requirements, you can implement your own by using the advanced properties, methods and delegate. The properties below let you access internal state and override it:
 
-updateURL - The URL that the app will direct the user to if an update is detected and they choose to download it. You can use this to implement your own download button.
+updateURL - The URL that the app will direct the user to if an update is detected and they choose to download it. If you are implementing your own download button, you should probably use the openAppPageInAppStore method instead, especially on Mac OS, as the process for opening the Mac app store is more complex than merely opening the URL.
 
 ignoredVersion - The version string of the last app version that the user ignored. If the user hasn't ignored any releases, this will be nil. Set this to nil to clear the ignored version.
 
@@ -146,15 +146,25 @@ lastChecked - The last date on which iVersion checked for an update. You can use
 
 lastReminded - The last date on which the user was reminded of a new version. You can use this in combination with the remindPeriod to determine if the app should check again. Set this to nil to clear the reminder delay.
 
+viewedVersionDetails - Flag that indicates if the local version details have been viewed (YES) or not (NO).
+
 delegate - An object you have supplied that implements the iVersionDelegate protocol, documented below. Use this to detect and/or override iVersion's default behaviour. 
 
 
 Advanced methods
 ---------------
 
+- (void)openAppPageInAppStore;
+
+This method will open the application page in the Mac or iPhone app store, depending on which platform is running. You should use this method instead of the updateURL property if you are running on Mac OS as the process for launching the Mac app store is more complex than merely opening the URL.
+
 - (void)checkForNewVersion;
 
 This method will trigger a new check for new versions, ignoring the checkPeriod and remindPeriod properties.
+
+- (NSString *)versionDetails;
+
+This returns the local release notes for current version, or any versions that have been released since the last time the app was launched, depending on how many versions are included in the local version plist file. If this isn't the first time this version of the app was launched, only the most recent version is  included.
 
 
 Delegate methods
@@ -180,7 +190,11 @@ This is called if a new version was detected.
 
 - (BOOL)iVersionShouldDisplayNewVersion:(NSString *)version details:(NSString *)versionDetails;
 
-This is called immediately before the new version alert is displayed. Return NO to prevent the alert from being displayed. Note that if you are implementing the alert yourself you will need to set the lastChecked, lastReminded and ignoredVersion properties yourself, depending on the user response.
+This is called immediately before the new version detected alert is displayed. Return NO to prevent the alert from being displayed. Note that if you are implementing the alert yourself you will need to set the lastChecked, lastReminded and ignoredVersion properties yourself, depending on the user response.
+
+- (BOOL)iVersionShouldDisplayCurrentVersionDetails:(NSString *)versionDetails;
+
+This is called immediately before the current version new features alert is displayed. Return NO to prevent the alert from being displayed. Note that if you intend to implement this notification yourself, you will need to set the viewedVersionDetails flag manually.
 
 
 Localisation
