@@ -486,7 +486,14 @@ static iVersion *sharedInstance = nil;
 			if (data)
 			{
 				NSPropertyListFormat format;
-				versions = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:&format error:&error];
+				if ([NSPropertyListSerialization respondsToSelector:@selector(propertyListWithData:options:format:error:)])
+				{
+					versionsDetails = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:&format error:&error];
+				}
+				else
+				{
+					versionsDetails = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:0 format:&format errorDescription:NULL];
+				}
 			}
 			[self performSelectorOnMainThread:@selector(setDownloadError:) withObject:error waitUntilDone:YES];
 			[self performSelectorOnMainThread:@selector(setRemoteVersionsDict:) withObject:versions waitUntilDone:YES];
