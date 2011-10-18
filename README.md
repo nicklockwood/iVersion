@@ -19,15 +19,15 @@ Installation
 
 To install iVersion into your app, drag the iVersion.h and .m files into your project.
 
-To enable iVersion in your application you need to instantiate and configure iVersion *before* the app has finished launching. The easiest way to do this is to add the iVersion configuration code in your AppDelegate's initialize method, like this:
+To enable iVersion in your application you need to instantiate and configure iVersion *before* the app has finished launching. The easiest way to do this is to add the iVersion configuration code in your AppDelegate's `initialize` method, like this:
 
-+ (void)initialize
-{
-	//configure iVersion
-	[iVersion sharedInstance].appStoreID = 355313284;
-	[iVersion sharedInstance].remoteVersionsPlistURL = @"http://example.com/versions.plist";
-	[iVersion sharedInstance].localVersionsPlistPath = @"versions.plist";
-}
+	+ (void)initialize
+	{
+		//configure iVersion
+		[iVersion sharedInstance].appStoreID = 355313284;
+		[iVersion sharedInstance].remoteVersionsPlistURL = @"http://example.com/versions.plist";
+		[iVersion sharedInstance].localVersionsPlistPath = @"versions.plist";
+	}
 
 The above code represents the minimum configuration needed to make iVersion work, although there are other configuration options you may wish to add (documented below).
 
@@ -35,22 +35,22 @@ The exact same configuration code will work for both Mac and iPhone/iPad.
 
 You will also need to add a plist file to your app containing the release notes for the current version, and host another copy on a web-facing server somewhere. The format for these plists is as follows:
 
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>1.0</key>
-	<array>
-		<string>First release</string>
-	</array>
-	<key>1.1</key>
-	<array>
-		<string>NEW: Added  new snoodlebar feature</string>
-		<string>FIX: Fixed the bugalloo glitch</string>
-	</array>
-	...
-</dict>
-</plist>
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+	<plist version="1.0">
+	<dict>
+		<key>1.0</key>
+		<array>
+			<string>First release</string>
+		</array>
+		<key>1.1</key>
+		<array>
+			<string>NEW: Added  new snoodlebar feature</string>
+			<string>FIX: Fixed the bugalloo glitch</string>
+		</array>
+		...
+	</dict>
+	</plist>
 
 The root node of the plist is a dictionary containing one or more items. Each item represents a particular version of your application.
 
@@ -68,19 +68,15 @@ Do not feel that the release notes have to exactly mirror those in iTunes or the
 
 The local and remote release notes plists do not have to match. Whilst it may be convenient to make them identical from a maintenance point of view, the local version works better if it is written in a slightly different tone. For example the remote release notes might read:
 
-"
-Version 1.1
-
-- Fixed crashing bug
-- Added shiny new menu graphics
-- New sound settings
-"
+	Version 1.1
+	
+	- Fixed crashing bug
+	- Added shiny new menu graphics
+	- New sound settings
 
 Whereas the local one might say:
 
-"
-Check out the new sound options in the settings panel. You can access the settings from the home screen
-"
+	Check out the new sound options in the settings panel. You can access the settings from the home screen
 
 There's no point in mentioning the bug fix or new graphics because the user can see this easily enough just by using the app. On the other hand, they might not notice the new sound options, or know how to find them.
 
@@ -92,45 +88,85 @@ Configuration
 
 To configure iVersion, there are a number of properties of the iVersion class that can alter the behaviour and appearance of iVersion. These should be mostly self- explanatory, but they are documented below:
 
-appStoreID - this should match the iTunes app ID of your application, which you can get from iTunes connect after setting up your app. This is only used for remote version updates, so you can ignore this if you do not intend to use that feature (although it should still be set to a valid integer value).
+	@property (nonatomic, assign) NSUInteger appStoreID;
 
-remoteVersionsPlistURL - This is the URL of the remotely hosted plist that iVersion will check for new releases. As noted above, make sure you only update this file after your new release has been approved by Apple and appeared in the store or you will have some very confused customers. For testing purposes, you may wish to create a separate copy of the file at a different address and use a build constant to switch which version the app points at. Set this value to nil if you do not want your app to check for updates automatically. Do not set it to an invalid URL such as example.com because this will waste battery, CPU and bandwidth as the app tries to check the invalid URL each time it launches.
+This should match the iTunes app ID of your application, which you can get from iTunes connect after setting up your app. This is only used for remote version updates, so you can ignore this if you do not intend to use that feature (although it should still be set to a valid integer value).
 
-localVersionsPlistPath - The file name of your local release notes plist used to tell users about new features when they first launch a new update. Set this value to nil if you do not want your app to display release notes for the current version.
+	@property (nonatomic, copy) NSString *remoteVersionsPlistURL;
 
-applicationName - This is the name of the app displayed in the alert. It is set automatically from the info.plist, but you may wish to override it with a shorter or longer version.
+This is the URL of the remotely hosted plist that iVersion will check for new releases. As noted above, make sure you only update this file after your new release has been approved by Apple and appeared in the store or you will have some very confused customers. For testing purposes, you may wish to create a separate copy of the file at a different address and use a build constant to switch which version the app points at. Set this value to nil if you do not want your app to check for updates automatically. Do not set it to an invalid URL such as example.com because this will waste battery, CPU and bandwidth as the app tries to check the invalid URL each time it launches.
 
-applicationVersion - The current version number of the app. This is set automatically from the info.plist and it's probably not a good ideas to change it unless you know what you are doing. In some cases your bundle version may not match the publicly known "display" version of your app, in which case use the display version here. Note that the version numbers in the plist will be compared to this value, not the one in the info.plist.
+	@property (nonatomic, copy) NSString *localVersionsPlistPath;
 
-showOnFirstLaunch - Specify whether the release notes for the current version should be shown the first time the user launches the app. If set to no it means that users who, for example, download version 1.1 of your app but never installed a previous version, won't be shown the new features in version 1.1.
+The file name of your local release notes plist used to tell users about new features when they first launch a new update. Set this value to nil if you do not want your app to display release notes for the current version.
 
-groupNotesByVersion - If your release notes files contains multiple versions, this option will group the release notes by their version number in the alert shown to the user. If set to NO, the release notes will be shown as a single list.
+	@property (nonatomic, copy) NSString *applicationName;
 
-checkPeriod - Sets how frequently the app will check for new releases. This is measured in days but can be set to a fractional value, e.g. 0.5. Set this to a higher value to avoid excessive traffic to your server. A value of zero means the app will check every time it's launched.
+This is the name of the app displayed in the alert. It is set automatically from the info.plist, but you may wish to override it with a shorter or longer version.
 
-remindPeriod - How long the app should wait before reminding a user of a new version after they select the "remind me later" option. A value of zero means the app will remind the user every launch. Note that this value supersedes the check period, so once a reminder is set, the app won't check for new releases during the reminder period, even if new version are released in the meantime.
+	@property (nonatomic, copy) NSString *applicationVersion;
 
-inThisVersionTitle - The title displayed for features in the current version (i.e. features in the local version s plist file).
+The current version number of the app. This is set automatically from the info.plist and it's probably not a good ideas to change it unless you know what you are doing. In some cases your bundle version may not match the publicly known "display" version of your app, in which case use the display version here. Note that the version numbers in the plist will be compared to this value, not the one in the info.plist.
 
-updateAvailableTitle - The title displayed when iVersion detects a new version of the app has appeared in the remote versions plist.
+	@property (nonatomic, assign) BOOL showOnFirstLaunch;
 
-versionLabelFormat - The format string for the release notes version separators. This should include a %@ placeholder for the version number, e.g "Version %@".
+Specify whether the release notes for the current version should be shown the first time the user launches the app. If set to no it means that users who, for example, download version 1.1 of your app but never installed a previous version, won't be shown the new features in version 1.1.
 
-okButtonLabel - The button label for the button to dismiss the "new in this version" modal.
+	@property (nonatomic, assign) BOOL groupNotesByVersion;
 
-ignoreButtonLabel - The button label for the button the user presses if they do not want to download a new update.
+If your release notes files contains multiple versions, this option will group the release notes by their version number in the alert shown to the user. If set to NO, the release notes will be shown as a single list.
 
-remindButtonLabel - The button label for the button the user presses if they don't want to download a new update immediately, but do want to be reminded about it in future. Set this to nil if you don't want to display the remind me button - e.g. if you don't have space on screen.
+	@property (nonatomic, assign) float checkPeriod;
 
-downloadButtonLabel - The button label for the button the user presses if they want to download a new update.
+Sets how frequently the app will check for new releases. This is measured in days but can be set to a fractional value, e.g. 0.5. Set this to a higher value to avoid excessive traffic to your server. A value of zero means the app will check every time it's launched.
 
-localChecksDisabled - Set this to true to disable checking for local release notes. This is equivalent to setting the localVersionsPlistPath to nil, but may be more convenient.
+	@property (nonatomic, assign) float remindPeriod;
 
-remoteChecksDisabled - Set this to true to disable checking for new releases. This is equivalent to setting the remoteVersionsPlistURL to nil, but may be more convenient. You might connect this to an in-app user setting for toggling checks for updates.
+How long the app should wait before reminding a user of a new version after they select the "remind me later" option. A value of zero means the app will remind the user every launch. Note that this value supersedes the check period, so once a reminder is set, the app won't check for new releases during the reminder period, even if new version are released in the meantime.
 
-localDebug - If set to YES, iVersion will always display the contents of the local versions plist, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
+	@property (nonatomic, copy) NSString *inThisVersionTitle;
 
-remoteDebug - If set to YES, iVersion will always display the contents of the remote versions plist, irrespective of the version number of the current build or the check/remind period settings. Use this to proofread your release notes during testing, but disable it for the final release.
+The title displayed for features in the current version (i.e. features in the local version s plist file).
+
+	@property (nonatomic, copy) NSString *updateAvailableTitle;
+
+The title displayed when iVersion detects a new version of the app has appeared in the remote versions plist.
+
+	@property (nonatomic, copy) NSString *versionLabelFormat;
+
+The format string for the release notes version separators. This should include a %@ placeholder for the version number, e.g "Version %@".
+
+	@property (nonatomic, copy) NSString *okButtonLabel;
+	
+The button label for the button to dismiss the "new in this version" modal.
+
+	@property (nonatomic, copy) NSString *ignoreButtonLabel;
+
+The button label for the button the user presses if they do not want to download a new update.
+
+	@property (nonatomic, copy) NSString *remindButtonLabel;
+
+The button label for the button the user presses if they don't want to download a new update immediately, but do want to be reminded about it in future. Set this to nil if you don't want to display the remind me button - e.g. if you don't have space on screen.
+
+	@property (nonatomic, copy) NSString *downloadButtonLabel;
+
+The button label for the button the user presses if they want to download a new update.
+
+	@property (nonatomic, assign) BOOL localChecksDisabled;
+
+Set this to true to disable checking for local release notes. This is equivalent to setting the localVersionsPlistPath to nil, but may be more convenient.
+
+	@property (nonatomic, assign) BOOL remoteChecksDisabled;
+
+Set this to true to disable checking for new releases. This is equivalent to setting the remoteVersionsPlistURL to nil, but may be more convenient. You might connect this to an in-app user setting for toggling checks for updates.
+
+	@property (nonatomic, assign) BOOL localDebug;
+
+If set to YES, iVersion will always display the contents of the local versions plist, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
+
+	@property (nonatomic, assign) BOOL remoteDebug;
+
+If set to YES, iVersion will always display the contents of the remote versions plist, irrespective of the version number of the current build or the check/remind period settings. Use this to proofread your release notes during testing, but disable it for the final release.
 
 
 Advanced properties
@@ -138,31 +174,43 @@ Advanced properties
 
 If the default iVersion behaviour doesn't meet your requirements, you can implement your own by using the advanced properties, methods and delegate. The properties below let you access internal state and override it:
 
-updateURL - The URL that the app will direct the user to if an update is detected and they choose to download it. If you are implementing your own download button, you should probably use the openAppPageInAppStore method instead, especially on Mac OS, as the process for opening the Mac app store is more complex than merely opening the URL.
+	@property (nonatomic, retain) NSURL *updateURL;
 
-ignoredVersion - The version string of the last app version that the user ignored. If the user hasn't ignored any releases, this will be nil. Set this to nil to clear the ignored version.
+The URL that the app will direct the user to if an update is detected and they choose to download it. If you are implementing your own download button, you should probably use the openAppPageInAppStore method instead, especially on Mac OS, as the process for opening the Mac app store is more complex than merely opening the URL.
 
-lastChecked - The last date on which iVersion checked for an update. You can use this in combination with the checkPeriod to determine if the app should check again.
+	@property (nonatomic, copy) NSString *ignoredVersion;
 
-lastReminded - The last date on which the user was reminded of a new version. You can use this in combination with the remindPeriod to determine if the app should check again. Set this to nil to clear the reminder delay.
+The version string of the last app version that the user ignored. If the user hasn't ignored any releases, this will be nil. Set this to nil to clear the ignored version.
 
-viewedVersionDetails - Flag that indicates if the local version details have been viewed (YES) or not (NO).
+	@property (nonatomic, retain) NSDate *lastChecked;
 
-delegate - An object you have supplied that implements the iVersionDelegate protocol, documented below. Use this to detect and/or override iVersion's default behaviour. 
+The last date on which iVersion checked for an update. You can use this in combination with the checkPeriod to determine if the app should check again.
+
+	@property (nonatomic, retain) NSDate *lastReminded;
+
+The last date on which the user was reminded of a new version. You can use this in combination with the remindPeriod to determine if the app should check again. Set this to nil to clear the reminder delay.
+
+	@property (nonatomic, assign) BOOL viewedVersionDetails;
+
+Flag that indicates if the local version details have been viewed (YES) or not (NO).
+
+	@property (nonatomic, assign) id<iVersionDelegate> delegate;
+
+An object you have supplied that implements the iVersionDelegate protocol, documented below. Use this to detect and/or override iVersion's default behaviour. 
 
 
 Advanced methods
 ---------------
 
-- (void)openAppPageInAppStore;
+	- (void)openAppPageInAppStore;
 
 This method will open the application page in the Mac or iPhone app store, depending on which platform is running. You should use this method instead of the updateURL property if you are running on Mac OS as the process for launching the Mac app store is more complex than merely opening the URL.
 
-- (void)checkForNewVersion;
+	- (void)checkForNewVersion;
 
 This method will trigger a new check for new versions, ignoring the checkPeriod and remindPeriod properties.
 
-- (NSString *)versionDetails;
+	- (NSString *)versionDetails;
 
 This returns the local release notes for current version, or any versions that have been released since the last time the app was launched, depending on how many versions are included in the local version plist file. If this isn't the first time this version of the app was launched, only the most recent version is  included.
 
@@ -172,27 +220,27 @@ Delegate methods
 
 The iVersionDelegate protocol provides the following methods that can be used intercept iVersion events and override the default behaviour. All methods are optional.
 
-- (BOOL)iVersionShouldCheckForNewVersion;
+	- (BOOL)iVersionShouldCheckForNewVersion;
 
 This is called if the checking criteria have all been met and iVersion is about to check for a new version. If you return NO, the check will not be performed. This method is not called if you trigger the check manually with the checkForNewVersion method.
 
-- (void)iVersionDidNotDetectNewVersion;
+	- (void)iVersionDidNotDetectNewVersion;
 
 This is called if the version check did not detect any new versions of the application.
 
-- (void)iVersionVersionCheckFailed:(NSError *)error;
+	- (void)iVersionVersionCheckFailed:(NSError *)error;
 
 This is called if the version check failed due to network issues or because the remote versions plist file was missing or corrupt.
 
-- (void)iVersionDetectedNewVersion:(NSString *)version details:(NSString *)versionDetails;
+	- (void)iVersionDetectedNewVersion:(NSString *)version details:(NSString *)versionDetails;
 
 This is called if a new version was detected.
 
-- (BOOL)iVersionShouldDisplayNewVersion:(NSString *)version details:(NSString *)versionDetails;
+	- (BOOL)iVersionShouldDisplayNewVersion:(NSString *)version details:(NSString *)versionDetails;
 
 This is called immediately before the new version detected alert is displayed. Return NO to prevent the alert from being displayed. Note that if you are implementing the alert yourself you will need to set the lastChecked, lastReminded and ignoredVersion properties yourself, depending on the user response.
 
-- (BOOL)iVersionShouldDisplayCurrentVersionDetails:(NSString *)versionDetails;
+	- (BOOL)iVersionShouldDisplayCurrentVersionDetails:(NSString *)versionDetails;
 
 This is called immediately before the current version new features alert is displayed. Return NO to prevent the alert from being displayed. Note that if you intend to implement this notification yourself, you will need to set the viewedVersionDetails flag manually.
 
@@ -220,8 +268,13 @@ It is not clear whether use of a scraping script such as the one included with t
 
 The service uses two configuration constants:
 
-$app_store_id - the app store ID of the application
-$store_locale - the two-letter locale code for the iTunes store you wish to poll.
+	$app_store_id
+	
+The app store ID of the application.
+
+	$store_locale
+	
+The two-letter locale code for the iTunes store you wish to poll.
 
 These constants could be set by URL parameter, but it may be unwise for you to host a general-purpose iVersion service URL in case other developers hot-link to it and use it for their own purposes.
 

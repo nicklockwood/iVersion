@@ -38,7 +38,7 @@ $html = file_get_contents("http://itunes.apple.com/$store_locale/app/id$app_stor
 $html = preg_replace('/[\n\r]+/', ' ', $html);
 
 //get version number
-if (preg_match('/Current Version:\s*<\/span>\s*([0-9.]+)/i', $html, $matches))
+if (preg_match('/Version:\s*<\/span>\s*([0-9.]+)/i', $html, $matches))
 {
 	$version = @$matches[1];
 }

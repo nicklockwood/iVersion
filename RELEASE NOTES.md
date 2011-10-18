@@ -1,3 +1,7 @@
+Version 1.6.3
+
+- Fixed web service and updated project for Xcode 4.2
+
 Version 1.6.2
 
 - Fixed version details in new version alert on iOS
