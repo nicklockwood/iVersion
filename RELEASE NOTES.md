@@ -1,3 +1,11 @@
+Version 1.6.4
+
+- Updated iVersion web service to use official iTunes App Store search APIs
+- iVersion now uses CFBundleDisplayName for the application name (if available) 
+- Increased Mac app store refresh delay for older Macs
+- Simplified version comparison logic
+- Reorganised examples
+
 Version 1.6.3
 
 - Fixed web service and updated project for Xcode 4.2

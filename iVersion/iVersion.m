@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.6.3
+//  Version 1.6.4
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design. All rights reserved.
@@ -48,53 +48,33 @@ static iVersion *sharedInstance = nil;
 
 
 #define SECONDS_IN_A_DAY 86400.0
-#define MAC_APP_STORE_REFRESH_DELAY 2
+#define MAC_APP_STORE_REFRESH_DELAY 5.0
 
 
 @implementation NSString(iVersion)
 
 - (NSComparisonResult)compareVersion:(NSString *)version
 {
-	NSArray *thisVersionParts = [self componentsSeparatedByString:@"."];
-	NSArray *versionParts = [version componentsSeparatedByString:@"."];
-	NSUInteger count = MIN([thisVersionParts count], [versionParts count]);
-	NSUInteger i;
-	for (i = 0; i < count; i++)
-	{
-		NSUInteger thisPart = [[thisVersionParts objectAtIndex:i] integerValue];
-		NSUInteger part = [[versionParts objectAtIndex:i] integerValue];
-		if (thisPart > part)
-		{
-			return NSOrderedDescending; //version is older
-		}
-		else if (thisPart < part)
-		{
-			return NSOrderedAscending; //version is newer
-		}
-	}
-	if ([thisVersionParts count] > [versionParts count])
-	{
-		return NSOrderedDescending; //version is older
-	}
-	else if ([thisVersionParts count] < [versionParts count])
-	{
-		return NSOrderedAscending; //version is newer
-	}
-	return NSOrderedSame; //version is the same
+	return [self compare:version options:NSNumericSearch];
 }
 
 - (NSComparisonResult)compareVersionDescending:(NSString *)version
 {
-	NSComparisonResult result = [self compareVersion:version];
-	if (result == NSOrderedDescending)
+	switch ([self compareVersion:version])
 	{
-		return NSOrderedAscending;
+		case NSOrderedAscending:
+		{
+			return NSOrderedDescending;
+		}
+		case NSOrderedDescending:
+		{
+			return NSOrderedAscending;
+		}
+		default:
+		{
+			return NSOrderedSame;
+		}
 	}
-	else if (result == NSOrderedAscending)
-	{
-		return NSOrderedDescending;
-	}
-	return NSOrderedSame;
 }
 
 @end
@@ -181,9 +161,14 @@ static iVersion *sharedInstance = nil;
 													 name:NSApplicationDidFinishLaunchingNotification
 												   object:nil];
 #endif
-		//application name and version
-		self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
+		//localised application name and version
 		self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+		self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+		if ([applicationName length] == 0)
+		{
+			self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
+		}
+		
 
 		//default settings
 		showOnFirstLaunch = NO;
@@ -663,7 +648,7 @@ static iVersion *sharedInstance = nil;
     }
 	
 	//try again
-	[self performSelector:@selector(openAppPageWhenAppStoreLaunched) withObject:nil afterDelay:0];
+	[self performSelector:@selector(openAppPageWhenAppStoreLaunched) withObject:nil afterDelay:0.0];
 }
 
 - (void)openAppPageInAppStore

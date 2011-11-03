@@ -2,21 +2,29 @@
 
 /*
 
-WARNING: Apple's developer licence agreement states:
-
-"Neither You nor Your Application may perform any functions or link to any content, services, information or data or use any robot, spider, site search or other retrieval application or device to scrape, mine, retrieve, cache, analyze or index software, data or services provided by Apple or its licensors, or obtain (or try to obtain) any such data, except the data that Apple expressly provides or makes available to You in connection with such services. You agree that You will not collect, disseminate or use any such data for any unauthorized purpose."
-
-It is not clear whether use of a scraping script such as this one is in violation of these terms, but linking to such a service from an App Store app is at your own discretion and is neither recommended nor endorsed by the developer.
+NOTE: this web service has been updated to make use of the official App Store search API, and as such is no longer in danger of violating Apple's terms and conditions.
 
 */
 
-//app-specific config
+//choice of 3 platforms to search
+define ('IPHONE', 'software');
+define ('IPAD', 'iPadSoftware');
+define ('MAC', 'macSoftware');
+
+//app config - best to hard code this to avoid abuse
+$platform = IPAD;
 $app_store_id = 355313284;
-$store_locale = 'us';
+$developer = 'Charcoal Design';
+
+//country and language config - you may wish to pass these in
+//as query string arguments from the url, that way your app
+//can request the right version based on the user's locale settings
+$country = 'US';
+$language = 'en_US';
 
 //cache config
 $cache_enabled = false;
-$cache_file_path = '../cache/iversion_'.$app_store_id.'_'.$store_locale.'.plist';
+$cache_file_path = '../cache/iversion_'.$app_store_id.'_'.$country.'_'.$language.'.plist';
 $cache_duration = 3600; //seconds
 
 //set mime type - strictly this should be application/x-plist
@@ -31,27 +39,27 @@ if ($cache_enabled && file_exists($cache_file_path) && time() - filemtime($cache
 	return;
 }
 
-//get itunes app page content
-$html = file_get_contents("http://itunes.apple.com/$store_locale/app/id$app_store_id?mt=8");
+//get itunes json app data
+//note that file get contents may not work with remote files on some servers,
+//so you may need to replace this call with an alternative api, e.g. curl
+$json = file_get_contents('http://itunes.apple.com/search?limit=200&media=software&term='.urlencode($developer).'&country='.urlencode($country).'&lang='.urlencode($language).'&attribute=softwareDeveloper&entity=software');
 
-//strip newlines (makes regex matching simpler)
-$html = preg_replace('/[\n\r]+/', ' ', $html);
+//find correct app in results
+$data = @json_decode($json);
+foreach (@$data->results as $result)
+{
+	if (@$result->trackId == $app_store_id)
+	{
+		$data = $result;
+		break;
+	}
+}
 
 //get version number
-if (preg_match('/Version:\s*<\/span>\s*([0-9.]+)/i', $html, $matches))
-{
-	$version = @$matches[1];
-}
+$version = @$data->version;
 
-//get release notes:
-if (preg_match("/New In Version $version\s*<\/h4>\s*<p[^>]*>(.+?)<\/p>/i", $html,$matches))
-{
-	$release_notes = @$matches[1];
-	
-	//replace line breaks and strip other html tags or entities
-	$release_notes = preg_replace('/<br[^>]*>/', "\n", $release_notes);
-	$release_notes = strip_tags($release_notes);
-}
+//get release notes
+$release_notes = @$data->releaseNotes;
 
 //start output buffering to capture output
 ob_start();

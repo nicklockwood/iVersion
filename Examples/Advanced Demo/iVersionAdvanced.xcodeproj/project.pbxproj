@@ -8,30 +8,30 @@
 
 /* Begin PBXBuildFile section */
 		01D0D13312FF415100F15064 /* versions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01D0D13212FF415100F15064 /* versions.plist */; };
-		01D0D13912FF41C000F15064 /* iVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D0D13812FF41C000F15064 /* iVersion.m */; };
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		256AC3DA0F4B6AC300CF3369 /* iVersionMacAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* iVersionMacAppDelegate.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		B205F2101462A79C00B69B0D /* iVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = B205F20F1462A79C00B69B0D /* iVersion.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		01D0D13212FF415100F15064 /* versions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = versions.plist; sourceTree = "<group>"; };
-		01D0D13712FF41C000F15064 /* iVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iVersion.h; sourceTree = "<group>"; };
-		01D0D13812FF41C000F15064 /* iVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iVersion.m; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		256AC3D80F4B6AC300CF3369 /* iVersionMacAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iVersionMacAppDelegate.h; sourceTree = "<group>"; };
 		256AC3D90F4B6AC300CF3369 /* iVersionMacAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iVersionMacAppDelegate.m; sourceTree = "<group>"; };
-		256AC3F00F4B6AF500CF3369 /* iVersionMac_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iVersionMac_Prefix.pch; sourceTree = "<group>"; };
+		256AC3F00F4B6AF500CF3369 /* iVersionAdvanced_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iVersionAdvanced_Prefix.pch; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		8D1107310486CEB800E47090 /* iVersionMac-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iVersionMac-Info.plist"; sourceTree = "<group>"; };
-		8D1107320486CEB800E47090 /* iVersionMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iVersionMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107310486CEB800E47090 /* iVersionAdvanced-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iVersionAdvanced-Info.plist"; sourceTree = "<group>"; };
+		8D1107320486CEB800E47090 /* iVersionAdvanced.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iVersionAdvanced.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B205F20E1462A79C00B69B0D /* iVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iVersion.h; sourceTree = "<group>"; };
+		B205F20F1462A79C00B69B0D /* iVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iVersion.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,16 +46,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		01D0D13612FF41C000F15064 /* iVersion */ = {
-			isa = PBXGroup;
-			children = (
-				01D0D13712FF41C000F15064 /* iVersion.h */,
-				01D0D13812FF41C000F15064 /* iVersion.m */,
-			);
-			name = iVersion;
-			path = ../iVersion;
-			sourceTree = SOURCE_ROOT;
-		};
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -86,7 +76,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D1107320486CEB800E47090 /* iVersionMac.app */,
+				8D1107320486CEB800E47090 /* iVersionAdvanced.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,7 +84,7 @@
 		29B97314FDCFA39411CA2CEA /* iVersionMac */ = {
 			isa = PBXGroup;
 			children = (
-				01D0D13612FF41C000F15064 /* iVersion */,
+				B205F20D1462A79C00B69B0D /* iVersion */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -107,7 +97,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				256AC3F00F4B6AF500CF3369 /* iVersionMac_Prefix.pch */,
+				256AC3F00F4B6AF500CF3369 /* iVersionAdvanced_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
@@ -116,7 +106,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				8D1107310486CEB800E47090 /* iVersionMac-Info.plist */,
+				8D1107310486CEB800E47090 /* iVersionAdvanced-Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
 				01D0D13212FF415100F15064 /* versions.plist */,
@@ -133,12 +123,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B205F20D1462A79C00B69B0D /* iVersion */ = {
+			isa = PBXGroup;
+			children = (
+				B205F20E1462A79C00B69B0D /* iVersion.h */,
+				B205F20F1462A79C00B69B0D /* iVersion.m */,
+			);
+			name = iVersion;
+			path = ../../iVersion;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D1107260486CEB800E47090 /* iVersionMac */ = {
+		8D1107260486CEB800E47090 /* iVersionAdvanced */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "iVersionMac" */;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "iVersionAdvanced" */;
 			buildPhases = (
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
@@ -148,10 +148,10 @@
 			);
 			dependencies = (
 			);
-			name = iVersionMac;
+			name = iVersionAdvanced;
 			productInstallPath = "$(HOME)/Applications";
 			productName = iVersionMac;
-			productReference = 8D1107320486CEB800E47090 /* iVersionMac.app */;
+			productReference = 8D1107320486CEB800E47090 /* iVersionAdvanced.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -162,7 +162,7 @@
 			attributes = {
 				LastUpgradeCheck = 0420;
 			};
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iVersionMac" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iVersionAdvanced" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
@@ -176,7 +176,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D1107260486CEB800E47090 /* iVersionMac */,
+				8D1107260486CEB800E47090 /* iVersionAdvanced */,
 			);
 		};
 /* End PBXProject section */
@@ -201,7 +201,7 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* iVersionMacAppDelegate.m in Sources */,
-				01D0D13912FF41C000F15064 /* iVersion.m in Sources */,
+				B205F2101462A79C00B69B0D /* iVersion.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,10 +236,10 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = iVersionMac_Prefix.pch;
-				INFOPLIST_FILE = "iVersionMac-Info.plist";
+				GCC_PREFIX_HEADER = iVersionAdvanced_Prefix.pch;
+				INFOPLIST_FILE = "iVersionAdvanced-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_NAME = iVersionMac;
+				PRODUCT_NAME = iVersionAdvanced;
 			};
 			name = Debug;
 		};
@@ -250,10 +250,10 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = iVersionMac_Prefix.pch;
-				INFOPLIST_FILE = "iVersionMac-Info.plist";
+				GCC_PREFIX_HEADER = iVersionAdvanced_Prefix.pch;
+				INFOPLIST_FILE = "iVersionAdvanced-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_NAME = iVersionMac;
+				PRODUCT_NAME = iVersionAdvanced;
 			};
 			name = Release;
 		};
@@ -284,7 +284,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "iVersionMac" */ = {
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "iVersionAdvanced" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4B08A954540054247B /* Debug */,
@@ -293,7 +293,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iVersionMac" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iVersionAdvanced" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,

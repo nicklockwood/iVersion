@@ -11,7 +11,17 @@ iVersion has an additional function, which is to tell users about important new 
 
 NOTE: iVersion cannot tell if a given release is available to download, so make sure that you only update the remote versions file after apple has approved your app and it has appeared in the store.
 
-One way to do this automatically is to replace the remote versions file with a  web service that dynamically polls the iTunes app page for your app and scrapes the version number and release notes. A sample implementation of such a service (written in PHP) is included as an example, however it is not clear whether doing this is in compliance with Apple's guidelines. See the Web Service heading below for more information.
+One way to do this automatically is to replace the hard-coded remote versions file with a web service that dynamically polls the iTunes App Store services for your app details and extracts the version number and release notes. A sample implementation of such a service (written in PHP) is included as an example.
+
+
+Supported iOS & SDK Versions
+-----------------------------
+
+* Supported build target - iOS 5.0 (Xcode 4.2)
+* Earliest supported deployment target - iOS 4.0 (Xcode 4.2)
+* Earliest compatible deployment target - iOS 3.0
+
+NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this iOS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
 
 
 Installation
@@ -254,33 +264,35 @@ Although iVersion isn't localised, it is easy to localise without making any mod
 Web Service
 ---------------
 
-Included with the source is a sample web service for automatically detecting app updates. The service is written in PHP, but is simple enough that it can be easily ported to other web scripting language.
+Included with the source is a sample web service for automatically detecting app updates. The service is written in PHP, but is simple enough that it can be easily ported to other web scripting languages. The new version of this service makes use of Apple's authorised search APIs.
 
----
+The service uses the following configuration constants:
 
-WARNING: Apple's developer licence agreement states:
-
-"Neither You nor Your Application may perform any functions or link to any content, services, information or data or use any robot, spider, site search or other retrieval application or device to scrape, mine, retrieve, cache, analyze or index software, data or services provided by Apple or its licensors, or obtain (or try to obtain) any such data, except the data that Apple expressly provides or makes available to You in connection with such services. You agree that You will not collect, disseminate or use any such data for any unauthorized purpose."
-
-It is not clear whether use of a scraping script such as the one included with this project is in violation of terms, but linking to such a service from an App Store app is at your own discretion and is neither recommended nor endorsed by the developer.
-
----
-
-The service uses two configuration constants:
+	$platform
+	
+Apple's search APIs are platform specific (iPhone, iPad and Mac). Use one of the IPHONE, IPAD and MAC constants provided for this value.
 
 	$app_store_id
 	
-The app store ID of the application.
+The app store ID of your application.
 
-	$store_locale
+	$developer
 	
-The two-letter locale code for the iTunes store you wish to poll.
+Your iTunes developer name as it appears on iTunes. This is used as a filter to reduce the amount of JSON the service has to sift through to find your app (unfortunately there currently appears to be no way to search for a specific app by ID).
 
-These constants could be set by URL parameter, but it may be unwise for you to host a general-purpose iVersion service URL in case other developers hot-link to it and use it for their own purposes.
+	$country
+	
+The two-letter country code for the iTunes store you wish to get the application details from. There is no way to determine which app store a given user is using programmatically, so you'll either have to use the locale and hope that it's right, or hard-code for the US store and assume that your app will appear on all  stores at roughly the same time.
 
-The service is currently very simplistic. Notably it only works on some iTunes store locales because it relies on matching specific text strings. It should be easy to add support for other locales if you are reasonably familiar with regular expressions. Otherwise it's recommended that you hard code for the US store.
+	$language
+	
+The language you want to return your release notes in. This is independent of the store country, so it's a good idea to base this on the user's locale by detecting this in the app and passing it through as a parameter in the service URL.
 
-The service is quite fragile in that it will cease to work if Apple makes significant structural or copy changes to the iTunes page. It will fail gracefully in this instance however - if the page layout changes then the service will return a valid plist file that simply contains no versions in the dictionary. If something more serious goes wrong, the iVersion library will silently ignore malformed version plists anyway, so it's pretty unlikely that using this service will break your app.
+In principle these constants could all set by URL query parameter, but it may be unwise for you to host a general-purpose iVersion service URL in case other developers hot-link to it and use it for their own purposes (sucking up your bandwidth in the process). In general you should probably pass the language and country codes in dynamically and hard code the app details into the service.
+
+The sample service also includes an optional caching feature. Since every iVersion request from every one of your apps will go via your web service, it may result in a lot of iTunes hits from your server. For a popular app this could be hundreds or thousands of hits per day. Apple might treat this suspicious and start rejecting hits from your server's IP address. By using the cache feature you can rate-limit this as well as improving performance and reducing your server's downstream bandwidth usage.
+
+The service should fail gracefully if it has trouble connecting to iTunes. If anything goes wrong with retrieving or parsing the iTunes JSON it should return a valid plist file that simply contains no versions in the dictionary. If something more serious goes wrong, the iVersion library will silently ignore malformed version plists anyway, so it's pretty unlikely that using this service will break your app.
 
 You may also find that the use of file_get_contents() for accessing a remote URL is not supported on your server. If that is the case, check out the PHP manual page for file_get_contents for suggestions on alternative implementations:
 
@@ -298,7 +310,7 @@ This time it will not say that a new version is available. In effect you have si
 
 If you dismiss the dialog and then quit and relaunch the app you should now see nothing. This is because the app has detected that the bundle version hasn't changed since you last launched the app.
 
-To show the alerts again, delete the app from the simulator and reset the bundle  version to 1.1. Alternatively, enabled the debug settings to force the alerts to appear on launch.
+To show the alerts again, delete the app from the simulator and reset the bundle version to 1.1. Alternatively, enable the debug settings to force the alerts to appear on launch.
 
 
 Advanced Example
