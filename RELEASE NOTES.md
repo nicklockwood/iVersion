@@ -1,3 +1,11 @@
+Version 1.7
+
+- Added additional delegate methods to facilitate logging
+- Renamed some delegate methods
+- Removed localChecksDisabled property and renamed remoteChecksDisabled property to checkAtLaunch for clarity and consistency with the iRate and iNotify libraries
+- Combined remoteDebug and localDebug to simplify usage
+- Added checkIfNewVersion method to manually trigger display of local version details
+
 Version 1.6.4
 
 - Updated iVersion web service to use official iTunes App Store search APIs

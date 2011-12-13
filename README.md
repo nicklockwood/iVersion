@@ -18,7 +18,7 @@ Supported iOS & SDK Versions
 -----------------------------
 
 * Supported build target - iOS 5.0 (Xcode 4.2)
-* Earliest supported deployment target - iOS 4.0 (Xcode 4.2)
+* Earliest supported deployment target - iOS 4.3 (Xcode 4.2)
 * Earliest compatible deployment target - iOS 3.0
 
 NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this iOS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
@@ -36,14 +36,14 @@ To enable iVersion in your application you need to instantiate and configure iVe
 		//configure iVersion
 		[iVersion sharedInstance].appStoreID = 355313284;
 		[iVersion sharedInstance].remoteVersionsPlistURL = @"http://example.com/versions.plist";
-		[iVersion sharedInstance].localVersionsPlistPath = @"versions.plist";
+		[iVersion sharedInstance].localVersionsPlistPath = @"versions.plist"; //optional
 	}
 
 The above code represents the minimum configuration needed to make iVersion work, although there are other configuration options you may wish to add (documented below).
 
 The exact same configuration code will work for both Mac and iPhone/iPad.
 
-You will also need to add a plist file to your app containing the release notes for the current version, and host another copy on a web-facing server somewhere. The format for these plists is as follows:
+You will also need to add a plist file to your app containing the release notes for the current version, and host another copy on a public-facing web server somewhere. The format for these plists is as follows:
 
 	<?xml version="1.0" encoding="UTF-8"?>
 	<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -67,6 +67,23 @@ The root node of the plist is a dictionary containing one or more items. Each it
 The key for each value must be a numerical version number consisting of one or more positive integers separated by decimal points. These should match the values you set for the Bundle Version (CFBundleVersion) key in your application's info.plist.
 
 Each value should be an array of strings, each representing a single bullet point in your release notes. There is no restriction to the format of each release note - the approach in the example above is just a suggestion. You may prefer to put all your notes into a single string and add your own line formatting or indenting. You can also omit the release notes if you want and just have an empty <array/>.
+
+As of iVersion 1.7, you can use the simpler versions plist format below, where the notes array for each release is replaced by a single string:
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+	<plist version="1.0">
+	<dict>
+		<key>1.0</key>
+		<string>First release</string>
+		<key>1.1</key>
+		<string>NEW: Added  new snoodlebar feature
+FIX: Fixed the bugalloo glitch</string>
+		...
+	</dict>
+	</plist>
+	
+*Note however* that this is not backwards compatible - supplying a versions plist in this format to an app running an earlier release of the iVersion library will crash, so if you are upgrading to iVersion 1.7 on an app that's already on the App Store, it's a good idea to stick with the original plist format, or to change the URL for your remote versions file so that older versions of the app do not access it (though obviously that means that users of the older version won't be notified of updates, which slightly defeats the point).
 
 
 Plist Tips
@@ -162,21 +179,13 @@ The button label for the button the user presses if they don't want to download 
 
 The button label for the button the user presses if they want to download a new update.
 
-	@property (nonatomic, assign) BOOL localChecksDisabled;
+	@property (nonatomic, assign) BOOL checkAtLaunch;
 
-Set this to true to disable checking for local release notes. This is equivalent to setting the localVersionsPlistPath to nil, but may be more convenient.
+Set this to NO to disable checking for local and remote release notes automatically when the app is launched or returns from the background. Disabling this option does not prevent you from manually triggering the checks by calling `checkIfNewVersion` and `checkForNewVersion` respectively.
 
-	@property (nonatomic, assign) BOOL remoteChecksDisabled;
+	@property (nonatomic, assign) BOOL debug;
 
-Set this to true to disable checking for new releases. This is equivalent to setting the remoteVersionsPlistURL to nil, but may be more convenient. You might connect this to an in-app user setting for toggling checks for updates.
-
-	@property (nonatomic, assign) BOOL localDebug;
-
-If set to YES, iVersion will always display the contents of the local versions plist, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
-
-	@property (nonatomic, assign) BOOL remoteDebug;
-
-If set to YES, iVersion will always display the contents of the remote versions plist, irrespective of the version number of the current build or the check/remind period settings. Use this to proofread your release notes during testing, but disable it for the final release.
+If set to YES, iVersion will always display the contents of the local and remote versions plists, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
 
 
 Advanced properties
@@ -216,13 +225,21 @@ Advanced methods
 
 This method will open the application page in the Mac or iPhone app store, depending on which platform is running. You should use this method instead of the updateURL property if you are running on Mac OS as the process for launching the Mac app store is more complex than merely opening the URL.
 
-	- (void)checkForNewVersion;
+	- (void)checkIfNewVersion;
 
-This method will trigger a new check for new versions, ignoring the checkPeriod and remindPeriod properties.
+This method will check the local versions plist to see if there are new notes to be displayed, and will display them in an alert. This method is called automatically on launch if `checkAtLaunch` is set to YES.
 
 	- (NSString *)versionDetails;
 
-This returns the local release notes for current version, or any versions that have been released since the last time the app was launched, depending on how many versions are included in the local version plist file. If this isn't the first time this version of the app was launched, only the most recent version is  included.
+This returns the local release notes for the current version, or any versions that have been released since the last time the app was launched, depending on how many versions are included in the local version plist file. If this isn't the first time this version of the app was launched, only the most recent version is included.
+	
+	- (BOOL)shouldCheckForNewVersion;
+	
+This method checks to see if the criteria for checking for a new version have been met. You can use this to decide whether to check for version updates if you have disabled the automatic display at app launch.
+	
+	- (void)checkForNewVersion;
+
+This method will trigger a new check for new versions, ignoring the checkPeriod and remindPeriod properties. This method is called automatically on launch and when the app returns from background if `checkAtLaunch` is set to YES and `shouldCheckForNewVersion` returns YES.
 
 
 Delegate methods
@@ -238,27 +255,55 @@ This is called if the checking criteria have all been met and iVersion is about 
 
 This is called if the version check did not detect any new versions of the application.
 
-	- (void)iVersionVersionCheckFailed:(NSError *)error;
+	- (void)iVersionVersionCheckDidFailWithError:(NSError *)error;
 
 This is called if the version check failed due to network issues or because the remote versions plist file was missing or corrupt.
 
-	- (void)iVersionDetectedNewVersion:(NSString *)version details:(NSString *)versionDetails;
+	- (void)iVersionDidDetectNewVersion:(NSString *)version details:(NSString *)versionDetails;
 
 This is called if a new version was detected.
 
 	- (BOOL)iVersionShouldDisplayNewVersion:(NSString *)version details:(NSString *)versionDetails;
 
-This is called immediately before the new version detected alert is displayed. Return NO to prevent the alert from being displayed. Note that if you are implementing the alert yourself you will need to set the lastChecked, lastReminded and ignoredVersion properties yourself, depending on the user response.
+This is called immediately before the new (remote) version details alert is displayed. Return NO to prevent the alert from being displayed. Note that if you are implementing the alert yourself you will need to set the lastChecked, lastReminded and ignoredVersion properties yourself, depending on the user response.
 
 	- (BOOL)iVersionShouldDisplayCurrentVersionDetails:(NSString *)versionDetails;
 
-This is called immediately before the current version new features alert is displayed. Return NO to prevent the alert from being displayed. Note that if you intend to implement this notification yourself, you will need to set the viewedVersionDetails flag manually.
+This is called immediately before the current (local) version details alert is displayed. Return NO to prevent the alert from being displayed. Note that if you intend to implement this notification yourself, you will need to set the viewedVersionDetails flag manually.
 
+	- (void)iVersionUserDidAttemptToDownloadUpdate:(NSString *)version;
+	
+This is called when the user pressed the download button in the new version alert. This is useful if you want to log user interaction with iVersion. This method is only called if you are using the standard iVersion alert view and will not be called automatically if you provide a custom alert implementation or call the `openAppPageInAppStore` method directly.
+	
+	- (void)iVersionUserDidRequestReminderForUpdate:(NSString *)version;
+	
+This is called when the user asks to be reminded about a new version. This is useful if you want to log user interaction with iVersion. This method is only called if you are using the standard iVersion alert view and will not be called automatically if you provide a custom alert implementation.
+	
+	- (void)iVersionUserDidIgnoreUpdate:(NSString *)version;
+	
+This is called when the user presses the ignore in the new version alert. This is useful if you want to log user interaction with iVersion. This method is only called if you are using the standard iVersion alert view and will not be called automatically if you provide a custom alert implementation.
+	
 
 Localisation
 ---------------
 
-Although iVersion isn't localised, it is easy to localise without making any modifications to the library itself. All you need to do is provide localised values for all of the message strings by setting the properties above using NSLocalizedString(...). If you need to provide localised release notes, the simplest way to do this is to localise the remoteVersionsPlistURL property in the same way, providing a different URL for each language.
+Although iVersion isn't localised, it is easy to localise without making any modifications to the library itself. All you need to do is provide localised values for all of the message strings by setting the properties above using NSLocalizedString(...), e.g:
+
+	+ (void)initialize
+	{
+		[iVersion sharedInstance].inThisVersionTitle = NSLocalizedString(@"New in this version", @"iVersion local version alert title");
+		[iVersion sharedInstance].updateAvailableTitle = NSLocalizedString(@"A new version of MyApp is available to download", @"iVersion new version alert title");
+		[iVersion sharedInstance].versionLabelFormat = NSLocalizedString(@"Version %@", @"iVersion version label format");
+		[iVersion sharedInstance].okButtonLabel = NSLocalizedString(@"OK", @"iVersion OK button");
+		[iVersion sharedInstance].ignoreButtonLabel = NSLocalizedString(@"Ignore", @"iVersion ignore button");
+		[iVersion sharedInstance].remindButtonLabel = NSLocalizedString(@"Remind Me Later", @"iVersion remind button");
+		[iVersion sharedInstance].downloadButtonLabel = NSLocalizedString(@"Download", @"iVersion download button");
+		[iVersion sharedInstance].remoteVersionsPlistURL = @"http://example.com/versions_en.plist";
+	}
+
+You can then use the genstrings command line tool to extract these strings into a Localizable.strings file, which can be translated into your supported languages.
+
+If you need to provide localised release notes, the simplest way to do this is to localise the remoteVersionsPlistURL file and provide a different URL for each language.
 
 
 Web Service

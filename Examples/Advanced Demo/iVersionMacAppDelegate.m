@@ -21,7 +21,7 @@
 	[iVersion sharedInstance].appStoreID = 412363063;
 	[iVersion sharedInstance].remoteVersionsPlistURL = @"http://charcoaldesign.co.uk/iVersion/versions.plist";
 	[iVersion sharedInstance].localVersionsPlistPath = @"versions.plist";
-	[iVersion sharedInstance].remoteChecksDisabled = YES;
+	[iVersion sharedInstance].checkAtLaunch = NO;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -40,7 +40,7 @@
 #pragma mark -
 #pragma mark iVersionDelegate methods
 
-- (void)iVersionVersionCheckFailed:(NSError *)error
+- (void)iVersionVersionCheckDidFailWithError:(NSError *)error
 {
 	[textView setString:[NSString stringWithFormat:@"Error: %@", error]];
 	[progressIndicator stopAnimation:self];
@@ -52,7 +52,7 @@
 	[progressIndicator stopAnimation:self];
 }
 
-- (void)iVersionDetectedNewVersion:(NSString *)version details:(NSString *)versionDetails
+- (void)iVersionDidDetectNewVersion:(NSString *)version details:(NSString *)versionDetails
 {
 	[textView setString:versionDetails];
 	[progressIndicator stopAnimation:self];

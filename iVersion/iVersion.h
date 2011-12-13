@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.6.4
+//  Version 1.7
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design. All rights reserved.
@@ -41,15 +41,18 @@
 @end
 
 
-@protocol iVersionDelegate
+@protocol iVersionDelegate <NSObject>
 @optional
 
 - (BOOL)iVersionShouldCheckForNewVersion;
 - (void)iVersionDidNotDetectNewVersion;
-- (void)iVersionVersionCheckFailed:(NSError *)error;
-- (void)iVersionDetectedNewVersion:(NSString *)version details:(NSString *)versionDetails;
+- (void)iVersionVersionCheckDidFailWithError:(NSError *)error;
+- (void)iVersionDidDetectNewVersion:(NSString *)version details:(NSString *)versionDetails;
 - (BOOL)iVersionShouldDisplayNewVersion:(NSString *)version details:(NSString *)versionDetails;
 - (BOOL)iVersionShouldDisplayCurrentVersionDetails:(NSString *)versionDetails;
+- (void)iVersionUserDidAttemptToDownloadUpdate:(NSString *)version;
+- (void)iVersionUserDidRequestReminderForUpdate:(NSString *)version;
+- (void)iVersionUserDidIgnoreUpdate:(NSString *)version;
 
 @end
 
@@ -75,10 +78,8 @@
 	NSString *ignoreButtonLabel;
 	NSString *remindButtonLabel;
 	NSString *downloadButtonLabel;
-	BOOL localChecksDisabled;
-	BOOL remoteChecksDisabled;
-	BOOL localDebug;
-	BOOL remoteDebug;
+	BOOL checkAtLaunch;
+	BOOL debug;
 	NSURL *updateURL;
 	NSString *versionDetails;
 	id<iVersionDelegate> delegate;
@@ -111,11 +112,9 @@
 @property (nonatomic, copy) NSString *remindButtonLabel;
 @property (nonatomic, copy) NSString *downloadButtonLabel;
 
-//debugging and disabling
-@property (nonatomic, assign) BOOL localChecksDisabled;
-@property (nonatomic, assign) BOOL remoteChecksDisabled;
-@property (nonatomic, assign) BOOL localDebug;
-@property (nonatomic, assign) BOOL remoteDebug;
+//debugging and automatic checks
+@property (nonatomic, assign) BOOL checkAtLaunch;
+@property (nonatomic, assign) BOOL debug;
 
 //advanced properties for implementing custom behaviour
 @property (nonatomic, copy) NSString *ignoredVersion;
@@ -127,7 +126,9 @@
 
 //manually control behaviour
 - (void)openAppPageInAppStore;
-- (void)checkForNewVersion;
+- (void)checkIfNewVersion;
 - (NSString *)versionDetails;
+- (BOOL)shouldCheckForNewVersion;
+- (void)checkForNewVersion;
 
 @end
