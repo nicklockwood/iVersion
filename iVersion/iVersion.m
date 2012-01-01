@@ -1,12 +1,12 @@
 //
 //  iVersion.m
 //
-//  Version 1.7
+//  Version 1.7.1
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design. All rights reserved.
 //
-//  Get the latest version of iCarousel from either of these locations:
+//  Get the latest version of iVersion from either of these locations:
 //
 //  http://charcoaldesign.co.uk/source/cocoa#iversion
 //  https://github.com/nicklockwood/iVersion
@@ -159,14 +159,19 @@ static iVersion *sharedInstance = nil;
 													 name:NSApplicationDidFinishLaunchingNotification
 												   object:nil];
 #endif
-		//localised application name and version
-		self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+		//application version (use short version preferentially)
+		self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+        if ([applicationVersion length] == 0)
+        {
+            self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+        }
+        
+        //localised application name
 		self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
 		if ([applicationName length] == 0)
 		{
 			self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
 		}
-		
 
 		//default settings
         checkAtLaunch = YES;

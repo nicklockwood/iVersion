@@ -1,17 +1,43 @@
 <?php
 
-/*
-
-NOTE: this web service has been updated to make use of the official App Store search API, and as such is no longer in danger of violating Apple's terms and conditions.
-
-*/
+//
+//  iversion.php
+//
+//  Version 1.7.1
+//
+//  Created by Nick Lockwood on 17/02/2011.
+//  Copyright 2011 Charcoal Design. All rights reserved.
+//
+//  Get the latest version of iVersion from either of these locations:
+//
+//  http://charcoaldesign.co.uk/source/cocoa#iversion
+//  https://github.com/nicklockwood/iVersion
+//
+//  This software is provided 'as-is', without any express or implied
+//  warranty.  In no event will the authors be held liable for any damages
+//  arising from the use of this software.
+//
+//  Permission is granted to anyone to use this software for any purpose,
+//  including commercial applications, and to alter it and redistribute it
+//  freely, subject to the following restrictions:
+//
+//  1. The origin of this software must not be misrepresented; you must not
+//  claim that you wrote the original software. If you use this software
+//  in a product, an acknowledgment in the product documentation would be
+//  appreciated but is not required.
+//
+//  2. Altered source versions must be plainly marked as such, and must not be
+//  misrepresented as being the original software.
+//
+//  3. This notice may not be removed or altered from any source distribution.
+//
 
 //choice of 3 platforms to search
 define ('IPHONE', 'software');
 define ('IPAD', 'iPadSoftware');
 define ('MAC', 'macSoftware');
 
-//app config - best to hard code this to avoid abuse
+//app config - best to hard code these to avoid abuse
 $platform = IPAD;
 $app_store_id = 355313284;
 $developer = 'Charcoal Design';
@@ -39,10 +65,25 @@ if ($cache_enabled && file_exists($cache_file_path) && time() - filemtime($cache
 	return;
 }
 
-//get itunes json app data
-//note that file get contents may not work with remote files on some servers,
-//so you may need to replace this call with an alternative api, e.g. curl
-$json = file_get_contents('http://itunes.apple.com/search?limit=200&media=software&term='.urlencode($developer).'&country='.urlencode($country).'&lang='.urlencode($language).'&attribute=softwareDeveloper&entity='.urlencode($platform));
+//generate itunes search query url
+$url = 'http://itunes.apple.com/search?limit=200&media=software&term='.urlencode($developer).'&country='.urlencode($country).'&lang='.urlencode($language).'&attribute=softwareDeveloper&entity='.urlencode($platform);
+
+//download json app data
+if (in_array  ('curl', get_loaded_extensions()))
+{
+	//use curl if available
+	$curl = curl_init();
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($curl, CURLOPT_URL, $url);
+	$json = curl_exec($curl);
+	curl_close($curl);
+}
+else
+{
+	//fall back to file_get_contents, which may not work with
+	//remote files on some servers, depending on configuration
+	$json = file_get_contents($url);
+}
 
 //find correct app in results
 $data = @json_decode($json);

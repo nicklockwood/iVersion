@@ -1,3 +1,9 @@
+Version 1.7.1
+
+- Now uses CFBundleShortVersionString when available instead of CFBundleVersion for the application version
+- Fixed bug in iversion.php web service where platform was not set correctly
+- Added logic to web service to use curl when available instead of file_get_contents for reading in iTunes search service data
+
 Version 1.7
 
 - Added additional delegate methods to facilitate logging

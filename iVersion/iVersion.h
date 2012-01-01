@@ -1,12 +1,12 @@
 //
 //  iVersion.h
 //
-//  Version 1.7
+//  Version 1.7.1
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design. All rights reserved.
 //
-//  Get the latest version of iCarousel from either of these locations:
+//  Get the latest version of iVersion from either of these locations:
 //
 //  http://charcoaldesign.co.uk/source/cocoa#iversion
 //  https://github.com/nicklockwood/iVersion
