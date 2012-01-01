@@ -42,7 +42,7 @@ if ($cache_enabled && file_exists($cache_file_path) && time() - filemtime($cache
 //get itunes json app data
 //note that file get contents may not work with remote files on some servers,
 //so you may need to replace this call with an alternative api, e.g. curl
-$json = file_get_contents('http://itunes.apple.com/search?limit=200&media=software&term='.urlencode($developer).'&country='.urlencode($country).'&lang='.urlencode($language).'&attribute=softwareDeveloper&entity=software');
+$json = file_get_contents('http://itunes.apple.com/search?limit=200&media=software&term='.urlencode($developer).'&country='.urlencode($country).'&lang='.urlencode($language).'&attribute=softwareDeveloper&entity='.urlencode($platform));
 
 //find correct app in results
 $data = @json_decode($json);
