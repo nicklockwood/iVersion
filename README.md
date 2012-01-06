@@ -24,6 +24,17 @@ Supported iOS & SDK Versions
 NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this iOS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
 
 
+ARC Compatibility
+------------------
+
+iVersion does not use automatic reference counting, but can be converted using the ARC migration tool without any issues.
+
+However, in the interests of avoiding modifying the library (which may cause unknown bugs or problems later when upgrading to a new version) a better approach is to specify in your ARC project that iVersion's files should be excluded from the ARC validation process. To do that:
+
+1. Go to Project Settings, under Build Phases > Compile Sources
+2. Double-click the iVersion.m file and add the -fno-objc-arc compiler flag
+
+
 Installation
 --------------
 
@@ -78,7 +89,7 @@ As of iVersion 1.7, you can use the simpler versions plist format below, where t
 		<string>First release</string>
 		<key>1.1</key>
 		<string>NEW: Added  new snoodlebar feature
-FIX: Fixed the bugalloo glitch</string>
+	FIX: Fixed the bugalloo glitch</string>
 		...
 	</dict>
 	</plist>
@@ -338,10 +349,6 @@ In principle these constants could all set by URL query parameter, but it may be
 The sample service also includes an optional caching feature. Since every iVersion request from every one of your apps will go via your web service, it may result in a lot of iTunes hits from your server. For a popular app this could be hundreds or thousands of hits per day. Apple might treat this suspicious and start rejecting hits from your server's IP address. By using the cache feature you can rate-limit this as well as improving performance and reducing your server's downstream bandwidth usage.
 
 The service should fail gracefully if it has trouble connecting to iTunes. If anything goes wrong with retrieving or parsing the iTunes JSON it should return a valid plist file that simply contains no versions in the dictionary. If something more serious goes wrong, the iVersion library will silently ignore malformed version plists anyway, so it's pretty unlikely that using this service will break your app.
-
-You may also find that the use of file_get_contents() for accessing a remote URL is not supported on your server. If that is the case, check out the PHP manual page for file_get_contents for suggestions on alternative implementations:
-
-http://php.net/manual/en/function.file-get-contents.php 
 
 
 Example Projects
