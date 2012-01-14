@@ -17,8 +17,8 @@ One way to do this automatically is to replace the hard-coded remote versions fi
 Supported iOS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 5.0 (Xcode 4.2)
-* Earliest supported deployment target - iOS 4.3 (Xcode 4.2)
+* Supported build target - iOS 5.0 / Mac OS 10.7 (Xcode 4.2, Apple LLVM compiler 3.0)
+* Earliest supported deployment target - iOS 4.3 / Mac OS 10.6
 * Earliest compatible deployment target - iOS 3.0
 
 NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this iOS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
@@ -27,12 +27,7 @@ NOTE: 'Supported' means that the library has been tested with this version. 'Com
 ARC Compatibility
 ------------------
 
-iVersion does not use automatic reference counting, but can be converted using the ARC migration tool without any issues.
-
-However, in the interests of avoiding modifying the library (which may cause unknown bugs or problems later when upgrading to a new version) a better approach is to specify in your ARC project that iVersion's files should be excluded from the ARC validation process. To do that:
-
-1. Go to Project Settings, under Build Phases > Compile Sources
-2. Double-click the iVersion.m file and add the -fno-objc-arc compiler flag
+iVersion makes use of the ARC Helper library to automatically work with both ARC and non-ARC projects through conditional compilation. There is no need to exclude iVersion files from the ARC validation process, or to convert iVersion using the ARC conversion tool.
 
 
 Installation
@@ -204,7 +199,7 @@ Advanced properties
 
 If the default iVersion behaviour doesn't meet your requirements, you can implement your own by using the advanced properties, methods and delegate. The properties below let you access internal state and override it:
 
-	@property (nonatomic, retain) NSURL *updateURL;
+	@property (nonatomic, strong) NSURL *updateURL;
 
 The URL that the app will direct the user to if an update is detected and they choose to download it. If you are implementing your own download button, you should probably use the openAppPageInAppStore method instead, especially on Mac OS, as the process for opening the Mac app store is more complex than merely opening the URL.
 
@@ -212,11 +207,11 @@ The URL that the app will direct the user to if an update is detected and they c
 
 The version string of the last app version that the user ignored. If the user hasn't ignored any releases, this will be nil. Set this to nil to clear the ignored version.
 
-	@property (nonatomic, retain) NSDate *lastChecked;
+	@property (nonatomic, strong) NSDate *lastChecked;
 
 The last date on which iVersion checked for an update. You can use this in combination with the checkPeriod to determine if the app should check again.
 
-	@property (nonatomic, retain) NSDate *lastReminded;
+	@property (nonatomic, strong) NSDate *lastReminded;
 
 The last date on which the user was reminded of a new version. You can use this in combination with the remindPeriod to determine if the app should check again. Set this to nil to clear the reminder delay.
 

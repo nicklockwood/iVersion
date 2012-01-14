@@ -1,12 +1,13 @@
 //
 //  iVersion.m
 //
-//  Version 1.7.1
+//  Version 1.7.2
 //
 //  Created by Nick Lockwood on 26/01/2011.
-//  Copyright 2011 Charcoal Design. All rights reserved.
+//  Copyright 2011 Charcoal Design
 //
-//  Get the latest version of iVersion from either of these locations:
+//  Distributed under the permissive zlib license
+//  Get the latest version from either of these locations:
 //
 //  http://charcoaldesign.co.uk/source/cocoa#iversion
 //  https://github.com/nicklockwood/iVersion
@@ -33,16 +34,17 @@
 #import "iVersion.h"
 
 
-NSString * const iVersionLastVersionKey = @"iVersionLastVersionChecked";
-NSString * const iVersionIgnoreVersionKey = @"iVersionIgnoreVersion";
-NSString * const iVersionLastCheckedKey = @"iVersionLastChecked";
-NSString * const iVersionLastRemindedKey = @"iVersionLastReminded";
-NSString * const iVersionMacAppStoreBundleID = @"com.apple.appstore";
+NSString *const iVersionLastVersionKey = @"iVersionLastVersionChecked";
+NSString *const iVersionIgnoreVersionKey = @"iVersionIgnoreVersion";
+NSString *const iVersionLastCheckedKey = @"iVersionLastChecked";
+NSString *const iVersionLastRemindedKey = @"iVersionLastReminded";
+
+NSString *const iVersionMacAppStoreBundleID = @"com.apple.appstore";
 
 //note, these aren't ideal as they link to the app page, not the update page
 //there may be some way to link directly to the app store updates tab, but I don't know what it is
-NSString * const iVersioniOSAppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%i";
-NSString * const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/app/id%i";
+NSString *const iVersioniOSAppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%i";
+NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/app/id%i";
 
 static iVersion *sharedInstance = nil;
 
@@ -87,7 +89,7 @@ static iVersion *sharedInstance = nil;
 #endif
 
 @property (nonatomic, copy) NSDictionary *remoteVersionsDict;
-@property (nonatomic, retain) NSError *downloadError;
+@property (nonatomic, strong) NSError *downloadError;
 @property (nonatomic, copy) NSString *versionDetails;
 
 @end
@@ -172,7 +174,7 @@ static iVersion *sharedInstance = nil;
 		{
 			self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
 		}
-
+        
 		//default settings
         checkAtLaunch = YES;
 		showOnFirstLaunch = NO;
@@ -208,15 +210,13 @@ static iVersion *sharedInstance = nil;
 	{
 		return updateURL;
 	}
+	
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-	
 	return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOSAppStoreURLFormat, appStoreID]];
-	
 #else
-	
 	return [NSURL URLWithString:[NSString stringWithFormat:iVersionMacAppStoreURLFormat, appStoreID]];
-	
 #endif
+	
 }
 
 - (NSDate *)lastChecked
@@ -229,7 +229,7 @@ static iVersion *sharedInstance = nil;
 	[[NSUserDefaults standardUserDefaults] setObject:date forKey:iVersionLastCheckedKey];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
-			
+
 - (NSDate *)lastReminded
 {
 	return [[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastRemindedKey];
@@ -265,22 +265,23 @@ static iVersion *sharedInstance = nil;
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[remoteVersionsDict release];
-	[downloadError release];
-	[remoteVersionsPlistURL release];
-	[localVersionsPlistPath release];
-	[applicationName release];
-	[applicationVersion release];
-	[inThisVersionTitle release];
-	[updateAvailableTitle release];
-	[versionLabelFormat release];
-	[okButtonLabel release];
-	[ignoreButtonLabel release];
-	[remindButtonLabel release];
-	[downloadButtonLabel release];
-	[updateURL release];
-	[versionDetails release];
-	[super dealloc];
+	
+	AH_RELEASE(remoteVersionsDict);
+	AH_RELEASE(downloadError);
+	AH_RELEASE(remoteVersionsPlistURL);
+	AH_RELEASE(localVersionsPlistPath);
+	AH_RELEASE(applicationName);
+	AH_RELEASE(applicationVersion);
+	AH_RELEASE(inThisVersionTitle);
+	AH_RELEASE(updateAvailableTitle);
+	AH_RELEASE(versionLabelFormat);
+	AH_RELEASE(okButtonLabel);
+	AH_RELEASE(ignoreButtonLabel);
+	AH_RELEASE(remindButtonLabel);
+	AH_RELEASE(downloadButtonLabel);
+	AH_RELEASE(updateURL);
+	AH_RELEASE(versionDetails);
+	AH_SUPER_DEALLOC;
 }
 
 #pragma mark -
@@ -437,7 +438,7 @@ static iVersion *sharedInstance = nil;
 		{
 			
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-				
+            
 			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:self.updateAvailableTitle
 															message:details
 														   delegate:self
@@ -449,7 +450,7 @@ static iVersion *sharedInstance = nil;
 			}
 			
 			[alert show];
-			[alert release];
+			AH_RELEASE(alert);
 #else
 			NSAlert *alert = [NSAlert alertWithMessageText:self.updateAvailableTitle
 											 defaultButton:downloadButtonLabel
@@ -467,7 +468,7 @@ static iVersion *sharedInstance = nil;
 							 didEndSelector:@selector(remoteAlertDidEnd:returnCode:contextInfo:)
 								contextInfo:nil];
 #endif
-
+            
 		}
 	}
 }
@@ -510,27 +511,28 @@ static iVersion *sharedInstance = nil;
 	{
 		if (remoteVersionsPlistURL)
 		{
-			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-			NSError *error = nil;
-			NSDictionary *versions = nil;
-			NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:remoteVersionsPlistURL] options:NSDataReadingUncached error:&error];
-			if (data)
-			{
-				NSPropertyListFormat format;
-				if ([NSPropertyListSerialization respondsToSelector:@selector(propertyListWithData:options:format:error:)])
-				{
-					versions = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:&format error:&error];
-				}
-				else
-				{
-					versions = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:0 format:&format errorDescription:NULL];
-				}
+			@autoreleasepool
+            {
+                NSError *error = nil;
+                NSDictionary *versions = nil;
+                NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:remoteVersionsPlistURL] options:NSDataReadingUncached error:&error];
+                if (data)
+                {
+                    NSPropertyListFormat format;
+                    if ([NSPropertyListSerialization respondsToSelector:@selector(propertyListWithData:options:format:error:)])
+                    {
+                        versions = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:&format error:&error];
+                    }
+                    else
+                    {
+                        versions = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:0 format:&format errorDescription:NULL];
+                    }
+                }
+                [self performSelectorOnMainThread:@selector(setDownloadError:) withObject:error waitUntilDone:YES];
+                [self performSelectorOnMainThread:@selector(setRemoteVersionsDict:) withObject:versions waitUntilDone:YES];
+                [self performSelectorOnMainThread:@selector(setLastChecked:) withObject:[NSDate date] waitUntilDone:YES];
+                [self performSelectorOnMainThread:@selector(downloadedVersionsData) withObject:nil waitUntilDone:YES];		
 			}
-			[self performSelectorOnMainThread:@selector(setDownloadError:) withObject:error waitUntilDone:YES];
-			[self performSelectorOnMainThread:@selector(setRemoteVersionsDict:) withObject:versions waitUntilDone:YES];
-			[self performSelectorOnMainThread:@selector(setLastChecked:) withObject:[NSDate date] waitUntilDone:YES];
-			[self performSelectorOnMainThread:@selector(downloadedVersionsData) withObject:nil waitUntilDone:YES];		
-			[pool drain];
 		}
 	}
 }
@@ -574,11 +576,11 @@ static iVersion *sharedInstance = nil;
 				
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 				
-				[[[[UIAlertView alloc] initWithTitle:inThisVersionTitle
-											 message:versionDetails
-											delegate:self
-								   cancelButtonTitle:okButtonLabel
-								   otherButtonTitles:nil] autorelease] show];			
+				[AH_AUTORELEASE([[UIAlertView alloc] initWithTitle:inThisVersionTitle
+                                                           message:versionDetails
+                                                          delegate:self
+                                                 cancelButtonTitle:okButtonLabel
+                                                 otherButtonTitles:nil]) show];			
 #else
 				NSAlert *alert = [NSAlert alertWithMessageText:inThisVersionTitle
 												 defaultButton:okButtonLabel

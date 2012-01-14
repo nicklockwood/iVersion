@@ -1,3 +1,8 @@
+Version 1.7.2
+
+- Added automatic support for ARC compile targets
+- Now requires Apple LLVM 3.0 compiler target
+
 Version 1.7.1
 
 - Now uses CFBundleShortVersionString when available instead of CFBundleVersion for the application version

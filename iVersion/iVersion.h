@@ -1,12 +1,13 @@
 //
 //  iVersion.h
 //
-//  Version 1.7.1
+//  Version 1.7.2
 //
 //  Created by Nick Lockwood on 26/01/2011.
-//  Copyright 2011 Charcoal Design. All rights reserved.
+//  Copyright 2011 Charcoal Design
 //
-//  Get the latest version of iVersion from either of these locations:
+//  Distributed under the permissive zlib license
+//  Get the latest version from either of these locations:
 //
 //  http://charcoaldesign.co.uk/source/cocoa#iversion
 //  https://github.com/nicklockwood/iVersion
@@ -30,7 +31,66 @@
 //  3. This notice may not be removed or altered from any source distribution.
 //
 
-#import <Foundation/Foundation.h>
+//
+//  ARC Helper
+//
+//  Version 1.2
+//
+//  Created by Nick Lockwood on 05/01/2012.
+//  Copyright 2012 Charcoal Design
+//
+//  Distributed under the permissive zlib license
+//  Get the latest version from here:
+//
+//  https://gist.github.com/1563325
+//
+
+#ifndef AH_RETAIN
+#if __has_feature(objc_arc)
+#define AH_RETAIN(x) x
+#define AH_RELEASE(x)
+#define AH_AUTORELEASE(x) x
+#define AH_SUPER_DEALLOC
+#else
+#define __AH_WEAK
+#define AH_WEAK assign
+#define AH_RETAIN(x) [x retain]
+#define AH_RELEASE(x) [x release]
+#define AH_AUTORELEASE(x) [x autorelease]
+#define AH_SUPER_DEALLOC [super dealloc]
+#endif
+#endif
+
+//  Weak reference support
+
+#ifndef AH_WEAK
+#if defined __IPHONE_OS_VERSION_MIN_REQUIRED
+#if __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_4_3
+#define __AH_WEAK __weak
+#define AH_WEAK weak
+#else
+#define __AH_WEAK __unsafe_unretained
+#define AH_WEAK unsafe_unretained
+#endif
+#elif defined __MAC_OS_X_VERSION_MIN_REQUIRED
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > __MAC_10_6
+#define __AH_WEAK __weak
+#define AH_WEAK weak
+#else
+#define __AH_WEAK __unsafe_unretained
+#define AH_WEAK unsafe_unretained
+#endif
+#endif
+#endif
+
+//  ARC Helper ends
+
+
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+#import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 
 
 @interface NSString(iVersion)
@@ -58,8 +118,12 @@
 
 
 @interface iVersion : NSObject
+
+//required for 32-bit Macs
 #ifdef __i386__
 {
+	@private
+
 	NSDictionary *remoteVersionsDict;
 	NSError *downloadError;
 	NSUInteger appStoreID;
@@ -82,7 +146,7 @@
 	BOOL debug;
 	NSURL *updateURL;
 	NSString *versionDetails;
-	id<iVersionDelegate> delegate;
+	id<iVersionDelegate> __AH_WEAK delegate;
 }
 #endif
 
@@ -118,11 +182,11 @@
 
 //advanced properties for implementing custom behaviour
 @property (nonatomic, copy) NSString *ignoredVersion;
-@property (nonatomic, retain) NSDate *lastChecked;
-@property (nonatomic, retain) NSDate *lastReminded;
-@property (nonatomic, retain) NSURL *updateURL;
+@property (nonatomic, strong) NSDate *lastChecked;
+@property (nonatomic, strong) NSDate *lastReminded;
+@property (nonatomic, strong) NSURL *updateURL;
 @property (nonatomic, assign) BOOL viewedVersionDetails;
-@property (nonatomic, assign) id<iVersionDelegate> delegate;
+@property (nonatomic, AH_WEAK) id<iVersionDelegate> delegate;
 
 //manually control behaviour
 - (void)openAppPageInAppStore;
