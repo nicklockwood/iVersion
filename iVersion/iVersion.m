@@ -471,12 +471,9 @@ static iVersion *sharedInstance = nil;
             
 		}
 	}
-	else
+	else if ([delegate respondsToSelector:@selector(iVersionDidNotDetectNewVersion)])
 	{
-		if ([delegate respondsToSelector:@selector(iVersionDidNotDetectNewVersion)])
-		{
-			[delegate iVersionDidNotDetectNewVersion];
-		}
+		[delegate iVersionDidNotDetectNewVersion];
 	}
 }
 
