@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.7.2
+//  Version 1.7.3
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -147,6 +147,8 @@
 	NSURL *updateURL;
 	NSString *versionDetails;
 	id<iVersionDelegate> __AH_WEAK delegate;
+    id visibleLocalAlert;
+    id visibleRemoteAlert;
 }
 #endif
 

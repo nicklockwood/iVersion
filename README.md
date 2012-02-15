@@ -14,14 +14,14 @@ NOTE: iVersion cannot tell if a given release is available to download, so make 
 One way to do this automatically is to replace the hard-coded remote versions file with a web service that dynamically polls the iTunes App Store services for your app details and extracts the version number and release notes. A sample implementation of such a service (written in PHP) is included as an example.
 
 
-Supported iOS & SDK Versions
+Supported OS & SDK Versions
 -----------------------------
 
 * Supported build target - iOS 5.0 / Mac OS 10.7 (Xcode 4.2, Apple LLVM compiler 3.0)
 * Earliest supported deployment target - iOS 4.3 / Mac OS 10.6
-* Earliest compatible deployment target - iOS 3.0
+* Earliest compatible deployment target - iOS 3.0 / Mac OS 10.6
 
-NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this iOS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
+NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this OS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
 
 
 ARC Compatibility
@@ -42,7 +42,6 @@ To enable iVersion in your application you need to instantiate and configure iVe
 		//configure iVersion
 		[iVersion sharedInstance].appStoreID = 355313284;
 		[iVersion sharedInstance].remoteVersionsPlistURL = @"http://example.com/versions.plist";
-		[iVersion sharedInstance].localVersionsPlistPath = @"versions.plist"; //optional
 	}
 
 The above code represents the minimum configuration needed to make iVersion work, although there are other configuration options you may wish to add (documented below).

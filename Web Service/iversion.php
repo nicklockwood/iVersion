@@ -3,12 +3,13 @@
 //
 //  iversion.php
 //
-//  Version 1.7.1
+//  Version 1.7.3
 //
 //  Created by Nick Lockwood on 17/02/2011.
-//  Copyright 2011 Charcoal Design. All rights reserved.
+//  Copyright 2011 Charcoal Design
 //
-//  Get the latest version of iVersion from either of these locations:
+//  Distributed under the permissive zlib license
+//  Get the latest version from either of these locations:
 //
 //  http://charcoaldesign.co.uk/source/cocoa#iversion
 //  https://github.com/nicklockwood/iVersion

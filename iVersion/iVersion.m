@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.7.2
+//  Version 1.7.3
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -57,26 +57,26 @@ static iVersion *sharedInstance = nil;
 
 - (NSComparisonResult)compareVersion:(NSString *)version
 {
-	return [self compare:version options:NSNumericSearch];
+    return [self compare:version options:NSNumericSearch];
 }
 
 - (NSComparisonResult)compareVersionDescending:(NSString *)version
 {
-	switch ([self compareVersion:version])
-	{
-		case NSOrderedAscending:
-		{
-			return NSOrderedDescending;
-		}
-		case NSOrderedDescending:
-		{
-			return NSOrderedAscending;
-		}
-		default:
-		{
-			return NSOrderedSame;
-		}
-	}
+    switch ([self compareVersion:version])
+    {
+        case NSOrderedAscending:
+        {
+            return NSOrderedDescending;
+        }
+        case NSOrderedDescending:
+        {
+            return NSOrderedAscending;
+        }
+        default:
+        {
+            return NSOrderedSame;
+        }
+    }
 }
 
 @end
@@ -91,6 +91,8 @@ static iVersion *sharedInstance = nil;
 @property (nonatomic, copy) NSDictionary *remoteVersionsDict;
 @property (nonatomic, strong) NSError *downloadError;
 @property (nonatomic, copy) NSString *versionDetails;
+@property (nonatomic, strong) id visibleLocalAlert;
+@property (nonatomic, strong) id visibleRemoteAlert;
 
 @end
 
@@ -120,6 +122,8 @@ static iVersion *sharedInstance = nil;
 @synthesize updateURL;
 @synthesize versionDetails;
 @synthesize delegate;
+@synthesize visibleLocalAlert;
+@synthesize visibleRemoteAlert;
 
 
 #pragma mark -
@@ -127,161 +131,163 @@ static iVersion *sharedInstance = nil;
 
 + (iVersion *)sharedInstance
 {
-	if (sharedInstance == nil)
-	{
-		sharedInstance = [[iVersion alloc] init];
-	}
-	return sharedInstance;
+    if (sharedInstance == nil)
+    {
+        sharedInstance = [[iVersion alloc] init];
+    }
+    return sharedInstance;
 }
 
 - (iVersion *)init
 {
-	if ((self = [super init]))
-	{
-		
+    if ((self = [super init]))
+    {
+        
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-		
-		//register for iphone application events
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(applicationLaunched:)
-													 name:UIApplicationDidFinishLaunchingNotification
-												   object:nil];
-		
-		if (&UIApplicationWillEnterForegroundNotification)
-		{
-			[[NSNotificationCenter defaultCenter] addObserver:self
-													 selector:@selector(applicationWillEnterForeground:)
-														 name:UIApplicationWillEnterForegroundNotification
-													   object:nil];
-		}
+        
+        //register for iphone application events
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(applicationLaunched:)
+                                                     name:UIApplicationDidFinishLaunchingNotification
+                                                   object:nil];
+        
+        if (&UIApplicationWillEnterForegroundNotification)
+        {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(applicationWillEnterForeground:)
+                                                         name:UIApplicationWillEnterForegroundNotification
+                                                       object:nil];
+        }
 #else
-		//register for mac application events
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(applicationLaunched:)
-													 name:NSApplicationDidFinishLaunchingNotification
-												   object:nil];
+        //register for mac application events
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(applicationLaunched:)
+                                                     name:NSApplicationDidFinishLaunchingNotification
+                                                   object:nil];
 #endif
-		//application version (use short version preferentially)
-		self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+        //application version (use short version preferentially)
+        self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
         if ([applicationVersion length] == 0)
         {
             self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
         }
         
         //localised application name
-		self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
-		if ([applicationName length] == 0)
-		{
-			self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
-		}
+        self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+        if ([applicationName length] == 0)
+        {
+            self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
+        }
         
-		//default settings
+        //default settings
         checkAtLaunch = YES;
-		showOnFirstLaunch = NO;
-		groupNotesByVersion = YES;
-		checkPeriod = 0.5;
-		remindPeriod = 1;
-		
-		//default message text, don't edit these here; if you want to provide your
-		//own message text then configure them using the setters/getters
-		self.inThisVersionTitle = @"New in this version";
-		self.updateAvailableTitle = nil; //set lazily so that appname can be included
-		self.versionLabelFormat = @"Version %@";
-		self.okButtonLabel = @"OK";
-		self.ignoreButtonLabel = @"Ignore";
-		self.remindButtonLabel = @"Remind Me Later";
-		self.downloadButtonLabel = @"Download";
-	}
-	return self;
+        showOnFirstLaunch = NO;
+        groupNotesByVersion = YES;
+        checkPeriod = 0.5;
+        remindPeriod = 1;
+        
+        //default message text, don't edit these here; if you want to provide your
+        //own message text then configure them using the setters/getters
+        self.inThisVersionTitle = @"New in this version";
+        self.updateAvailableTitle = nil; //set lazily so that appname can be included
+        self.versionLabelFormat = @"Version %@";
+        self.okButtonLabel = @"OK";
+        self.ignoreButtonLabel = @"Ignore";
+        self.remindButtonLabel = @"Remind Me Later";
+        self.downloadButtonLabel = @"Download";
+    }
+    return self;
 }
 
 - (NSString *)updateAvailableTitle
 {
-	if (updateAvailableTitle)
-	{
-		return updateAvailableTitle;
-	}
-	return [NSString stringWithFormat:@"A new version of %@ is available to download", applicationName];
+    if (updateAvailableTitle)
+    {
+        return updateAvailableTitle;
+    }
+    return [NSString stringWithFormat:@"A new version of %@ is available to download", applicationName];
 }
 
 - (NSURL *)updateURL
 {
-	if (updateURL)
-	{
-		return updateURL;
-	}
-	
+    if (updateURL)
+    {
+        return updateURL;
+    }
+    
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-	return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOSAppStoreURLFormat, appStoreID]];
+    return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOSAppStoreURLFormat, appStoreID]];
 #else
-	return [NSURL URLWithString:[NSString stringWithFormat:iVersionMacAppStoreURLFormat, appStoreID]];
+    return [NSURL URLWithString:[NSString stringWithFormat:iVersionMacAppStoreURLFormat, appStoreID]];
 #endif
-	
+    
 }
 
 - (NSDate *)lastChecked
 {
-	return 	[[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastCheckedKey];
+    return     [[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastCheckedKey];
 }
 
 - (void)setLastChecked:(NSDate *)date
 {
-	[[NSUserDefaults standardUserDefaults] setObject:date forKey:iVersionLastCheckedKey];
-	[[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaults standardUserDefaults] setObject:date forKey:iVersionLastCheckedKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (NSDate *)lastReminded
 {
-	return [[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastRemindedKey];
+    return [[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastRemindedKey];
 }
 
 - (void)setLastReminded:(NSDate *)date
 {
-	[[NSUserDefaults standardUserDefaults] setObject:date forKey:iVersionLastRemindedKey];
-	[[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaults standardUserDefaults] setObject:date forKey:iVersionLastRemindedKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (NSString *)ignoredVersion
 {
-	return [[NSUserDefaults standardUserDefaults] objectForKey:iVersionIgnoreVersionKey];
+    return [[NSUserDefaults standardUserDefaults] objectForKey:iVersionIgnoreVersionKey];
 }
 
 - (void)setIgnoredVersion:(NSString *)version
 {
-	[[NSUserDefaults standardUserDefaults] setObject:version forKey:iVersionIgnoreVersionKey];
-	[[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaults standardUserDefaults] setObject:version forKey:iVersionIgnoreVersionKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (BOOL)viewedVersionDetails
 {
-	return [[[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastVersionKey] isEqualToString:applicationVersion];
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastVersionKey] isEqualToString:applicationVersion];
 }
 
 - (void)setViewedVersionDetails:(BOOL)viewed
 {
-	[[NSUserDefaults standardUserDefaults] setObject:(viewed? applicationVersion: nil) forKey:iVersionLastVersionKey];
+    [[NSUserDefaults standardUserDefaults] setObject:(viewed? applicationVersion: nil) forKey:iVersionLastVersionKey];
 }
 
 - (void)dealloc
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
-	AH_RELEASE(remoteVersionsDict);
-	AH_RELEASE(downloadError);
-	AH_RELEASE(remoteVersionsPlistURL);
-	AH_RELEASE(localVersionsPlistPath);
-	AH_RELEASE(applicationName);
-	AH_RELEASE(applicationVersion);
-	AH_RELEASE(inThisVersionTitle);
-	AH_RELEASE(updateAvailableTitle);
-	AH_RELEASE(versionLabelFormat);
-	AH_RELEASE(okButtonLabel);
-	AH_RELEASE(ignoreButtonLabel);
-	AH_RELEASE(remindButtonLabel);
-	AH_RELEASE(downloadButtonLabel);
-	AH_RELEASE(updateURL);
-	AH_RELEASE(versionDetails);
-	AH_SUPER_DEALLOC;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    AH_RELEASE(remoteVersionsDict);
+    AH_RELEASE(downloadError);
+    AH_RELEASE(remoteVersionsPlistURL);
+    AH_RELEASE(localVersionsPlistPath);
+    AH_RELEASE(applicationName);
+    AH_RELEASE(applicationVersion);
+    AH_RELEASE(inThisVersionTitle);
+    AH_RELEASE(updateAvailableTitle);
+    AH_RELEASE(versionLabelFormat);
+    AH_RELEASE(okButtonLabel);
+    AH_RELEASE(ignoreButtonLabel);
+    AH_RELEASE(remindButtonLabel);
+    AH_RELEASE(downloadButtonLabel);
+    AH_RELEASE(updateURL);
+    AH_RELEASE(versionDetails);
+    AH_RELEASE(visibleLocalAlert);
+    AH_RELEASE(visibleRemoteAlert);
+    AH_SUPER_DEALLOC;
 }
 
 #pragma mark -
@@ -289,199 +295,200 @@ static iVersion *sharedInstance = nil;
 
 - (NSString *)lastVersion
 {
-	return [[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastVersionKey];
+    return [[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastVersionKey];
 }
 
 - (void)setLastVersion:(NSString *)version
 {
-	[[NSUserDefaults standardUserDefaults] setObject:version forKey:iVersionLastVersionKey];
-	[[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaults standardUserDefaults] setObject:version forKey:iVersionLastVersionKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (NSDictionary *)localVersionsDict
 {
-	static NSDictionary *versionsDict = nil;
-	if (versionsDict == nil)
-	{
-		if (localVersionsPlistPath == nil)
-		{
-			versionsDict = [[NSDictionary alloc] init]; //empty dictionary
-		}
-		else
-		{
-			NSString *versionsFile = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:localVersionsPlistPath];
-			versionsDict = [[NSDictionary alloc] initWithContentsOfFile:versionsFile];
-		}
-	}
-	return versionsDict;
+    static NSDictionary *versionsDict = nil;
+    if (versionsDict == nil)
+    {
+        if (localVersionsPlistPath == nil)
+        {
+            versionsDict = [[NSDictionary alloc] init]; //empty dictionary
+        }
+        else
+        {
+            NSString *versionsFile = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:localVersionsPlistPath];
+            versionsDict = [[NSDictionary alloc] initWithContentsOfFile:versionsFile];
+        }
+    }
+    return versionsDict;
 }
 
 - (NSString *)mostRecentVersionInDict:(NSDictionary *)dict
 {
-	return [[[dict allKeys] sortedArrayUsingSelector:@selector(compareVersion:)] lastObject];
+    return [[[dict allKeys] sortedArrayUsingSelector:@selector(compareVersion:)] lastObject];
 }
 
 - (NSString *)versionDetails:(NSString *)version inDict:(NSDictionary *)dict
 {
-	id versionData = [dict objectForKey:version];
+    id versionData = [dict objectForKey:version];
     if ([versionData isKindOfClass:[NSString class]])
     {
         return versionData;
     }
     else if ([versionData isKindOfClass:[NSArray class]])
     {
-		return [versionData componentsJoinedByString:@"\n\n"];
+        return [versionData componentsJoinedByString:@"\n\n"];
     }
     return nil;
 }
 
 - (NSString *)versionDetailsSince:(NSString *)lastVersion inDict:(NSDictionary *)dict
 {
-	if (debug)
-	{
-		lastVersion = @"0";
-	}
-	BOOL newVersionFound = NO;
-	NSMutableString *details = [NSMutableString stringWithString:@""];
-	NSArray *versions = [[dict allKeys] sortedArrayUsingSelector:@selector(compareVersionDescending:)];
-	for (NSString *version in versions)
-	{
-		if ([version compareVersion:lastVersion] == NSOrderedDescending)
-		{
-			newVersionFound = YES;
-			if (groupNotesByVersion)
-			{
-				[details appendFormat:versionLabelFormat, version];
-				[details appendString:@"\n\n"];
-			}
-			[details appendString:[self versionDetails:version inDict:dict]];
-			[details appendString:@"\n\n"];
-		}
-	}
-	return newVersionFound? [details stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]]: nil;
+    if (debug)
+    {
+        lastVersion = @"0";
+    }
+    BOOL newVersionFound = NO;
+    NSMutableString *details = [NSMutableString stringWithString:@""];
+    NSArray *versions = [[dict allKeys] sortedArrayUsingSelector:@selector(compareVersionDescending:)];
+    for (NSString *version in versions)
+    {
+        if ([version compareVersion:lastVersion] == NSOrderedDescending)
+        {
+            newVersionFound = YES;
+            if (groupNotesByVersion)
+            {
+                [details appendFormat:versionLabelFormat, version];
+                [details appendString:@"\n\n"];
+            }
+            [details appendString:[self versionDetails:version inDict:dict]];
+            [details appendString:@"\n\n"];
+        }
+    }
+    return newVersionFound? [details stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]]: nil;
 }
 
 - (NSString *)versionDetails
 {
-	if (!versionDetails)
-	{
-		if (self.viewedVersionDetails)
-		{
-			self.versionDetails = [self versionDetails:applicationVersion inDict:[self localVersionsDict]];
-		}
-		else 
-		{
-			self.versionDetails = [self versionDetailsSince:self.lastVersion inDict:[self localVersionsDict]];
-		}
-	}
-	return versionDetails;
+    if (!versionDetails)
+    {
+        if (self.viewedVersionDetails)
+        {
+            self.versionDetails = [self versionDetails:applicationVersion inDict:[self localVersionsDict]];
+        }
+        else 
+        {
+            self.versionDetails = [self versionDetailsSince:self.lastVersion inDict:[self localVersionsDict]];
+        }
+    }
+    return versionDetails;
 }
 
 - (void)downloadedVersionsData
 {
-	
+    
 #ifndef __IPHONE_OS_VERSION_MAX_ALLOWED
-	
-	//only show when main window is available
-	if (![[NSApplication sharedApplication] mainWindow])
-	{
-		[self performSelector:@selector(downloadedVersionsData) withObject:nil afterDelay:0.5];
-		return;
-	}
-	
+    
+    //only show when main window is available
+    if (![[NSApplication sharedApplication] mainWindow])
+    {
+        [self performSelector:@selector(downloadedVersionsData) withObject:nil afterDelay:0.5];
+        return;
+    }
+    
 #endif
-	
-	//check if data downloaded
-	if (!remoteVersionsDict)
-	{
+    
+    //check if data downloaded
+    if (!remoteVersionsDict)
+    {
         if ([delegate respondsToSelector:@selector(iVersionVersionCheckDidFailWithError:)])
-		{
-			[delegate iVersionVersionCheckDidFailWithError:downloadError];
-		}
+        {
+            [delegate iVersionVersionCheckDidFailWithError:downloadError];
+        }
         
         //deprecated code path
-		else if ([delegate respondsToSelector:@selector(iVersionVersionCheckFailed:)])
-		{
+        else if ([delegate respondsToSelector:@selector(iVersionVersionCheckFailed:)])
+        {
             NSLog(@"iVersionVersionCheckFailed: delegate method is deprecated, use iVersionVersionCheckDidFailWithError: instead");
-			[delegate performSelector:@selector(iVersionVersionCheckFailed:) withObject:downloadError];
-		}
-		return;
-	}
-	
-	//get version details
-	NSString *details = [self versionDetailsSince:applicationVersion inDict:remoteVersionsDict];
-	NSString *mostRecentVersion = [self mostRecentVersionInDict:remoteVersionsDict];
-	if (details)
-	{
-		//inform delegate of new version
-		if ([delegate respondsToSelector:@selector(iVersionDidDetectNewVersion:details:)])
-		{
-			[delegate iVersionDidDetectNewVersion:mostRecentVersion details:details];
-		}
+            [delegate performSelector:@selector(iVersionVersionCheckFailed:) withObject:downloadError];
+        }
+        return;
+    }
+    
+    //get version details
+    NSString *details = [self versionDetailsSince:applicationVersion inDict:remoteVersionsDict];
+    NSString *mostRecentVersion = [self mostRecentVersionInDict:remoteVersionsDict];
+    if (details)
+    {
+        //inform delegate of new version
+        if ([delegate respondsToSelector:@selector(iVersionDidDetectNewVersion:details:)])
+        {
+            [delegate iVersionDidDetectNewVersion:mostRecentVersion details:details];
+        }
         
         //deprecated code path
         if ([delegate respondsToSelector:@selector(iVersionDetectedNewVersion:details:)])
-		{
+        {
             NSLog(@"iVersionDetectedNewVersion:details: delegate method is deprecated, use iVersionDidDetectNewVersion:details: instead");
-			[delegate performSelector:@selector(iVersionDetectedNewVersion:details:) withObject:mostRecentVersion withObject:details];
-		}
-		
-		//check if ignored
-		BOOL showDetails = ![self.ignoredVersion isEqualToString:mostRecentVersion] || debug;
-		if (showDetails && [delegate respondsToSelector:@selector(iVersionShouldDisplayNewVersion:details:)])
-		{
-			showDetails = [delegate iVersionShouldDisplayNewVersion:mostRecentVersion details:details];
-		}
-		
-		//show details
-		if (showDetails)
-		{
-			
+            [delegate performSelector:@selector(iVersionDetectedNewVersion:details:) withObject:mostRecentVersion withObject:details];
+        }
+        
+        //check if ignored
+        BOOL showDetails = ![self.ignoredVersion isEqualToString:mostRecentVersion] || debug;
+        if (showDetails && [delegate respondsToSelector:@selector(iVersionShouldDisplayNewVersion:details:)])
+        {
+            showDetails = [delegate iVersionShouldDisplayNewVersion:mostRecentVersion details:details];
+        }
+        
+        //show details
+        if (showDetails && !visibleRemoteAlert)
+        {
+            
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
             
-			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:self.updateAvailableTitle
-															message:details
-														   delegate:self
-												  cancelButtonTitle:ignoreButtonLabel
-												  otherButtonTitles:downloadButtonLabel, nil];
-			if (remindButtonLabel)
-			{
-				[alert addButtonWithTitle:remindButtonLabel];
-			}
-			
-			[alert show];
-			AH_RELEASE(alert);
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:self.updateAvailableTitle
+                                                            message:details
+                                                           delegate:self
+                                                  cancelButtonTitle:ignoreButtonLabel
+                                                  otherButtonTitles:downloadButtonLabel, nil];
+            if (remindButtonLabel)
+            {
+                [alert addButtonWithTitle:remindButtonLabel];
+            }
+            
+            self.visibleRemoteAlert = alert;
+            [visibleRemoteAlert show];
+            AH_RELEASE(alert);
 #else
-			NSAlert *alert = [NSAlert alertWithMessageText:self.updateAvailableTitle
-											 defaultButton:downloadButtonLabel
-										   alternateButton:ignoreButtonLabel
-											   otherButton:nil
-								 informativeTextWithFormat:details];	
-			
-			if (remindButtonLabel)
-			{
-				[alert addButtonWithTitle:remindButtonLabel];
-			}
-			
-			[alert beginSheetModalForWindow:[[NSApplication sharedApplication] mainWindow]
-							  modalDelegate:self
-							 didEndSelector:@selector(remoteAlertDidEnd:returnCode:contextInfo:)
-								contextInfo:nil];
+            self.visibleRemoteAlert = [NSAlert alertWithMessageText:self.updateAvailableTitle
+                                                      defaultButton:downloadButtonLabel
+                                                    alternateButton:ignoreButtonLabel
+                                                        otherButton:nil
+                                          informativeTextWithFormat:details];    
+            
+            if (remindButtonLabel)
+            {
+                [visibleRemoteAlert addButtonWithTitle:remindButtonLabel];
+            }
+            
+            [visibleRemoteAlert beginSheetModalForWindow:[[NSApplication sharedApplication] mainWindow]
+                                           modalDelegate:self
+                                          didEndSelector:@selector(remoteAlertDidEnd:returnCode:contextInfo:)
+                                             contextInfo:nil];
 #endif
             
-		}
-	}
-	else if ([delegate respondsToSelector:@selector(iVersionDidNotDetectNewVersion)])
-	{
-		[delegate iVersionDidNotDetectNewVersion];
-	}
+        }
+    }
+    else if ([delegate respondsToSelector:@selector(iVersionDidNotDetectNewVersion)])
+    {
+        [delegate iVersionDidNotDetectNewVersion];
+    }
 }
 
 - (BOOL)shouldCheckForNewVersion
 {
-	//debug mode?
-	if (!debug)
-	{
+    //debug mode?
+    if (!debug)
+    {
         //check if within the reminder period
         if (self.lastReminded != nil)
         {
@@ -497,25 +504,25 @@ static iVersion *sharedInstance = nil;
         {
             return NO;
         }
-	}
+    }
     
-	//confirm with delegate
-	if ([delegate respondsToSelector:@selector(iVersionShouldCheckForNewVersion)])
-	{
-		return [delegate iVersionShouldCheckForNewVersion];
-	}
-	
-	//perform the check
-	return YES;
+    //confirm with delegate
+    if ([delegate respondsToSelector:@selector(iVersionShouldCheckForNewVersion)])
+    {
+        return [delegate iVersionShouldCheckForNewVersion];
+    }
+    
+    //perform the check
+    return YES;
 }
 
 - (void)checkForNewVersionInBackground
 {
-	@synchronized (self)
-	{
-		if (remoteVersionsPlistURL)
-		{
-			@autoreleasepool
+    @synchronized (self)
+    {
+        if (remoteVersionsPlistURL)
+        {
+            @autoreleasepool
             {
                 NSError *error = nil;
                 NSDictionary *versions = nil;
@@ -535,76 +542,77 @@ static iVersion *sharedInstance = nil;
                 [self performSelectorOnMainThread:@selector(setDownloadError:) withObject:error waitUntilDone:YES];
                 [self performSelectorOnMainThread:@selector(setRemoteVersionsDict:) withObject:versions waitUntilDone:YES];
                 [self performSelectorOnMainThread:@selector(setLastChecked:) withObject:[NSDate date] waitUntilDone:YES];
-                [self performSelectorOnMainThread:@selector(downloadedVersionsData) withObject:nil waitUntilDone:YES];		
-			}
-		}
-	}
+                [self performSelectorOnMainThread:@selector(downloadedVersionsData) withObject:nil waitUntilDone:YES];        
+            }
+        }
+    }
 }
 
 - (void)checkForNewVersion
 {
-	[self performSelectorInBackground:@selector(checkForNewVersionInBackground) withObject:nil];
+    [self performSelectorInBackground:@selector(checkForNewVersionInBackground) withObject:nil];
 }
 
 - (void)checkIfNewVersion
 {
-	
+    
 #ifndef __IPHONE_OS_VERSION_MAX_ALLOWED
-	
-	//only show when main window is available
-	if (![[NSApplication sharedApplication] mainWindow])
-	{
-		[self performSelector:@selector(checkIfNewVersion) withObject:nil afterDelay:0.5];
-		return;
-	}
-	
+    
+    //only show when main window is available
+    if (![[NSApplication sharedApplication] mainWindow])
+    {
+        [self performSelector:@selector(checkIfNewVersion) withObject:nil afterDelay:0.5];
+        return;
+    }
+    
 #endif
-	
-	if (self.lastVersion != nil || showOnFirstLaunch || debug)
-	{
-		if ([applicationVersion compareVersion:self.lastVersion] == NSOrderedDescending || debug)
-		{
-			//clear reminder
-			self.lastReminded = nil;
-			
-			//get version details
-			BOOL showDetails = !!self.versionDetails;
-			if (showDetails && [delegate respondsToSelector:@selector(iVersionShouldDisplayCurrentVersionDetails:)])
-			{
-				showDetails = [delegate iVersionShouldDisplayCurrentVersionDetails:self.versionDetails];
-			}
-			
-			//show details
-			if (showDetails)
-			{
-				
+    
+    if (self.lastVersion != nil || showOnFirstLaunch || debug)
+    {
+        if ([applicationVersion compareVersion:self.lastVersion] == NSOrderedDescending || debug)
+        {
+            //clear reminder
+            self.lastReminded = nil;
+            
+            //get version details
+            BOOL showDetails = !!self.versionDetails;
+            if (showDetails && [delegate respondsToSelector:@selector(iVersionShouldDisplayCurrentVersionDetails:)])
+            {
+                showDetails = [delegate iVersionShouldDisplayCurrentVersionDetails:self.versionDetails];
+            }
+            
+            //show details
+            if (showDetails && !visibleLocalAlert)
+            {
+                
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-				
-				[AH_AUTORELEASE([[UIAlertView alloc] initWithTitle:inThisVersionTitle
-                                                           message:versionDetails
-                                                          delegate:self
-                                                 cancelButtonTitle:okButtonLabel
-                                                 otherButtonTitles:nil]) show];			
+                
+                self.visibleLocalAlert = AH_AUTORELEASE([[UIAlertView alloc] initWithTitle:inThisVersionTitle
+                                                                                   message:versionDetails
+                                                                                  delegate:self
+                                                                         cancelButtonTitle:okButtonLabel
+                                                                         otherButtonTitles:nil]);
+                [visibleLocalAlert show];
 #else
-				NSAlert *alert = [NSAlert alertWithMessageText:inThisVersionTitle
-												 defaultButton:okButtonLabel
-											   alternateButton:nil
-												   otherButton:nil
-									 informativeTextWithFormat:versionDetails];	
-				
-				[alert beginSheetModalForWindow:[[NSApplication sharedApplication] mainWindow]
-								  modalDelegate:self
-								 didEndSelector:@selector(localAlertDidEnd:returnCode:contextInfo:)
-									contextInfo:nil];
+                self.visibleLocalAlert = [NSAlert alertWithMessageText:inThisVersionTitle
+                                                         defaultButton:okButtonLabel
+                                                       alternateButton:nil
+                                                           otherButton:nil
+                                             informativeTextWithFormat:versionDetails];    
+                
+                [visibleLocalAlert beginSheetModalForWindow:[[NSApplication sharedApplication] mainWindow]
+                                              modalDelegate:self
+                                             didEndSelector:@selector(localAlertDidEnd:returnCode:contextInfo:)
+                                                contextInfo:nil];
 #endif
-			}
-		}
-	}
-	else 
-	{
-		//record this as last viewed release
-		self.viewedVersionDetails = YES;
-	}
+            }
+        }
+    }
+    else 
+    {
+        //record this as last viewed release
+        self.viewedVersionDetails = YES;
+    }
 }
 
 #pragma mark -
@@ -614,7 +622,7 @@ static iVersion *sharedInstance = nil;
 
 - (void)openAppPageInAppStore
 {
-	[[UIApplication sharedApplication] openURL:self.updateURL];
+    [[UIApplication sharedApplication] openURL:self.updateURL];
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -622,84 +630,94 @@ static iVersion *sharedInstance = nil;
     //latest version
     NSString *latestVersion = [self mostRecentVersionInDict:remoteVersionsDict];
     
-	if ([alertView.title isEqualToString:inThisVersionTitle])
-	{
-		//record that details have been viewed
-		self.viewedVersionDetails = YES;
-	}
-	else if (buttonIndex == alertView.cancelButtonIndex)
-	{
+    if (alertView == visibleLocalAlert)
+    {
+        //record that details have been viewed
+        self.viewedVersionDetails = YES;
+    }
+    else if (buttonIndex == alertView.cancelButtonIndex)
+    {
         //log event
         if ([delegate respondsToSelector:@selector(iVersionUserDidIgnoreUpdate:)])
         {
             [delegate iVersionUserDidIgnoreUpdate:latestVersion];
         }
         
-		//ignore this version
-		self.ignoredVersion = latestVersion;
-		self.lastReminded = nil;
-	}
-	else if (buttonIndex == 2)
-	{
+        //ignore this version
+        self.ignoredVersion = latestVersion;
+        self.lastReminded = nil;
+    }
+    else if (buttonIndex == 2)
+    {
         //log event
         if ([delegate respondsToSelector:@selector(iVersionUserDidRequestReminderForUpdate:)])
         {
             [delegate iVersionUserDidRequestReminderForUpdate:latestVersion];
         }
         
-		//remind later
-		self.lastReminded = [NSDate date];
-	}
-	else
-	{
+        //remind later
+        self.lastReminded = [NSDate date];
+    }
+    else
+    {
         //log event
         if ([delegate respondsToSelector:@selector(iVersionUserDidAttemptToDownloadUpdate:)])
         {
             [delegate iVersionUserDidAttemptToDownloadUpdate:latestVersion];
         }
         
-		//clear reminder
-		self.lastReminded = nil;
-		
-		//go to download page
-		[self openAppPageInAppStore];
-	}
+        //clear reminder
+        self.lastReminded = nil;
+        
+        //go to download page
+        [self openAppPageInAppStore];
+    }
+    
+    //release alert
+    if (alertView == visibleLocalAlert)
+    {
+        self.visibleLocalAlert = nil;
+    }
+    else
+    {
+        self.visibleRemoteAlert = nil;
+    }
 }
 
 #else
 
 - (void)localAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
-	//record that details have been viewed
-	self.viewedVersionDetails = YES;
+    //record that details have been viewed
+    self.viewedVersionDetails = YES;
 }
 
 - (void)openAppPageWhenAppStoreLaunched
 {
-	//check if app store is running
+    //check if app store is running
     ProcessSerialNumber psn = { kNoProcess, kNoProcess };
     while (GetNextProcess(&psn) == noErr)
-	{
+    {
         CFDictionaryRef cfDict = ProcessInformationCopyDictionary(&psn,  kProcessDictionaryIncludeAllInformationMask);
-		NSString *bundleID = [(NSDictionary *)cfDict objectForKey:(NSString *)kCFBundleIdentifierKey];
-		if ([iVersionMacAppStoreBundleID isEqualToString:bundleID])
-		{
-			//open app page
-			[[NSWorkspace sharedWorkspace] performSelector:@selector(openURL:) withObject:self.updateURL afterDelay:MAC_APP_STORE_REFRESH_DELAY];
-			CFRelease(cfDict);
-			return;
-		}
-		CFRelease(cfDict);
+        NSString *bundleID = [(NSDictionary *)cfDict objectForKey:(NSString *)kCFBundleIdentifierKey];
+        if ([iVersionMacAppStoreBundleID isEqualToString:bundleID])
+        {
+            //open app page
+            [[NSWorkspace sharedWorkspace] performSelector:@selector(openURL:) withObject:self.updateURL afterDelay:MAC_APP_STORE_REFRESH_DELAY];
+            CFRelease(cfDict);
+            return;
+        }
+        CFRelease(cfDict);
     }
-	
-	//try again
-	[self performSelector:@selector(openAppPageWhenAppStoreLaunched) withObject:nil afterDelay:0.0];
+    
+    //try again
+    [self performSelector:@selector(openAppPageWhenAppStoreLaunched) withObject:nil afterDelay:0.0];
 }
 
 - (void)openAppPageInAppStore
 {
-	[[NSWorkspace sharedWorkspace] openURL:self.updateURL];
-	[self openAppPageWhenAppStoreLaunched];
+    [[NSWorkspace sharedWorkspace] openURL:self.updateURL];
+    [self openAppPageWhenAppStoreLaunched];
 }
 
 - (void)remoteAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
@@ -707,57 +725,67 @@ static iVersion *sharedInstance = nil;
     //latest version
     NSString *latestVersion = [self mostRecentVersionInDict:remoteVersionsDict];
     
-	switch (returnCode)
-	{
-		case NSAlertAlternateReturn:
-		{
+    switch (returnCode)
+    {
+        case NSAlertAlternateReturn:
+        {
             //log event
             if ([delegate respondsToSelector:@selector(iVersionUserDidIgnoreUpdate:)])
             {
                 [delegate iVersionUserDidIgnoreUpdate:latestVersion];
             }
             
-			//ignore this version
-			self.ignoredVersion = latestVersion;
-			self.lastReminded = nil;
-			break;
-		}
-		case NSAlertDefaultReturn:
-		{
+            //ignore this version
+            self.ignoredVersion = latestVersion;
+            self.lastReminded = nil;
+            break;
+        }
+        case NSAlertDefaultReturn:
+        {
             //log event
             if ([delegate respondsToSelector:@selector(iVersionUserDidAttemptToDownloadUpdate:)])
             {
                 [delegate iVersionUserDidAttemptToDownloadUpdate:latestVersion];
             }
             
-			//clear reminder
-			self.lastReminded = nil;
-			
-			//launch mac app store
-			[self openAppPageInAppStore];
-			break;
-		}
-		default:
-		{
+            //clear reminder
+            self.lastReminded = nil;
+            
+            //launch mac app store
+            [self openAppPageInAppStore];
+            break;
+        }
+        default:
+        {
             //log event
             if ([delegate respondsToSelector:@selector(iVersionUserDidRequestReminderForUpdate:)])
             {
                 [delegate iVersionUserDidRequestReminderForUpdate:latestVersion];
             }
             
-			//remind later
-			self.lastReminded = [NSDate date];
-		}
-	}
+            //remind later
+            self.lastReminded = [NSDate date];
+        }
+    }
+    
+    //release alert
+    if (alert == visibleLocalAlert)
+    {
+        self.visibleLocalAlert = nil;
+    }
+    else
+    {
+        self.visibleRemoteAlert = nil;
+    }
 }
 
 #endif
 
 - (void)applicationLaunched:(NSNotification *)notification
 {
-	if (checkAtLaunch)
-	{
-		[self checkIfNewVersion];
+    if (checkAtLaunch)
+    {
+        [self checkIfNewVersion];
         if ([self shouldCheckForNewVersion])
         {
             [self checkForNewVersion];
@@ -765,12 +793,19 @@ static iVersion *sharedInstance = nil;
     }
 }
 
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+
 - (void)applicationWillEnterForeground:(NSNotification *)notification
 {
-	if (checkAtLaunch && [self shouldCheckForNewVersion])
-	{
-		[self checkForNewVersion];
-	}
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground)
+    {
+        if (checkAtLaunch && [self shouldCheckForNewVersion])
+        {
+            [self checkForNewVersion];
+        }
+    }
 }
+
+#endif
 
 @end

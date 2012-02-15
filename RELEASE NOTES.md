@@ -1,3 +1,9 @@
+Version 1.7.3
+
+- Added missing iVersionDidNotDetectNewVersion delegate method
+- Added logic to prevent multiple prompts from being displayed if user fails to close one prompt before the next is due to be opened
+- Added workaround for change in IApplicationWillEnterForegroundNotification implementation in iOS5
+
 Version 1.7.2
 
 - Added automatic support for ARC compile targets
