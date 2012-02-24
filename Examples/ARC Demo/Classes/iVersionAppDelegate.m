@@ -16,10 +16,6 @@
 @synthesize window;
 @synthesize viewController;
 
-
-#pragma mark -
-#pragma mark Application lifecycle
-
 + (void)initialize
 {
     //set the app and bundle ID. normally you wouldn't need to do this
@@ -39,16 +35,5 @@
     [window makeKeyAndVisible];
     return YES;
 }
-
-#pragma mark -
-#pragma mark Memory management
-
-- (void)dealloc
-{
-    [viewController release];
-    [window release];
-    [super dealloc];
-}
-
 
 @end

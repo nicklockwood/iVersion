@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.7.3
+//  Version 1.8
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -34,7 +34,7 @@
 //
 //  ARC Helper
 //
-//  Version 1.2
+//  Version 1.2.1
 //
 //  Created by Nick Lockwood on 05/01/2012.
 //  Copyright 2012 Charcoal Design
@@ -47,16 +47,16 @@
 
 #ifndef AH_RETAIN
 #if __has_feature(objc_arc)
-#define AH_RETAIN(x) x
+#define AH_RETAIN(x) (x)
 #define AH_RELEASE(x)
-#define AH_AUTORELEASE(x) x
+#define AH_AUTORELEASE(x) (x)
 #define AH_SUPER_DEALLOC
 #else
 #define __AH_WEAK
 #define AH_WEAK assign
-#define AH_RETAIN(x) [x retain]
-#define AH_RELEASE(x) [x release]
-#define AH_AUTORELEASE(x) [x autorelease]
+#define AH_RETAIN(x) [(x) retain]
+#define AH_RELEASE(x) [(x) release]
+#define AH_AUTORELEASE(x) [(x) autorelease]
 #define AH_SUPER_DEALLOC [super dealloc]
 #endif
 #endif
@@ -122,31 +122,33 @@
 //required for 32-bit Macs
 #ifdef __i386__
 {
-	@private
-
-	NSDictionary *remoteVersionsDict;
-	NSError *downloadError;
-	NSUInteger appStoreID;
-	NSString *remoteVersionsPlistURL;
-	NSString *localVersionsPlistPath;
-	NSString *applicationName;
-	NSString *applicationVersion;
-	BOOL showOnFirstLaunch;
-	BOOL groupNotesByVersion;
-	float checkPeriod;
-	float remindPeriod;
-	NSString *inThisVersionTitle;
-	NSString *updateAvailableTitle;
-	NSString *versionLabelFormat;
-	NSString *okButtonLabel;
-	NSString *ignoreButtonLabel;
-	NSString *remindButtonLabel;
-	NSString *downloadButtonLabel;
-	BOOL checkAtLaunch;
-	BOOL debug;
-	NSURL *updateURL;
-	NSString *versionDetails;
-	id<iVersionDelegate> __AH_WEAK delegate;
+    @private
+    
+    NSDictionary *remoteVersionsDict;
+    NSError *downloadError;
+    NSUInteger appStoreID;
+    NSString *remoteVersionsPlistURL;
+    NSString *localVersionsPlistPath;
+    NSString *applicationName;
+    NSString *applicationVersion;
+    NSString *applicationBundleID;
+    NSString *appStoreLanguage;
+    BOOL showOnFirstLaunch;
+    BOOL groupNotesByVersion;
+    float checkPeriod;
+    float remindPeriod;
+    NSString *inThisVersionTitle;
+    NSString *updateAvailableTitle;
+    NSString *versionLabelFormat;
+    NSString *okButtonLabel;
+    NSString *ignoreButtonLabel;
+    NSString *remindButtonLabel;
+    NSString *downloadButtonLabel;
+    BOOL checkAtLaunch;
+    BOOL debug;
+    NSURL *updateURL;
+    NSString *versionDetails;
+    id<iVersionDelegate> __AH_WEAK delegate;
     id visibleLocalAlert;
     id visibleRemoteAlert;
 }
@@ -154,14 +156,19 @@
 
 + (iVersion *)sharedInstance;
 
-//app-specific settings - always set these
+//app store ID - this is only needed if your
+//bundle ID is not unique between iOS and Mac app stores
 @property (nonatomic, assign) NSUInteger appStoreID;
+
+//app-specific configuration - you may need to set some of these
 @property (nonatomic, copy) NSString *remoteVersionsPlistURL;
 @property (nonatomic, copy) NSString *localVersionsPlistPath;
 
-//application name and version - these are set automatically
+//application details - these are set automatically
 @property (nonatomic, copy) NSString *applicationName;
 @property (nonatomic, copy) NSString *applicationVersion;
+@property (nonatomic, copy) NSString *applicationBundleID;
+@property (nonatomic, copy) NSString *appStoreLanguage;
 
 //usage settings - these have sensible defaults
 @property (nonatomic, assign) BOOL showOnFirstLaunch;
@@ -169,7 +176,7 @@
 @property (nonatomic, assign) float checkPeriod;
 @property (nonatomic, assign) float remindPeriod;
 
-//message text, you may wish to customise these, e.g. for localisation
+//message text - you may wish to customise these, e.g. for localisation
 @property (nonatomic, copy) NSString *inThisVersionTitle;
 @property (nonatomic, copy) NSString *updateAvailableTitle;
 @property (nonatomic, copy) NSString *versionLabelFormat;

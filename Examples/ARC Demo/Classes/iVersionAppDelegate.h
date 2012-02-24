@@ -12,8 +12,8 @@
 
 @interface iVersionAppDelegate : NSObject <UIApplicationDelegate>
 
-@property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet iVersionViewController *viewController;
+@property (nonatomic) IBOutlet UIWindow *window;
+@property (nonatomic) IBOutlet iVersionViewController *viewController;
 
 @end
 

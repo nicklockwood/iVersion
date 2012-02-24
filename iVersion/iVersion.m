@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.7.3
+//  Version 1.8
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -40,13 +40,12 @@ NSString *const iVersionLastCheckedKey = @"iVersionLastChecked";
 NSString *const iVersionLastRemindedKey = @"iVersionLastReminded";
 
 NSString *const iVersionMacAppStoreBundleID = @"com.apple.appstore";
+NSString *const iTunesLookupURLFormat = @"http://itunes.apple.com/lookup?lang=%@";
 
 //note, these aren't ideal as they link to the app page, not the update page
 //there may be some way to link directly to the app store updates tab, but I don't know what it is
 NSString *const iVersioniOSAppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%i";
 NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/app/id%i";
-
-static iVersion *sharedInstance = nil;
 
 
 #define SECONDS_IN_A_DAY 86400.0
@@ -106,6 +105,8 @@ static iVersion *sharedInstance = nil;
 @synthesize localVersionsPlistPath;
 @synthesize applicationName;
 @synthesize applicationVersion;
+@synthesize applicationBundleID;
+@synthesize appStoreLanguage;
 @synthesize showOnFirstLaunch;
 @synthesize groupNotesByVersion;
 @synthesize checkPeriod;
@@ -129,8 +130,18 @@ static iVersion *sharedInstance = nil;
 #pragma mark -
 #pragma mark Lifecycle methods
 
++ (void)load
+{
+    @autoreleasepool
+    {
+        //initialise iVersion
+        [iVersion sharedInstance];
+    }
+}
+
 + (iVersion *)sharedInstance
 {
+    static iVersion *sharedInstance = nil;
     if (sharedInstance == nil)
     {
         sharedInstance = [[iVersion alloc] init];
@@ -165,6 +176,10 @@ static iVersion *sharedInstance = nil;
                                                      name:NSApplicationDidFinishLaunchingNotification
                                                    object:nil];
 #endif
+        
+        //get language
+        self.appStoreLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+        
         //application version (use short version preferentially)
         self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
         if ([applicationVersion length] == 0)
@@ -179,12 +194,15 @@ static iVersion *sharedInstance = nil;
             self.applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
         }
         
+        //bundle id
+        self.applicationBundleID = [[NSBundle mainBundle] bundleIdentifier];
+        
         //default settings
         checkAtLaunch = YES;
         showOnFirstLaunch = NO;
         groupNotesByVersion = YES;
-        checkPeriod = 0.5;
-        remindPeriod = 1;
+        checkPeriod = 0.0f;
+        remindPeriod = 1.0f;
         
         //default message text, don't edit these here; if you want to provide your
         //own message text then configure them using the setters/getters
@@ -225,7 +243,7 @@ static iVersion *sharedInstance = nil;
 
 - (NSDate *)lastChecked
 {
-    return     [[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastCheckedKey];
+    return [[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastCheckedKey];
 }
 
 - (void)setLastChecked:(NSDate *)date
@@ -270,12 +288,14 @@ static iVersion *sharedInstance = nil;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
+    AH_RELEASE(appStoreLanguage);
     AH_RELEASE(remoteVersionsDict);
     AH_RELEASE(downloadError);
     AH_RELEASE(remoteVersionsPlistURL);
     AH_RELEASE(localVersionsPlistPath);
     AH_RELEASE(applicationName);
     AH_RELEASE(applicationVersion);
+    AH_RELEASE(applicationBundleID);
     AH_RELEASE(inThisVersionTitle);
     AH_RELEASE(updateAvailableTitle);
     AH_RELEASE(versionLabelFormat);
@@ -348,7 +368,7 @@ static iVersion *sharedInstance = nil;
         lastVersion = @"0";
     }
     BOOL newVersionFound = NO;
-    NSMutableString *details = [NSMutableString stringWithString:@""];
+    NSMutableString *details = [NSMutableString string];
     NSArray *versions = [[dict allKeys] sortedArrayUsingSelector:@selector(compareVersionDescending:)];
     for (NSString *version in versions)
     {
@@ -381,6 +401,16 @@ static iVersion *sharedInstance = nil;
         }
     }
     return versionDetails;
+}
+
+- (NSString *)URLEncodedString:(NSString *)string
+{
+    CFStringRef encoded = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+                                                                  (__bridge CFStringRef)string,
+                                                                  NULL,
+                                                                  CFSTR("!*'\"();:@&=+$,/?%#[]% "),
+                                                                  kCFStringEncodingUTF8);
+    return CFBridgingRelease(encoded);
 }
 
 - (void)downloadedVersionsData
@@ -516,34 +546,111 @@ static iVersion *sharedInstance = nil;
     return YES;
 }
 
+- (NSString *)valueForKey:(NSString *)key inJSON:(NSString *)json
+{
+    NSRange keyRange = [json rangeOfString:[NSString stringWithFormat:@"\"%@\"", key]];
+    if (keyRange.location != NSNotFound)
+    {
+        NSInteger start = keyRange.location + keyRange.length;
+        NSRange valueStart = [json rangeOfString:@":" options:0 range:NSMakeRange(start, [json length] - start)];
+        if (valueStart.location != NSNotFound)
+        {
+            start = valueStart.location + 1;
+            NSRange valueEnd = [json rangeOfString:@"," options:0 range:NSMakeRange(start, [json length] - start)];
+            if (valueEnd.location != NSNotFound)
+            {
+                NSString *value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
+                value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                value = [value stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
+                value = [value stringByReplacingOccurrencesOfString:@"\\\\" withString:@"\\"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\\"" withString:@"\""];
+                value = [value stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+                return value;
+            }
+        }
+    }
+    return nil;
+}
+
+- (void)setAppStoreIDOnMainThread:(NSString *)bundleID
+{
+    self.appStoreID = [bundleID longLongValue];
+}
+
 - (void)checkForNewVersionInBackground
 {
     @synchronized (self)
     {
-        if (remoteVersionsPlistURL)
+        @autoreleasepool
         {
-            @autoreleasepool
+            NSError *error = nil;
+            BOOL newerVersionAvailable = NO;
+            NSDictionary *versions = nil;
+
+            //first check iTunes
+            NSString *iTunesServiceURL = [NSString stringWithFormat:iTunesLookupURLFormat, appStoreLanguage];
+            if (appStoreID)
             {
-                NSError *error = nil;
-                NSDictionary *versions = nil;
-                NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:remoteVersionsPlistURL] options:NSDataReadingUncached error:&error];
-                if (data)
+                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"&id=%i", appStoreID];
+            }
+            else 
+            {
+                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"&bundleId=%@", applicationBundleID];
+            }
+            NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:iTunesServiceURL] options:NSDataReadingUncached error:&error];
+            if (data)
+            {
+                //convert to string
+                NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                
+                //check bundle ID matches
+                NSString *bundleID = [self valueForKey:@"bundleId" inJSON:json];
+                if (bundleID && [bundleID isEqualToString:applicationBundleID])
                 {
-                    NSPropertyListFormat format;
-                    if ([NSPropertyListSerialization respondsToSelector:@selector(propertyListWithData:options:format:error:)])
+                    //get version details
+                    NSString *releaseNotes = [self valueForKey:@"releaseNotes" inJSON:json];
+                    NSString *latestVersion = [self valueForKey:@"version" inJSON:json];
+                    if (releaseNotes && latestVersion)
                     {
-                        versions = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:&format error:&error];
+                        versions = [NSDictionary dictionaryWithObject:releaseNotes forKey:latestVersion];
                     }
-                    else
+                    
+                    //check for new version
+                    newerVersionAvailable = ([latestVersion compareVersion:self.applicationVersion] == NSOrderedDescending);
+                    
+                    //get app id
+                    if (!appStoreID)
                     {
-                        versions = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:0 format:&format errorDescription:NULL];
+                        NSString *appStoreIDString = [self valueForKey:@"trackId" inJSON:json];
+                        [self performSelectorOnMainThread:@selector(setAppStoreIDOnMainThread:) withObject:appStoreIDString waitUntilDone:YES];
                     }
                 }
-                [self performSelectorOnMainThread:@selector(setDownloadError:) withObject:error waitUntilDone:YES];
-                [self performSelectorOnMainThread:@selector(setRemoteVersionsDict:) withObject:versions waitUntilDone:YES];
-                [self performSelectorOnMainThread:@selector(setLastChecked:) withObject:[NSDate date] waitUntilDone:YES];
-                [self performSelectorOnMainThread:@selector(downloadedVersionsData) withObject:nil waitUntilDone:YES];        
+                
+                //release json
+                AH_RELEASE(json);
+                
+                //now check plist for alternative release notes
+                if (appStoreID && newerVersionAvailable && remoteVersionsPlistURL)
+                {
+                    NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:remoteVersionsPlistURL] options:NSDataReadingUncached error:&error];
+                    if (data)
+                    {
+                        NSPropertyListFormat format;
+                        if ([NSPropertyListSerialization respondsToSelector:@selector(propertyListWithData:options:format:error:)])
+                        {
+                            versions = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:&format error:&error];
+                        }
+                        else
+                        {
+                            versions = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:0 format:&format errorDescription:NULL];
+                        }
+                    }
+                }
             }
+            [self performSelectorOnMainThread:@selector(setDownloadError:) withObject:error waitUntilDone:YES];
+            [self performSelectorOnMainThread:@selector(setRemoteVersionsDict:) withObject:versions waitUntilDone:YES];
+            [self performSelectorOnMainThread:@selector(setLastChecked:) withObject:[NSDate date] waitUntilDone:YES];
+            [self performSelectorOnMainThread:@selector(downloadedVersionsData) withObject:nil waitUntilDone:YES];        
         }
     }
 }

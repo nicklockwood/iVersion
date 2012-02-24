@@ -1,17 +1,15 @@
 Purpose
 --------------
 
-The App Store app updates mechanism is somewhat cumbersome and disconnected from the apps themselves. Users often fail to notice when new versions of an app are released, and if they do notice, the App Store's "download all" option means that users often won't see the release notes for the new version.
+The Mac and iOS App Store update mechanism is somewhat cumbersome and disconnected from the apps themselves. Users often fail to notice when new versions of an app are released, and if they do notice, the App Store's "download all" option means that users often won't see the release notes for the new versions of each of their apps.
 
-Whilst it is not possible to bypass the App Store and update an app from within the app itself, as this violates the App Store terms and conditions, there is no reason why an app should not inform the user that the new release is ready, and direct them to the App Store to download the update.
+Whilst it is not permitted to update an App Store app from within the app itself, there is no reason why an app should not inform the user that the new release is ready, and direct them to the App Store to download the update.
 
-iVersion is a simple, drop-in class to allow iPhone and Mac App Store apps to automatically check for updates and inform the user about new features.
+iVersion is a simple, *zero-config* class to allow iPhone and Mac App Store apps to automatically check for updates and inform the user about new features.
+
+iVersion automatically detects when the new version of an app is released on the App Store and informs the user with a helpful alert that links them directly to the app download page.
 
 iVersion has an additional function, which is to tell users about important new features when they first run an app after downloading a new version.
-
-NOTE: iVersion cannot tell if a given release is available to download, so make sure that you only update the remote versions file after apple has approved your app and it has appeared in the store.
-
-One way to do this automatically is to replace the hard-coded remote versions file with a web service that dynamically polls the iTunes App Store services for your app details and extracts the version number and release notes. A sample implementation of such a service (written in PHP) is included as an example.
 
 
 Supported OS & SDK Versions
@@ -35,7 +33,19 @@ Installation
 
 To install iVersion into your app, drag the iVersion.h and .m files into your project.
 
-To enable iVersion in your application you need to instantiate and configure iVersion *before* the app has finished launching. The easiest way to do this is to add the iVersion configuration code in your AppDelegate's `initialize` method, like this:
+As of version 1.8, iVersion typically requires no configuration at all and will simply run automatically, using the Application's bundle ID to look it up on the App Store.
+
+**Note:** If you have apps with matching bundle IDs on both the Mac and iOS app stores (even if they use different capitalisation), the lookup mechanism won't work, so you'll need to set the application app store ID, which is a numeric ID that can be found in iTunes Connect after you set up an app.
+
+Additionally, you can specify an optional remotely hosted Plist file that will be used for the release notes instead of the ones on iTunes. This has 3 key advantages:
+
+1. You can provide release notes for multiple versions, and if users skip a version they will see the release notes for all the updates they've missed.
+
+2. You can provide more concise release notes, suitable for display on the iPhone screen. 
+
+3. You can delay the iVersion update alert until you are ready by not including an entry for the latest release until after the app has gone live.
+
+If you do wish to customise iVersion, the best time to do this is *before* the app has finished launching. The easiest way to do this is to add the iVersion configuration code in your AppDelegate's `initialize` method, like this:
 
 	+ (void)initialize
 	{
@@ -44,36 +54,9 @@ To enable iVersion in your application you need to instantiate and configure iVe
 		[iVersion sharedInstance].remoteVersionsPlistURL = @"http://example.com/versions.plist";
 	}
 
-The above code represents the minimum configuration needed to make iVersion work, although there are other configuration options you may wish to add (documented below).
+The Plist file you specify will need to be hosted on a public-facing web server somewhere. You can optionally also add a Plist file to your app containing the release notes for the current version, and specify its path using the `localVersionsPlistPath` property.
 
-The exact same configuration code will work for both Mac and iPhone/iPad.
-
-You will also need to add a plist file to your app containing the release notes for the current version, and host another copy on a public-facing web server somewhere. The format for these plists is as follows:
-
-	<?xml version="1.0" encoding="UTF-8"?>
-	<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-	<plist version="1.0">
-	<dict>
-		<key>1.0</key>
-		<array>
-			<string>First release</string>
-		</array>
-		<key>1.1</key>
-		<array>
-			<string>NEW: Added  new snoodlebar feature</string>
-			<string>FIX: Fixed the bugalloo glitch</string>
-		</array>
-		...
-	</dict>
-	</plist>
-
-The root node of the plist is a dictionary containing one or more items. Each item represents a particular version of your application.
-
-The key for each value must be a numerical version number consisting of one or more positive integers separated by decimal points. These should match the values you set for the applicationVersion property of iVersion, which by default is set to the Bundle Version (CFBundleShortVersionString or CFBundleVersion) key in your application's info.plist.
-
-Each value should be an array of strings, each representing a single bullet point in your release notes. There is no restriction to the format of each release note - the approach in the example above is just a suggestion. You may prefer to put all your notes into a single string and add your own line formatting or indenting. You can also omit the release notes if you want and just have an empty <array/>.
-
-As of iVersion 1.7, you can use the simpler versions plist format below, where the notes array for each release is replaced by a single string:
+The format for both of these plists is as follows:
 
 	<?xml version="1.0" encoding="UTF-8"?>
 	<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -87,8 +70,12 @@ As of iVersion 1.7, you can use the simpler versions plist format below, where t
 		...
 	</dict>
 	</plist>
-	
-*Note however* that this is not backwards compatible - supplying a versions plist in this format to an app running an earlier release of the iVersion library will crash, so if you are upgrading to iVersion 1.7 on an app that's already on the App Store, it's a good idea to stick with the original plist format, or to change the URL for your remote versions file so that older versions of the app do not access it (though obviously that means that users of the older version won't be notified of updates, which slightly defeats the point).
+
+The root node of the plist is a dictionary containing one or more items. Each item represents a particular version of your application.
+
+The key for each value must be a numerical version number consisting of one or more positive integers separated by decimal points. These should match the values you set for the applicationVersion property of iVersion, which by default is set to the Bundle Version (CFBundleShortVersionString or CFBundleVersion) key in your application's info.plist.
+
+Each value should be either a multi-line string or an array of strings, each representing a single bullet point in your release notes. There is no restriction to the format of each release note - the approach in the example above is just a suggestion. You can also omit the release notes if you want and just have an empty <array/>.
 
 
 Plist Tips
@@ -100,7 +87,7 @@ Do not feel that the release notes have to exactly mirror those in iTunes or the
 
 The local and remote release notes plists do not have to match. Whilst it may be convenient to make them identical from a maintenance point of view, the local version works better if it is written in a slightly different tone. For example the remote release notes might read:
 
-	Version 1.1
+    Version 1.1
 	
 	- Fixed crashing bug
 	- Added shiny new menu graphics
@@ -122,11 +109,11 @@ To configure iVersion, there are a number of properties of the iVersion class th
 
 	@property (nonatomic, assign) NSUInteger appStoreID;
 
-This should match the iTunes app ID of your application, which you can get from iTunes connect after setting up your app. This is only used for remote version updates, so you can ignore this if you do not intend to use that feature (although it should still be set to a valid integer value).
+This should match the iTunes app ID of your application, which you can get from iTunes connect after setting up your app. This value is not normally necessary and is generally only required if you have the aforementioned conflict between bundle IDs for your Mac and iOS apps. This feature is also only used for remote version updates, so you can ignore this if you do not intend to use that feature.
 
 	@property (nonatomic, copy) NSString *remoteVersionsPlistURL;
 
-This is the URL of the remotely hosted plist that iVersion will check for new releases. As noted above, make sure you only update this file after your new release has been approved by Apple and appeared in the store or you will have some very confused customers. For testing purposes, you may wish to create a separate copy of the file at a different address and use a build constant to switch which version the app points at. Set this value to nil if you do not want your app to check for updates automatically. Do not set it to an invalid URL such as example.com because this will waste battery, CPU and bandwidth as the app tries to check the invalid URL each time it launches.
+This is the URL of the remotely hosted plist that iVersion will check for release notes. As of iVersion 1.8, you can safely update this file *before* your new release has been approved by Apple and appeared in the store, although be cautious if there are existing versions of your app pointing at the file that use older versions of the iVersion library. For testing purposes, you may wish to create a separate copy of the file at a different address and use a build constant to switch which version the app points at. Set this value to nil if you want to just use the release notes on iTunes. Do not set it to an invalid URL such as example.com because this will waste battery, CPU and bandwidth as the app tries to check the invalid URL each time it launches.
 
 	@property (nonatomic, copy) NSString *localVersionsPlistPath;
 
@@ -138,7 +125,15 @@ This is the name of the app displayed in the alert. It is set automatically from
 
 	@property (nonatomic, copy) NSString *applicationVersion;
 
-The current version number of the app. This is set automatically from the  CFBundleShortVersionString (if available) or CFBundleVersion string in the info.plist and it's probably not a good ideas to change it unless you know what you are doing. In some cases your bundle version may not match the publicly known "display" version of your app, in which case use the display version here. Note that the version numbers in the plist will be compared to this value, not the one in the info.plist.
+The current version number of the app. This is set automatically from the  CFBundleShortVersionString (if available) or CFBundleVersion string in the info.plist and it's probably not a good ideas to change it unless you know what you are doing. In some cases your bundle version may not match the publicly known "display" version of your app, in which case use the display version here. Note that the version numbers on iTunes and in the remote versions Plist will be compared to this value, not the one in the info.plist.
+
+    @property (nonatomic, copy) NSString *applicationBundleID;
+
+This is the application bundle ID, used to retrieve the latest version and release notes from iTunes. This is set automatically from the app's info.plist, so you shouldn't need to change it except for testing purposes.
+
+    @property (nonatomic, copy) NSString *appStoreLanguage;
+    
+This is the language localisation that will be specified when retrieving release notes from iTunes. This is set automatically from the device language preferences, so shouldn't need to be changed.
 
 	@property (nonatomic, assign) BOOL showOnFirstLaunch;
 
@@ -150,11 +145,11 @@ If your release notes files contains multiple versions, this option will group t
 
 	@property (nonatomic, assign) float checkPeriod;
 
-Sets how frequently the app will check for new releases. This is measured in days but can be set to a fractional value, e.g. 0.5. Set this to a higher value to avoid excessive traffic to your server. A value of zero means the app will check every time it's launched.
+Sets how frequently the app will check for new releases. This is measured in days but can be set to a fractional value, e.g. 0.5 for half a day. Set this to a higher value to avoid excessive traffic to your server. A value of zero means the app will check every time it's launched. As of iVersion 1.8, the default value is zero.
 
 	@property (nonatomic, assign) float remindPeriod;
 
-How long the app should wait before reminding a user of a new version after they select the "remind me later" option. A value of zero means the app will remind the user every launch. Note that this value supersedes the check period, so once a reminder is set, the app won't check for new releases during the reminder period, even if new version are released in the meantime.
+How long the app should wait before reminding a user of a new version after they select the "remind me later" option. A value of zero means the app will remind the user every launch. Note that this value supersedes the check period, so once a reminder is set, the app won't check for new releases during the reminder period, even if new version are released in the meantime. The default remind period is one day.
 
 	@property (nonatomic, copy) NSString *inThisVersionTitle;
 
@@ -228,11 +223,11 @@ Advanced methods
 
 	- (void)openAppPageInAppStore;
 
-This method will open the application page in the Mac or iPhone app store, depending on which platform is running. You should use this method instead of the updateURL property if you are running on Mac OS as the process for launching the Mac app store is more complex than merely opening the URL.
+This method will open the application page in the Mac or iPhone app store, depending on which platform is running. You should use this method instead of the updateURL property if you are running on Mac OS as the process for launching the Mac app store is more complex than merely opening the URL. Note that this method depends on the `appStoreID` which is only retrieved after polling the iTunes server, so if you intend to call this method without first doing an update check, you will need to set the `appStoreID` property yourself beforehand.
 
 	- (void)checkIfNewVersion;
 
-This method will check the local versions plist to see if there are new notes to be displayed, and will display them in an alert. This method is called automatically on launch if `checkAtLaunch` is set to YES.
+This method will check the local versions Plist to see if there are new notes to be displayed, and will display them in an alert. This method is called automatically on launch if `checkAtLaunch` is set to YES.
 
 	- (NSString *)versionDetails;
 
@@ -250,7 +245,7 @@ This method will trigger a new check for new versions, ignoring the checkPeriod 
 Delegate methods
 ---------------
 
-The iVersionDelegate protocol provides the following methods that can be used intercept iVersion events and override the default behaviour. All methods are optional.
+The iVersionDelegate protocol provides the following methods that can be used to intercept iVersion events and override the default behaviour. All methods are optional.
 
 	- (BOOL)iVersionShouldCheckForNewVersion;
 
@@ -262,7 +257,7 @@ This is called if the version check did not detect any new versions of the appli
 
 	- (void)iVersionVersionCheckDidFailWithError:(NSError *)error;
 
-This is called if the version check failed due to network issues or because the remote versions plist file was missing or corrupt.
+This is called if the version check failed due to network issues or because the remote versions Plist file was missing or corrupt.
 
 	- (void)iVersionDidDetectNewVersion:(NSString *)version details:(NSString *)versionDetails;
 
@@ -270,7 +265,7 @@ This is called if a new version was detected.
 
 	- (BOOL)iVersionShouldDisplayNewVersion:(NSString *)version details:(NSString *)versionDetails;
 
-This is called immediately before the new (remote) version details alert is displayed. Return NO to prevent the alert from being displayed. Note that if you are implementing the alert yourself you will need to set the lastChecked, lastReminded and ignoredVersion properties yourself, depending on the user response.
+This is called immediately before the new (remote) version details alert is displayed. Return NO to prevent the alert from being displayed. Note that if you are implementing the alert yourself you will also need to set the `lastChecked`, `lastReminded` and `ignoredVersion` properties yourself, depending on the user response.
 
 	- (BOOL)iVersionShouldDisplayCurrentVersionDetails:(NSString *)versionDetails;
 
@@ -308,41 +303,9 @@ Although iVersion isn't localised, it is easy to localise without making any mod
 
 You can then use the genstrings command line tool to extract these strings into a Localizable.strings file, which can be translated into your supported languages.
 
-If you need to provide localised release notes, the simplest way to do this is to localise the remoteVersionsPlistURL file and provide a different URL for each language.
+iVersion will automatically use the localised release notes that you've specified on iTunes, if available.
 
-
-Web Service
----------------
-
-Included with the source is a sample web service for automatically detecting app updates. The service is written in PHP, but is simple enough that it can be easily ported to other web scripting languages. The new version of this service makes use of Apple's authorised search APIs.
-
-The service uses the following configuration constants:
-
-	$platform
-	
-Apple's search APIs are platform specific (iPhone, iPad and Mac). Use one of the IPHONE, IPAD and MAC constants provided for this value.
-
-	$app_store_id
-	
-The app store ID of your application.
-
-	$developer
-	
-Your iTunes developer name as it appears on iTunes. This is used as a filter to reduce the amount of JSON the service has to sift through to find your app (unfortunately there currently appears to be no way to search for a specific app by ID).
-
-	$country
-	
-The two-letter country code for the iTunes store you wish to get the application details from. There is no way to determine which app store a given user is using programmatically, so you'll either have to use the locale and hope that it's right, or hard-code for the US store and assume that your app will appear on all  stores at roughly the same time.
-
-	$language
-	
-The language you want to return your release notes in. This is independent of the store country, so it's a good idea to base this on the user's locale by detecting this in the app and passing it through as a parameter in the service URL.
-
-In principle these constants could all set by URL query parameter, but it may be unwise for you to host a general-purpose iVersion service URL in case other developers hot-link to it and use it for their own purposes (sucking up your bandwidth in the process). In general you should probably pass the language and country codes in dynamically and hard code the app details into the service.
-
-The sample service also includes an optional caching feature. Since every iVersion request from every one of your apps will go via your web service, it may result in a lot of iTunes hits from your server. For a popular app this could be hundreds or thousands of hits per day. Apple might treat this suspicious and start rejecting hits from your server's IP address. By using the cache feature you can rate-limit this as well as improving performance and reducing your server's downstream bandwidth usage.
-
-The service should fail gracefully if it has trouble connecting to iTunes. If anything goes wrong with retrieving or parsing the iTunes JSON it should return a valid plist file that simply contains no versions in the dictionary. If something more serious goes wrong, the iVersion library will silently ignore malformed version plists anyway, so it's pretty unlikely that using this service will break your app.
+If you are using the remote versions Plist, and you need to provide localised release notes, the simplest way to do this is to localise the `remoteVersionsPlistURL` file and provide a different URL for each language.
 
 
 Example Projects
@@ -352,7 +315,7 @@ When you build and run the basic Mac or iPhone example project for the first tim
 
 Quit the app, go into the iVersion-Info.plist file and edit the bundle version to 1.2. Now rebuild the app.
 
-This time it will not say that a new version is available. In effect you have simulated an upgrade. Instead it will tell you about the new features in your currently installed version. This is because it has found that the bundle version of the current app is newer than the last recorded version that was launched, and has checked the local versions.plist file for a release notes entry for the new version.
+This time it will not say that a new version is available. In effect, you have simulated an upgrade. Instead it will tell you about the new features in your currently installed version. This is because it has found that the bundle version of the current app is newer than the last recorded version that was launched, and has checked the local versions.plist file for a release notes entry for the new version.
 
 If you dismiss the dialog and then quit and relaunch the app you should now see nothing. This is because the app has detected that the bundle version hasn't changed since you last launched the app.
 

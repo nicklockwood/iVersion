@@ -1,8 +1,16 @@
+Version 1.8
+
+- iVersion is now *completely zero-config* in most cases!
+- iVersion can automatically detect app updates using official iTunes App Store search APIs based on your application bundle ID
+- It is no longer necessary to set the app store ID in most cases
+- Changed default checkPeriod to 0.0 so version check happens every launch
+- Removed PHP web service as it is no longer needed
+
 Version 1.7.3
 
 - Added missing iVersionDidNotDetectNewVersion delegate method
 - Added logic to prevent multiple prompts from being displayed if user fails to close one prompt before the next is due to be opened
-- Added workaround for change in IApplicationWillEnterForegroundNotification implementation in iOS5
+- Added workaround for change in UIApplicationWillEnterForegroundNotification implementation in iOS5
 
 Version 1.7.2
 
