@@ -107,6 +107,7 @@ NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/
 @synthesize applicationVersion;
 @synthesize applicationBundleID;
 @synthesize appStoreLanguage;
+@synthesize appStoreCountry;
 @synthesize showOnFirstLaunch;
 @synthesize groupNotesByVersion;
 @synthesize checkPeriod;
@@ -289,6 +290,7 @@ NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     AH_RELEASE(appStoreLanguage);
+    AH_RELEASE(appStoreCountry);
     AH_RELEASE(remoteVersionsDict);
     AH_RELEASE(downloadError);
     AH_RELEASE(remoteVersionsPlistURL);
@@ -589,6 +591,9 @@ NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/
 
             //first check iTunes
             NSString *iTunesServiceURL = [NSString stringWithFormat:iTunesLookupURLFormat, appStoreLanguage];
+            if (appStoreCountry) {
+                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"&country=%@", appStoreCountry];
+            }
             if (appStoreID)
             {
                 iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"&id=%i", appStoreID];

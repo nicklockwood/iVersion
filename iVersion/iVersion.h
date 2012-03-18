@@ -133,6 +133,7 @@
     NSString *applicationVersion;
     NSString *applicationBundleID;
     NSString *appStoreLanguage;
+    NSString *appStoreCountry;
     BOOL showOnFirstLaunch;
     BOOL groupNotesByVersion;
     float checkPeriod;
@@ -169,6 +170,7 @@
 @property (nonatomic, copy) NSString *applicationVersion;
 @property (nonatomic, copy) NSString *applicationBundleID;
 @property (nonatomic, copy) NSString *appStoreLanguage;
+@property (nonatomic, copy) NSString *appStoreCountry;
 
 //usage settings - these have sensible defaults
 @property (nonatomic, assign) BOOL showOnFirstLaunch;
