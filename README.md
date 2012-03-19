@@ -37,7 +37,7 @@ iVersion uses threading internally to avoid blocking the UI, but none of the iVe
 Installation
 --------------
 
-To install iVersion into your app, drag the iVersion.h and .m files into your project.
+To install iVersion into your app, drag the iVersion.h, .m and .bundle files into your project. You can omit the .bundle if you are not interested in localised copy.
 
 As of version 1.8, iVersion typically requires no configuration at all and will simply run automatically, using the Application's bundle ID to look it up on the App Store.
 
@@ -297,7 +297,15 @@ This is called when the user presses the ignore in the new version alert. This i
 Localisation
 ---------------
 
-Although iVersion isn't localised, it is easy to localise without making any modifications to the library itself. All you need to do is provide localised values for all of the message strings by setting the properties above using NSLocalizedString(...), e.g:
+The defaults strings for iVersion are already localised for English, French, German, Italian, Spanish and Japanese.
+
+iVersion will automatically use the localised release notes that you've specified on iTunes, if available.
+
+It is not recommended that you modify the strings files in the iVersion.bundle, as it will complicate updating to newer versions of iVersion. If you do want to edit the files, or open them so you can copy the keys into your own strings file, you should note that the iVersion strings files have actually been compiled as binary plists, so you'll need to open them in Xcode and use the Open As > Property List option, or they will appear as gibberish.
+
+If you want to add an additional language, or replace all the built-in strings, the simplest option is to remove the iVersion.bundle from your project and then add the iVersion keys directly to your own Localizable.strings file.
+
+If you want to override some of the localised strings but leave the others intact, you can provide localised values for any or all of the message strings by setting the keys directly in code using NSLocalizedString(...), e.g.
 
 	+ (void)initialize
 	{
@@ -310,10 +318,6 @@ Although iVersion isn't localised, it is easy to localise without making any mod
 		[iVersion sharedInstance].downloadButtonLabel = NSLocalizedString(@"Download", @"iVersion download button");
 		[iVersion sharedInstance].remoteVersionsPlistURL = @"http://example.com/versions_en.plist";
 	}
-
-You can then use the genstrings command line tool to extract these strings into a Localizable.strings file, which can be translated into your supported languages.
-
-iVersion will automatically use the localised release notes that you've specified on iTunes, if available.
 
 If you are using the remote versions Plist, and you need to provide localised release notes, the simplest way to do this is to localise the `remoteVersionsPlistURL` file and provide a different URL for each language.
 
