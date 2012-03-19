@@ -15,7 +15,7 @@ iVersion has an additional function, which is to tell users about important new 
 Supported OS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 5.0 / Mac OS 10.7 (Xcode 4.2, Apple LLVM compiler 3.0)
+* Supported build target - iOS 5.0 / Mac OS 10.7 (Xcode 4.3.1, Apple LLVM compiler 3.1)
 * Earliest supported deployment target - iOS 4.3 / Mac OS 10.6
 * Earliest compatible deployment target - iOS 3.0 / Mac OS 10.6
 
@@ -28,6 +28,12 @@ ARC Compatibility
 iVersion makes use of the ARC Helper library to automatically work with both ARC and non-ARC projects through conditional compilation. There is no need to exclude iVersion files from the ARC validation process, or to convert iVersion using the ARC conversion tool.
 
 
+Thread Safety
+--------------
+
+iVersion uses threading internally to avoid blocking the UI, but none of the iVersion external interfaces are thread safe and you should not call any methods or set any properties on iVersion except from the main thread.
+
+
 Installation
 --------------
 
@@ -35,7 +41,7 @@ To install iVersion into your app, drag the iVersion.h and .m files into your pr
 
 As of version 1.8, iVersion typically requires no configuration at all and will simply run automatically, using the Application's bundle ID to look it up on the App Store.
 
-**Note:** If you have apps with matching bundle IDs on both the Mac and iOS app stores (even if they use different capitalisation), the lookup mechanism won't work, so you'll need to set the application app store ID, which is a numeric ID that can be found in iTunes Connect after you set up an app.
+**Note:** If you have apps with matching bundle IDs on both the Mac and iOS app stores (even if they use different capitalisation), the lookup mechanism won't work, so you'll need to set the appStoreID property, which is a numeric ID that can be found in iTunes Connect after you set up an app.
 
 Additionally, you can specify an optional remotely hosted Plist file that will be used for the release notes instead of the ones on iTunes. This has 3 key advantages:
 
@@ -125,7 +131,7 @@ This is the name of the app displayed in the alert. It is set automatically from
 
 	@property (nonatomic, copy) NSString *applicationVersion;
 
-The current version number of the app. This is set automatically from the  CFBundleShortVersionString (if available) or CFBundleVersion string in the info.plist and it's probably not a good ideas to change it unless you know what you are doing. In some cases your bundle version may not match the publicly known "display" version of your app, in which case use the display version here. Note that the version numbers on iTunes and in the remote versions Plist will be compared to this value, not the one in the info.plist.
+The current version number of the app. This is set automatically from the  CFBundleShortVersionString (if available) or CFBundleVersion string in the info.plist and it's probably not a good idea to change it unless you know what you are doing. Note that the version numbers on iTunes and in the remote versions Plist will be compared to this value, not the one in the info.plist.
 
     @property (nonatomic, copy) NSString *applicationBundleID;
 
@@ -215,7 +221,7 @@ Flag that indicates if the local version details have been viewed (YES) or not (
 
 	@property (nonatomic, assign) id<iVersionDelegate> delegate;
 
-An object you have supplied that implements the iVersionDelegate protocol, documented below. Use this to detect and/or override iVersion's default behaviour. 
+An object you have supplied that implements the iVersionDelegate protocol, documented below. Use this to detect and/or override iVersion's default behaviour. This defaults to the App Delegate, so if you are using your App Delegate as your iVersion delegate, you don't need to set this property.
 
 
 Advanced methods
@@ -328,3 +334,5 @@ Advanced Example
 The advanced example demonstrates how you might implement a completely bespoke iVersion interface. Automatic version checking is disabled and instead the user can trigger a check by pressing the "Check for new version" button.
 
 When pressed, the app display a progress wheel and then prints the result in a console underneath the button.
+
+The example is for Mac OS, but the same thing can be applied on iOS.

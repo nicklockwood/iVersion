@@ -1,3 +1,8 @@
+Version 1.9
+
+- Included localisation for French, German, Italian, Spanish and Japanese
+- iVersion delegate now defaults to App Delegate unless otherwise specified
+
 Version 1.8
 
 - iVersion is now *completely zero-config* in most cases!

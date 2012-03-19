@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.8
+//  Version 1.9
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -34,7 +34,7 @@
 //
 //  ARC Helper
 //
-//  Version 1.2.1
+//  Version 1.2.2
 //
 //  Created by Nick Lockwood on 05/01/2012.
 //  Copyright 2012 Charcoal Design
@@ -48,9 +48,9 @@
 #ifndef AH_RETAIN
 #if __has_feature(objc_arc)
 #define AH_RETAIN(x) (x)
-#define AH_RELEASE(x)
+#define AH_RELEASE(x) (void)(x)
 #define AH_AUTORELEASE(x) (x)
-#define AH_SUPER_DEALLOC
+#define AH_SUPER_DEALLOC (void)(0)
 #else
 #define __AH_WEAK
 #define AH_WEAK assign

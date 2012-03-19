@@ -17,5 +17,7 @@
 		<string>FIX: Some important bug fix</string>
 		<string>CHANGE: Some significant change</string>
 	</array>
+	<key>minVersion</key>
+	<string>1.2</string>
 </dict>
 </plist>

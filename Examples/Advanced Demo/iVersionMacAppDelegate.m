@@ -32,7 +32,9 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
 	//set myself as iVersion delegate
-    //you can't do this in initialize method
+    //you don't actually need to set this if you
+    //are using the AppDelegate as your iVersion delegate
+    //as that is the default iVersion delegate anyway
 	[iVersion sharedInstance].delegate = self;
 }
 
