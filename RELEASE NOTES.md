@@ -2,6 +2,7 @@ Version 1.9
 
 - Included localisation for French, German, Italian, Spanish and Japanese
 - iVersion delegate now defaults to App Delegate unless otherwise specified
+- Now checks the correct country's iTunes store based on the user locale settings
 
 Version 1.8
 

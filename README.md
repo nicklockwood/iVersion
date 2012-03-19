@@ -141,6 +141,10 @@ This is the application bundle ID, used to retrieve the latest version and relea
     
 This is the language localisation that will be specified when retrieving release notes from iTunes. This is set automatically from the device language preferences, so shouldn't need to be changed.
 
+    @property (nonatomic, copy) NSString *appStoreCountry;
+
+This is the two-letter country used to specify which iTunes store to check. It is set automatically from the device locale preferences, so shouldn't need to be changed in most cases. You can override this to point to the US store, or another specific store if you prefer.
+
 	@property (nonatomic, assign) BOOL showOnFirstLaunch;
 
 Specify whether the release notes for the current version should be shown the first time the user launches the app. If set to no it means that users who, for example, download version 1.1 of your app but never installed a previous version, won't be shown the new features in version 1.1.

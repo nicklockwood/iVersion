@@ -40,7 +40,7 @@ static NSString *const iVersionLastCheckedKey = @"iVersionLastChecked";
 static NSString *const iVersionLastRemindedKey = @"iVersionLastReminded";
 
 static NSString *const iVersionMacAppStoreBundleID = @"com.apple.appstore";
-static NSString *const iVersionAppLookupURLFormat = @"http://itunes.apple.com/lookup?lang=%@";
+static NSString *const iVersionAppLookupURLFormat = @"http://itunes.apple.com/lookup?country=%@&lang=%@";
 
 //note, these aren't ideal as they link to the app page, not the update page
 //there may be some way to link directly to the app store updates tab, but I don't know what it is
@@ -107,6 +107,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 @synthesize applicationVersion;
 @synthesize applicationBundleID;
 @synthesize appStoreLanguage;
+@synthesize appStoreCountry;
 @synthesize showOnFirstLaunch;
 @synthesize groupNotesByVersion;
 @synthesize checkPeriod;
@@ -205,8 +206,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                                                    object:nil];
 #endif
         
-        //get language
+        //get language and country
         self.appStoreLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+        self.appStoreCountry = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
         
         //application version (use short version preferentially)
         self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
@@ -333,6 +335,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     AH_RELEASE(appStoreLanguage);
+    AH_RELEASE(appStoreCountry);
     AH_RELEASE(remoteVersionsDict);
     AH_RELEASE(downloadError);
     AH_RELEASE(remoteVersionsPlistURL);
@@ -632,7 +635,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             NSDictionary *versions = nil;
             
             //first check iTunes
-            NSString *iTunesServiceURL = [NSString stringWithFormat:iVersionAppLookupURLFormat, appStoreLanguage];
+            NSString *iTunesServiceURL = [NSString stringWithFormat:iVersionAppLookupURLFormat, appStoreCountry, appStoreLanguage];
             if (appStoreID)
             {
                 iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"&id=%i", appStoreID];
