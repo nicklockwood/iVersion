@@ -1,3 +1,8 @@
+Version 1.9.1
+
+- Fixed bug where release notes containing commas would not be displayed
+- Release notes containing unicode literals are now handled correctly
+
 Version 1.9
 
 - Included localisation for French, German, Italian, Spanish and Japanese

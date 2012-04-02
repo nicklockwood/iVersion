@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.9
+//  Version 1.9.1
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -608,10 +608,57 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             {
                 NSString *value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
                 value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                while ([value hasPrefix:@"\""] && ![value hasSuffix:@"\""])
+                {
+                    if (valueEnd.location == NSNotFound)
+                    {
+                        break;
+                    }
+                    NSInteger newStart = valueEnd.location + 1;
+                    valueEnd = [json rangeOfString:@"," options:0 range:NSMakeRange(newStart, [json length] - newStart)];
+                    value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
+                    value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                }
+                
                 value = [value stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
                 value = [value stringByReplacingOccurrencesOfString:@"\\\\" withString:@"\\"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
                 value = [value stringByReplacingOccurrencesOfString:@"\\\"" withString:@"\""];
                 value = [value stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\f" withString:@"\f"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\b" withString:@"\f"];
+                
+                while (YES)
+                {
+                    NSRange unicode = [value rangeOfString:@"\\u"];
+                    if (unicode.location == NSNotFound)
+                    {
+                        break;
+                    }
+                    
+                    uint32_t c = 0;
+                    NSString *hex = [value substringWithRange:NSMakeRange(unicode.location + 2, 4)];
+                    NSScanner *scanner = [NSScanner scannerWithString:hex];
+                    [scanner scanHexInt:&c];
+                    
+                    if (c <= 0xffff)
+                    {
+                        value = [value stringByReplacingCharactersInRange:NSMakeRange(unicode.location, 6) withString:[NSString stringWithFormat:@"%C", c]];
+                    }
+                    else
+                    {
+                        //convert character to surrogate pair
+                        uint16_t x = (uint16_t)c;
+                        uint16_t u = (c >> 16) & ((1 << 5) - 1);
+                        uint16_t w = (uint16_t)u - 1;
+                        unichar high = 0xd800 | (w << 6) | x >> 10;
+                        unichar low = (uint16_t)(0xdc00 | (x & ((1 << 10) - 1)));
+                        
+                        value = [value stringByReplacingCharactersInRange:NSMakeRange(unicode.location, 6) withString:[NSString stringWithFormat:@"%C%C", high, low]];
+                    }
+                }
                 return value;
             }
         }
