@@ -207,7 +207,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 #endif
         
         //get language and country
-        self.appStoreLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+        self.appStoreLanguage = [[NSLocale currentLocale] localeIdentifier];
         self.appStoreCountry = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
         
         //application version (use short version preferentially)

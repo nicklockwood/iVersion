@@ -2,6 +2,7 @@ Version 1.9.1
 
 - Fixed bug where release notes containing commas would not be displayed
 - Release notes containing unicode literals are now handled correctly
+- Now uses localeIdentifier for language parameter to match iTunes format
 
 Version 1.9
 
