@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.9.1
+//  Version 1.9.2
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -129,7 +129,6 @@
     NSUInteger appStoreID;
     NSString *remoteVersionsPlistURL;
     NSString *localVersionsPlistPath;
-    NSString *applicationName;
     NSString *applicationVersion;
     NSString *applicationBundleID;
     NSString *appStoreLanguage;
@@ -166,7 +165,6 @@
 @property (nonatomic, copy) NSString *localVersionsPlistPath;
 
 //application details - these are set automatically
-@property (nonatomic, copy) NSString *applicationName;
 @property (nonatomic, copy) NSString *applicationVersion;
 @property (nonatomic, copy) NSString *applicationBundleID;
 @property (nonatomic, copy) NSString *appStoreLanguage;

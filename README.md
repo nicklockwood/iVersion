@@ -125,10 +125,6 @@ This is the URL of the remotely hosted plist that iVersion will check for releas
 
 The file name of your local release notes plist used to tell users about new features when they first launch a new update. Set this value to nil if you do not want your app to display release notes for the current version.
 
-	@property (nonatomic, copy) NSString *applicationName;
-
-This is the name of the app displayed in the alert. It is set automatically from the info.plist, but you may wish to override it with a shorter or longer version.
-
 	@property (nonatomic, copy) NSString *applicationVersion;
 
 The current version number of the app. This is set automatically from the  CFBundleShortVersionString (if available) or CFBundleVersion string in the info.plist and it's probably not a good idea to change it unless you know what you are doing. Note that the version numbers on iTunes and in the remote versions Plist will be compared to this value, not the one in the info.plist.
@@ -151,7 +147,7 @@ Specify whether the release notes for the current version should be shown the fi
 
 	@property (nonatomic, assign) BOOL groupNotesByVersion;
 
-If your release notes files contains multiple versions, this option will group the release notes by their version number in the alert shown to the user. If set to NO, the release notes will be shown as a single list.
+If your release notes files contains multiple versions, this option will group the release notes by their version number in the alert shown to the user. If set to NO, the release notes will be shown as a single list. Defaults to NO.
 
 	@property (nonatomic, assign) float checkPeriod;
 
@@ -167,11 +163,11 @@ The title displayed for features in the current version (i.e. features in the lo
 
 	@property (nonatomic, copy) NSString *updateAvailableTitle;
 
-The title displayed when iVersion detects a new version of the app has appeared in the remote versions plist.
+The title displayed when iVersion detects a new version of the app has appeared in the remote versions plist. The latest version number will automatically be appended to this title in brackets if `groupNotesByVersion` is set to NO.
 
 	@property (nonatomic, copy) NSString *versionLabelFormat;
 
-The format string for the release notes version separators. This should include a %@ placeholder for the version number, e.g "Version %@".
+The format string for the release notes version separators. This should include a %@ placeholder for the version number, e.g "Version %@". This label is not used unless `groupNotesByVersion` is set to YES.
 
 	@property (nonatomic, copy) NSString *okButtonLabel;
 	

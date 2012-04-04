@@ -10,4 +10,9 @@
 
 @implementation iVersionViewController
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    return YES;
+}
+
 @end

@@ -26,7 +26,7 @@
     //but we need to test with an app that's actually on the store
     [iVersion sharedInstance].appStoreID = 355313284;
     [iVersion sharedInstance].applicationBundleID = @"com.charcoaldesign.rainbowblocks";
-
+    
     //configure iVersion. These paths are optional - if you don't set
     //them, iVersion will just get the release notes from iTunes directly
     [iVersion sharedInstance].remoteVersionsPlistURL = @"http://charcoaldesign.co.uk/iVersion/versions.plist";

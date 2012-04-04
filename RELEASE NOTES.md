@@ -1,3 +1,11 @@
+Version 1.9.2
+
+- Added logic to prevent UIAlertView collapsing in landscape mode
+- Shortened default updateAvailableTitle to better fit the alert
+- Removed applicationName configuration property as it is no longer used
+- Fixed bug in Italian localised updateAvailableTitle text
+- groupNotesByVersion now defaults to NO
+
 Version 1.9.1
 
 - Fixed bug where release notes containing commas would not be displayed
