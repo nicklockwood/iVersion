@@ -5,9 +5,13 @@ The Mac and iOS App Store update mechanism is somewhat cumbersome and disconnect
 
 Whilst it is not permitted to update an App Store app from within the app itself, there is no reason why an app should not inform the user that the new release is ready, and direct them to the App Store to download the update.
 
+And if your app is not on the App Store, either because it's an in-house/enterprise iOS app, or a Mac app delivered to customers outside of the store, you can't use the App Store update mechanism anyway.
+
 iVersion is a simple, *zero-config* class to allow iPhone and Mac App Store apps to automatically check for updates and inform the user about new features.
 
 iVersion automatically detects when the new version of an app is released on the App Store and informs the user with a helpful alert that links them directly to the app download page.
+
+Or if your app is not on the store, iVersion lets you specify a remote plist file to check for new releases, and a download URL where users can get the latest release.
 
 iVersion has an additional function, which is to tell users about important new features when they first run an app after downloading a new version.
 
@@ -41,9 +45,9 @@ To install iVersion into your app, drag the iVersion.h, .m and .bundle files int
 
 As of version 1.8, iVersion typically requires no configuration at all and will simply run automatically, using the Application's bundle ID to look it up on the App Store.
 
-**Note:** If you have apps with matching bundle IDs on both the Mac and iOS app stores (even if they use different capitalisation), the lookup mechanism won't work, so you'll need to set the appStoreID property, which is a numeric ID that can be found in iTunes Connect after you set up an app.
+**Note:** If you have apps with matching bundle IDs on both the Mac and iOS App Stores (even if they use different capitalisation), the lookup mechanism won't work, so you'll need to set the appStoreID property, which is a numeric ID that can be found in iTunes Connect after you set up an app. This is only applicable to App Store apps.
 
-Additionally, you can specify an optional remotely hosted Plist file that will be used for the release notes instead of the ones on iTunes. This has 3 key advantages:
+Alternatively (or additionally) you can specify an optional remotely hosted Plist file that will be used for the release notes instead of the ones on iTunes. Even if your app is on the store, there are a few advantages to providing your own release notes plist:
 
 1. You can provide release notes for multiple versions, and if users skip a version they will see the release notes for all the updates they've missed.
 
@@ -55,7 +59,7 @@ If you do wish to customise iVersion, the best time to do this is *before* the a
 
 	+ (void)initialize
 	{
-		//configure iVersion
+		//example configuration
 		[iVersion sharedInstance].appStoreID = 355313284;
 		[iVersion sharedInstance].remoteVersionsPlistURL = @"http://example.com/versions.plist";
 	}
@@ -201,7 +205,7 @@ If the default iVersion behaviour doesn't meet your requirements, you can implem
 
 	@property (nonatomic, strong) NSURL *updateURL;
 
-The URL that the app will direct the user to if an update is detected and they choose to download it. If you are implementing your own download button, you should probably use the openAppPageInAppStore method instead, especially on Mac OS, as the process for opening the Mac app store is more complex than merely opening the URL.
+The URL that the app will direct the user to if an update is detected and they choose to download it. You will need to override this for in-house apps or apps that are not distributed via the App Store. If you are implementing your own download button for a regular app-store-app, you should use the openAppPageInAppStore method instead of opening this URL, especially on Mac OS, as the process for opening the Mac App Store is more complex than merely opening the URL.
 
 	@property (nonatomic, copy) NSString *ignoredVersion;
 
@@ -229,7 +233,7 @@ Advanced methods
 
 	- (void)openAppPageInAppStore;
 
-This method will open the application page in the Mac or iPhone app store, depending on which platform is running. You should use this method instead of the updateURL property if you are running on Mac OS as the process for launching the Mac app store is more complex than merely opening the URL. Note that this method depends on the `appStoreID` which is only retrieved after polling the iTunes server, so if you intend to call this method without first doing an update check, you will need to set the `appStoreID` property yourself beforehand.
+This method will open the application page in the Mac or iPhone App Store, depending on which platform is running. You should use this method instead of the updateURL property if you are running on Mac OS as the process for launching the Mac App Store is more complex than merely opening the URL. Note that this method depends on the `appStoreID` which is only retrieved after polling the iTunes server, so if you intend to call this method without first doing an update check, you will need to set the `appStoreID` property yourself beforehand.
 
 	- (void)checkIfNewVersion;
 
