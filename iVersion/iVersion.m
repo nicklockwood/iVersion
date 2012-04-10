@@ -723,7 +723,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 AH_RELEASE(json);
                 
                 //now check plist for alternative release notes
-                if (((appStoreID && newerVersionAvailable) || !appStoreID) && remoteVersionsPlistURL)
+                if (((appStoreID && newerVersionAvailable) || !appStoreID || debug) && remoteVersionsPlistURL)
                 {
                     NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:remoteVersionsPlistURL] options:NSDataReadingUncached error:&error];
                     if (data)

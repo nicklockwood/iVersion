@@ -8,7 +8,6 @@
 
 #import "iVersionAppDelegate.h"
 #import "iVersionViewController.h"
-#import "iVersion.h"
 
 
 @implementation iVersionAppDelegate
