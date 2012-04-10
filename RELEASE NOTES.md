@@ -1,3 +1,8 @@
+Version 1.9.3
+
+- It is now possible again to use iVersion with apps that are not on the iOS or Mac app store using just the remoteVersionsPlist
+- It is now possible again to test release notes using debug mode
+
 Version 1.9.2
 
 - Added logic to prevent UIAlertView collapsing in landscape mode

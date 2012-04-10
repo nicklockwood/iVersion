@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.9.2
+//  Version 1.9.3
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -689,7 +689,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             {
                 iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"&bundleId=%@", applicationBundleID];
             }
-            NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:iTunesServiceURL] options:NSDataReadingUncached error:&error];
+            NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:iTunesServiceURL]
+                                                 options:NSDataReadingUncached error:&error];
             if (data)
             {
                 //convert to string
@@ -722,7 +723,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 AH_RELEASE(json);
                 
                 //now check plist for alternative release notes
-                if (appStoreID && newerVersionAvailable && remoteVersionsPlistURL)
+                if (((appStoreID && newerVersionAvailable) || !appStoreID) && remoteVersionsPlistURL)
                 {
                     NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:remoteVersionsPlistURL] options:NSDataReadingUncached error:&error];
                     if (data)

@@ -17,12 +17,8 @@
 
 + (void)initialize
 {
-    //set the app and bundle ID. normally you wouldn't need to do this
-    //but we need to test with an app that's actually on the store
-    [iVersion sharedInstance].appStoreID = 412363063;
-    [iVersion sharedInstance].applicationBundleID = @"com.charcoaldesign.RainbowBlocks";
-    
-	//set remote plist
+	//set remote plist. This is optional - if you don't set this
+    //iVersion will just get the release notes from iTunes directly (if your app is on the store)
 	[iVersion sharedInstance].remoteVersionsPlistURL = @"http://charcoaldesign.co.uk/iVersion/versions.plist";
 
 	//disable automatic checks
