@@ -19,7 +19,7 @@ iVersion has an additional function, which is to tell users about important new 
 Supported OS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 5.0 / Mac OS 10.7 (Xcode 4.3.1, Apple LLVM compiler 3.1)
+* Supported build target - iOS 5.1 / Mac OS 10.7 (Xcode 4.3.2, Apple LLVM compiler 3.1)
 * Earliest supported deployment target - iOS 4.3 / Mac OS 10.6
 * Earliest compatible deployment target - iOS 3.0 / Mac OS 10.6
 
@@ -188,6 +188,10 @@ The button label for the button the user presses if they don't want to download 
 	@property (nonatomic, copy) NSString *downloadButtonLabel;
 
 The button label for the button the user presses if they want to download a new update.
+
+    @property (nonatomic, assign) BOOL disableAlertViewResizing;
+
+On iPhone, iVersion includes some logic to resize the alert view to ensure that your release notes message doesn't become truncated in landscape mode. The code to do this is a rather nasty hack, so if your alert text is very short and/or your app only needs to function in portrait mode on iPhone, you may wish to set this property to YES, which may help make your app more robust against future iOS updates. Try the *Resizing Disabled* example for a demonstration of the effect.
 
 	@property (nonatomic, assign) BOOL checkAtLaunch;
 

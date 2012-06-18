@@ -1,3 +1,13 @@
+Version 1.9.4
+
+- Now links users directly to update page on app store on iOS
+- Fixed a bug where advanced properties set in the delegate methods might be subsequently overridden by iVersion
+- Added disableAlertViewResizing option (see README for details)
+- Added Resizing Disabled example project
+- Added explicit 30-second timeout for remote version checks
+- iVersion will now no longer spawn multiple download threads if closed and re-opened whilst performing a check
+- Added Simplified Chinese translation
+
 Version 1.9.3
 
 - It is now possible again to use iVersion with apps that are not on the iOS or Mac app store using just the remoteVersionsPlist

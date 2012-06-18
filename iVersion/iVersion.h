@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.9.3
+//  Version 1.9.4
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -34,7 +34,7 @@
 //
 //  ARC Helper
 //
-//  Version 1.2.2
+//  Version 1.3.1
 //
 //  Created by Nick Lockwood on 05/01/2012.
 //  Copyright 2012 Charcoal Design
@@ -51,6 +51,7 @@
 #define AH_RELEASE(x) (void)(x)
 #define AH_AUTORELEASE(x) (x)
 #define AH_SUPER_DEALLOC (void)(0)
+#define __AH_BRIDGE __bridge
 #else
 #define __AH_WEAK
 #define AH_WEAK assign
@@ -58,14 +59,16 @@
 #define AH_RELEASE(x) [(x) release]
 #define AH_AUTORELEASE(x) [(x) autorelease]
 #define AH_SUPER_DEALLOC [super dealloc]
+#define __AH_BRIDGE
 #endif
 #endif
 
 //  Weak reference support
 
+#import <Availability.h>
 #ifndef AH_WEAK
 #if defined __IPHONE_OS_VERSION_MIN_REQUIRED
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_4_3
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 50000
 #define __AH_WEAK __weak
 #define AH_WEAK weak
 #else
@@ -73,7 +76,7 @@
 #define AH_WEAK unsafe_unretained
 #endif
 #elif defined __MAC_OS_X_VERSION_MIN_REQUIRED
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > __MAC_10_6
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #define __AH_WEAK __weak
 #define AH_WEAK weak
 #else
@@ -124,33 +127,34 @@
 {
     @private
     
-    NSDictionary *remoteVersionsDict;
-    NSError *downloadError;
-    NSUInteger appStoreID;
-    NSString *remoteVersionsPlistURL;
-    NSString *localVersionsPlistPath;
-    NSString *applicationVersion;
-    NSString *applicationBundleID;
-    NSString *appStoreLanguage;
-    NSString *appStoreCountry;
-    BOOL showOnFirstLaunch;
-    BOOL groupNotesByVersion;
-    float checkPeriod;
-    float remindPeriod;
-    NSString *inThisVersionTitle;
-    NSString *updateAvailableTitle;
-    NSString *versionLabelFormat;
-    NSString *okButtonLabel;
-    NSString *ignoreButtonLabel;
-    NSString *remindButtonLabel;
-    NSString *downloadButtonLabel;
-    BOOL checkAtLaunch;
-    BOOL debug;
-    NSURL *updateURL;
-    NSString *versionDetails;
-    id<iVersionDelegate> __AH_WEAK delegate;
-    id visibleLocalAlert;
-    id visibleRemoteAlert;
+    NSDictionary *_remoteVersionsDict;
+    NSError *_downloadError;
+    NSUInteger _appStoreID;
+    NSString *_remoteVersionsPlistURL;
+    NSString *_localVersionsPlistPath;
+    NSString *_applicationVersion;
+    NSString *_applicationBundleID;
+    NSString *_appStoreLanguage;
+    NSString *_appStoreCountry;
+    BOOL _showOnFirstLaunch;
+    BOOL _groupNotesByVersion;
+    float _checkPeriod;
+    float _remindPeriod;
+    NSString *_inThisVersionTitle;
+    NSString *_updateAvailableTitle;
+    NSString *_versionLabelFormat;
+    NSString *_okButtonLabel;
+    NSString *_ignoreButtonLabel;
+    NSString *_remindButtonLabel;
+    NSString *_downloadButtonLabel;
+    BOOL _checkAtLaunch;
+    BOOL _debug;
+    NSURL *_updateURL;
+    NSString *_versionDetails;
+    id<iVersionDelegate> __AH_WEAK _delegate;
+    id _visibleLocalAlert;
+    id _visibleRemoteAlert;
+    BOOL _currentlyChecking;
 }
 #endif
 
@@ -186,6 +190,7 @@
 @property (nonatomic, copy) NSString *downloadButtonLabel;
 
 //debugging and automatic checks
+@property (nonatomic, assign) BOOL disableAlertViewResizing;
 @property (nonatomic, assign) BOOL checkAtLaunch;
 @property (nonatomic, assign) BOOL debug;
 

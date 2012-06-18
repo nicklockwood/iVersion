@@ -31,6 +31,10 @@
     //them, iVersion will just get the release notes from iTunes directly (if your app is on the store)
     [iVersion sharedInstance].remoteVersionsPlistURL = @"http://charcoaldesign.co.uk/iVersion/versions.plist";
     [iVersion sharedInstance].localVersionsPlistPath = @"versions.plist";
+
+    //disable the alert view resizing
+    //rotate the device to landscape to see what happens
+    [iVersion sharedInstance].disableAlertViewResizing = YES;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
