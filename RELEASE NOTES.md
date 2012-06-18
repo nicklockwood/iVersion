@@ -4,7 +4,7 @@ Version 1.9.4
 - Fixed a bug where advanced properties set in the delegate methods might be subsequently overridden by iVersion
 - Added disableAlertViewResizing option (see README for details)
 - Added Resizing Disabled example project
-- Added explicit 30-second timeout for remote version checks
+- Added explicit 60-second timeout for remote version checks
 - iVersion will now no longer spawn multiple download threads if closed and re-opened whilst performing a check
 - Added Simplified Chinese translation
 
