@@ -463,7 +463,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 #ifndef __IPHONE_OS_VERSION_MAX_ALLOWED
     
     //only show when main window is available
-    if (![[NSApplication sharedApplication] mainWindow])
+    if (self.onlyPromptIfMainWindowIsAvailable && ![[NSApplication sharedApplication] mainWindow])
     {
         [self performSelector:@selector(downloadedVersionsData) withObject:nil afterDelay:0.5];
         return;
