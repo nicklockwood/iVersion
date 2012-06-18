@@ -193,6 +193,10 @@ The button label for the button the user presses if they want to download a new 
 
 On iPhone, iVersion includes some logic to resize the alert view to ensure that your release notes message doesn't become truncated in landscape mode. The code to do this is a rather nasty hack, so if your alert text is very short and/or your app only needs to function in portrait mode on iPhone, you may wish to set this property to YES, which may help make your app more robust against future iOS updates. Try the *Resizing Disabled* example for a demonstration of the effect.
 
+    @property (nonatomic, assign) BOOL onlyPromptIfMainWindowIsAvailable;
+
+This setting is applicable to Mac OS only. By default, on Mac OS the iVersion alert is displayed as sheet on the main window. Some applications do not have a main window, so this approach doesn't work. For such applications, set this property to NO to allow the iVersion alert to be displayed as a regular modal window.
+
 	@property (nonatomic, assign) BOOL checkAtLaunch;
 
 Set this to NO to disable checking for local and remote release notes automatically when the app is launched or returns from the background. Disabling this option does not prevent you from manually triggering the checks by calling `checkIfNewVersion` and `checkForNewVersion` respectively.

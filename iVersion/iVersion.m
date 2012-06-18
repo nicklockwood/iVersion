@@ -119,6 +119,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 @synthesize remindButtonLabel = _remindButtonLabel;
 @synthesize downloadButtonLabel = _downloadButtonLabel;
 @synthesize disableAlertViewResizing = _disableAlertViewResizing;
+@synthesize onlyPromptIfMainWindowIsAvailable = _onlyPromptIfMainWindowIsAvailable;
 @synthesize checkAtLaunch = _checkAtLaunch;
 @synthesize debug = _debug;
 @synthesize updateURL = _updateURL;
@@ -227,6 +228,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.applicationBundleID = [[NSBundle mainBundle] bundleIdentifier];
         
         //default settings
+        self.onlyPromptIfMainWindowIsAvailable = YES;
         self.checkAtLaunch = YES;
         self.showOnFirstLaunch = NO;
         self.groupNotesByVersion = NO;
@@ -771,7 +773,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 #ifndef __IPHONE_OS_VERSION_MAX_ALLOWED
     
     //only show when main window is available
-    if (![[NSApplication sharedApplication] mainWindow])
+    if (self.onlyPromptIfMainWindowIsAvailable && ![[NSApplication sharedApplication] mainWindow])
     {
         [self performSelector:@selector(checkIfNewVersion) withObject:nil afterDelay:0.5];
         return;

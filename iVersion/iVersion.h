@@ -147,6 +147,8 @@
     NSString *_ignoreButtonLabel;
     NSString *_remindButtonLabel;
     NSString *_downloadButtonLabel;
+    BOOL _disableAlertViewResizing;
+    BOOL _onlyPromptIfMainWindowIsAvailable;
     BOOL _checkAtLaunch;
     BOOL _debug;
     NSURL *_updateURL;
@@ -191,6 +193,7 @@
 
 //debugging and automatic checks
 @property (nonatomic, assign) BOOL disableAlertViewResizing;
+@property (nonatomic, assign) BOOL onlyPromptIfMainWindowIsAvailable;
 @property (nonatomic, assign) BOOL checkAtLaunch;
 @property (nonatomic, assign) BOOL debug;
 
