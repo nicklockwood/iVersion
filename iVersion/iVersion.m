@@ -431,7 +431,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 - (NSString *)versionDetails
 {
-    if (!self.versionDetails)
+    if (!_versionDetails)
     {
         if (self.viewedVersionDetails)
         {
@@ -442,7 +442,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             self.versionDetails = [self versionDetailsSince:self.lastVersion inDict:[self localVersionsDict]];
         }
     }
-    return self.versionDetails;
+    return _versionDetails;
 }
 
 - (NSString *)URLEncodedString:(NSString *)string
