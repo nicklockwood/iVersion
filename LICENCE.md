@@ -1,6 +1,6 @@
 iVersion
 
-Version 1.9.4, June 18th, 2012
+Version 1.9.5, July 7th, 2012
 Copyright (C) 2011 Charcoal Design
 
 This software is provided 'as-is', without any express or implied

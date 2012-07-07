@@ -1,3 +1,7 @@
+Version 1.9.5
+
+- Fixed cache policy so that version data is no longer cached between requests while app is running
+
 Version 1.9.4
 
 - Now links users directly to update page on app store on iOS
