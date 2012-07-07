@@ -1,6 +1,7 @@
 Version 1.9.5
 
 - Fixed cache policy so that version data is no longer cached between requests while app is running
+- Fixed typo in German translation
 
 Version 1.9.4
 
