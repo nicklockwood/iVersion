@@ -40,7 +40,7 @@ static NSString *const iVersionLastCheckedKey = @"iVersionLastChecked";
 static NSString *const iVersionLastRemindedKey = @"iVersionLastReminded";
 
 static NSString *const iVersionMacAppStoreBundleID = @"com.apple.appstore";
-static NSString *const iVersionAppLookupURLFormat = @"http://itunes.apple.com/lookup?country=%@&lang=%@";
+static NSString *const iVersionAppLookupURLFormat = @"http://itunes.apple.com/%@/lookup";
 
 static NSString *const iVersioniOSAppStoreURLFormat = @"itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=%u";
 static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/app/id%u";
@@ -686,14 +686,14 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             NSDictionary *versions = nil;
             
             //first check iTunes
-            NSString *iTunesServiceURL = [NSString stringWithFormat:iVersionAppLookupURLFormat, self.appStoreCountry, self.appStoreLanguage];
+            NSString *iTunesServiceURL = [NSString stringWithFormat:iVersionAppLookupURLFormat, self.appStoreCountry];
             if (self.appStoreID)
             {
-                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"&id=%u", (unsigned int)self.appStoreID];
+                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"?id=%u", (unsigned int)self.appStoreID];
             }
             else 
             {
-                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"&bundleId=%@", self.applicationBundleID];
+                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"?bundleId=%@", self.applicationBundleID];
             }
             
             NSError *error = nil;
