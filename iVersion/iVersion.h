@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.9.5
+//  Version 1.9.6
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -123,7 +123,6 @@ __MAC_OS_X_VERSION_MIN_REQUIRED > __MAC_10_7))
     NSString *_localVersionsPlistPath;
     NSString *_applicationVersion;
     NSString *_applicationBundleID;
-    NSString *_appStoreLanguage;
     NSString *_appStoreCountry;
     BOOL _showOnFirstLaunch;
     BOOL _groupNotesByVersion;
@@ -162,7 +161,6 @@ __MAC_OS_X_VERSION_MIN_REQUIRED > __MAC_10_7))
 //application details - these are set automatically
 @property (nonatomic, copy) NSString *applicationVersion;
 @property (nonatomic, copy) NSString *applicationBundleID;
-@property (nonatomic, copy) NSString *appStoreLanguage;
 @property (nonatomic, copy) NSString *appStoreCountry;
 
 //usage settings - these have sensible defaults

@@ -1,3 +1,9 @@
+Version 1.9.6
+
+- Added support for iOS6. Currently it does not appear to be possible to link users directly to the release notes page on iOS6, but iVersion will now at least open the app store on the app page without an error.
+- iVersion now displays correctly localised release notes
+- Removed appStoreLanguage property, as this is no longer used
+
 Version 1.9.5
 
 - Fixed cache policy so that version data is no longer cached between requests while app is running

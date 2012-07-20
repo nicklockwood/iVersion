@@ -137,13 +137,9 @@ The current version number of the app. This is set automatically from the  CFBun
 
 This is the application bundle ID, used to retrieve the latest version and release notes from iTunes. This is set automatically from the app's info.plist, so you shouldn't need to change it except for testing purposes.
 
-    @property (nonatomic, copy) NSString *appStoreLanguage;
-    
-This is the language localisation that will be specified when retrieving release notes from iTunes. This is set automatically from the device language preferences, so shouldn't need to be changed.
-
     @property (nonatomic, copy) NSString *appStoreCountry;
 
-This is the two-letter country used to specify which iTunes store to check. It is set automatically from the device locale preferences, so shouldn't need to be changed in most cases. You can override this to point to the US store, or another specific store if you prefer.
+This is the two-letter country code used to specify which iTunes store to check. It is set automatically from the device locale preferences, so shouldn't need to be changed in most cases. You can override this to point to the US store, or another specific store if you prefer, which may be a good idea if your app is only available in certain countries, however be warned that this will affect the language used to display the release notes.
 
 	@property (nonatomic, assign) BOOL showOnFirstLaunch;
 
