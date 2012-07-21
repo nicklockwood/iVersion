@@ -133,15 +133,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 #pragma mark -
 #pragma mark Lifecycle methods
 
-+ (void)load
-{
-    @autoreleasepool
-    {
-        //initialise iVersion
-        [iVersion sharedInstance];
-    }
-}
-
 + (iVersion *)sharedInstance
 {
     static iVersion *sharedInstance = nil;
