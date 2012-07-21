@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.9.5
+//  Version 1.9.6
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -40,9 +40,10 @@ static NSString *const iVersionLastCheckedKey = @"iVersionLastChecked";
 static NSString *const iVersionLastRemindedKey = @"iVersionLastReminded";
 
 static NSString *const iVersionMacAppStoreBundleID = @"com.apple.appstore";
-static NSString *const iVersionAppLookupURLFormat = @"http://itunes.apple.com/lookup?country=%@&lang=%@";
+static NSString *const iVersionAppLookupURLFormat = @"http://itunes.apple.com/%@/lookup";
 
-static NSString *const iVersioniOSAppStoreURLFormat = @"itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=%u";
+static NSString *const iVersioniOSAppStoreURLFormat = @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=%u";
+static NSString *const iVersioniOS6AppStoreURLFormat = @"itms-apps://ax.itunes.apple.com/app/id%u";
 static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/app/id%u";
 
 
@@ -105,7 +106,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 @synthesize localVersionsPlistPath = _localVersionsPlistPath;
 @synthesize applicationVersion = _applicationVersion;
 @synthesize applicationBundleID = _applicationBundleID;
-@synthesize appStoreLanguage = _appStoreLanguage;
 @synthesize appStoreCountry = _appStoreCountry;
 @synthesize showOnFirstLaunch = _showOnFirstLaunch;
 @synthesize groupNotesByVersion = _groupNotesByVersion;
@@ -204,8 +204,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                                                    object:nil];
 #endif
         
-        //get language and country
-        self.appStoreLanguage = [[NSLocale currentLocale] localeIdentifier];
+        //get country
         self.appStoreCountry = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
         
         //application version (use short version preferentially)
@@ -263,9 +262,20 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     }
     
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-    return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOSAppStoreURLFormat, (unsigned int)self.appStoreID]];
+    
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 6.0)
+    {
+        return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOS6AppStoreURLFormat, (unsigned int)self.appStoreID]];
+    }
+    else
+    {
+        return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOSAppStoreURLFormat, (unsigned int)self.appStoreID]];
+    }
+    
 #else
+    
     return [NSURL URLWithString:[NSString stringWithFormat:iVersionMacAppStoreURLFormat, (unsigned int)self.appStoreID]];
+    
 #endif
     
 }
@@ -317,7 +327,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    [_appStoreLanguage release];
     [_appStoreCountry release];
     [_remoteVersionsDict release];
     [_downloadError release];
@@ -677,14 +686,14 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             NSDictionary *versions = nil;
             
             //first check iTunes
-            NSString *iTunesServiceURL = [NSString stringWithFormat:iVersionAppLookupURLFormat, self.appStoreCountry, self.appStoreLanguage];
+            NSString *iTunesServiceURL = [NSString stringWithFormat:iVersionAppLookupURLFormat, self.appStoreCountry];
             if (self.appStoreID)
             {
-                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"&id=%u", (unsigned int)self.appStoreID];
+                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"?id=%u", (unsigned int)self.appStoreID];
             }
             else 
             {
-                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"&bundleId=%@", self.applicationBundleID];
+                iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"?bundleId=%@", self.applicationBundleID];
             }
             
             NSError *error = nil;
