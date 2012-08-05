@@ -1,3 +1,7 @@
+Version 1.9.7
+
+- Fixed crash on iOS 4.x and Mac OS 10.6.x when compiled using Xcode 4.4
+
 Version 1.9.6
 
 - Added support for iOS6. Currently it does not appear to be possible to link users directly to the release notes page on iOS6, but iVersion will now at least open the app store on the app page without an error.

@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.9.6
+//  Version 1.9.7
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -135,11 +135,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 + (void)load
 {
-    @autoreleasepool
-    {
-        //initialise iVersion
-        [iVersion sharedInstance];
-    }
+    [self performSelectorOnMainThread:@selector(sharedInstance) withObject:nil waitUntilDone:NO];
 }
 
 + (iVersion *)sharedInstance
