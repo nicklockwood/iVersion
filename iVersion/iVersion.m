@@ -184,11 +184,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
         
         //register for iphone application events
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(applicationLaunched:)
-                                                     name:UIApplicationDidFinishLaunchingNotification
-                                                   object:nil];
-        
         if (&UIApplicationWillEnterForegroundNotification)
         {
             [[NSNotificationCenter defaultCenter] addObserver:self
@@ -201,12 +196,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                                                  selector:@selector(didRotate)
                                                      name:UIDeviceOrientationDidChangeNotification
                                                    object:nil];
-#else
-        //register for mac application events
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(applicationLaunched:)
-                                                     name:NSApplicationDidFinishLaunchingNotification
-                                                   object:nil];
+
 #endif
         
         //get country
@@ -239,6 +229,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.ignoreButtonLabel = [self localizedStringForKey:@"Ignore"];
         self.remindButtonLabel = [self localizedStringForKey:@"Remind Me Later"];
         self.downloadButtonLabel = [self localizedStringForKey:@"Download"];
+        
+        //app launched
+        [self performSelectorOnMainThread:@selector(applicationLaunched) withObject:nil waitUntilDone:NO];
     }
     return self;
 }
@@ -1062,7 +1055,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 #endif
 
-- (void)applicationLaunched:(NSNotification *)notification
+- (void)applicationLaunched
 {
     if (self.checkAtLaunch)
     {
