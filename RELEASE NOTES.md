@@ -1,3 +1,9 @@
+Version 1.9.8
+
+- Added verboseLogging option to make it easier to diagnose why a new version isn't being correctly detected
+- Renamed debug property to previewMode as this better describes its function
+- Fixed a bug where certain types of download error were not correctly passed to the delegate
+
 Version 1.9.7
 
 - Fixed crash on iOS 4.x and Mac OS 10.6.x when compiled using Xcode 4.4

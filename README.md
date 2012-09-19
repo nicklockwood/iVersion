@@ -19,8 +19,8 @@ iVersion has an additional function, which is to tell users about important new 
 Supported OS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 5.1 / Mac OS 10.8 (Xcode 4.4, Apple LLVM compiler 4.0)
-* Earliest supported deployment target - iOS 4.3 / Mac OS 10.7
+* Supported build target - iOS 6.0 / Mac OS 10.8 (Xcode 4.5, Apple LLVM compiler 4.1)
+* Earliest supported deployment target - iOS 5.0 / Mac OS 10.7
 * Earliest compatible deployment target - iOS 3.0 / Mac OS 10.6
 
 NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this OS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
@@ -197,7 +197,11 @@ This setting is applicable to Mac OS only. By default, on Mac OS the iVersion al
 
 Set this to NO to disable checking for local and remote release notes automatically when the app is launched or returns from the background. Disabling this option does not prevent you from manually triggering the checks by calling `checkIfNewVersion` and `checkForNewVersion` respectively.
 
-	@property (nonatomic, assign) BOOL debug;
+    @property (nonatomic, assign) BOOL verboseLogging;
+
+This option will cause iVersion to send detailed logs to the console about the version checking process. If your app is not correctly detecting a new release, this will help you figure out why. Verbose logging is enabled by default on debug builds, and disabled on release and deployment builds.
+
+	@property (nonatomic, assign) BOOL previewMode;
 
 If set to YES, iVersion will always display the contents of the local and remote versions plists, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
 
@@ -337,7 +341,7 @@ This time it will not say that a new version is available. In effect, you have s
 
 If you dismiss the dialog and then quit and relaunch the app you should now see nothing. This is because the app has detected that the bundle version hasn't changed since you last launched the app.
 
-To show the alerts again, delete the app from the simulator and reset the bundle version to 1.1. Alternatively, enable the debug settings to force the alerts to appear on launch.
+To show the alerts again, delete the app from the simulator and reset the bundle version to 1.1. Alternatively, enable the `previewMode` option to force the alerts to appear on launch.
 
 
 Advanced Example

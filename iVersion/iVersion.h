@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.9.7
+//  Version 1.9.8
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -85,6 +85,17 @@ __MAC_OS_X_VERSION_MIN_REQUIRED > __MAC_10_7))
 #endif
 
 
+extern NSString *const iVersionErrorDomain;
+
+
+typedef enum
+{
+    iVersionErrorBundleIdDoesNotMatchAppStore = 1,
+    iVersionErrorApplicationNotFoundOnAppStore
+}
+iVersionErrorCode;
+
+
 @interface NSString(iVersion)
 
 - (NSComparisonResult)compareVersion:(NSString *)version;
@@ -138,7 +149,8 @@ __MAC_OS_X_VERSION_MIN_REQUIRED > __MAC_10_7))
     BOOL _disableAlertViewResizing;
     BOOL _onlyPromptIfMainWindowIsAvailable;
     BOOL _checkAtLaunch;
-    BOOL _debug;
+    BOOL _verboseLogging;
+    BOOL _previewMode;
     NSURL *_updateURL;
     NSString *_versionDetails;
     id<iVersionDelegate> __ah_weak _delegate;
@@ -182,7 +194,8 @@ __MAC_OS_X_VERSION_MIN_REQUIRED > __MAC_10_7))
 @property (nonatomic, assign) BOOL disableAlertViewResizing;
 @property (nonatomic, assign) BOOL onlyPromptIfMainWindowIsAvailable;
 @property (nonatomic, assign) BOOL checkAtLaunch;
-@property (nonatomic, assign) BOOL debug;
+@property (nonatomic, assign) BOOL verboseLogging;
+@property (nonatomic, assign) BOOL previewMode;
 
 //advanced properties for implementing custom behaviour
 @property (nonatomic, copy) NSString *ignoredVersion;
