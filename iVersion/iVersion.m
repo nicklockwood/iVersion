@@ -1,15 +1,14 @@
 //
 //  iVersion.m
 //
-//  Version 1.9.8
+//  Version 1.10
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
 //
 //  Distributed under the permissive zlib license
-//  Get the latest version from either of these locations:
+//  Get the latest version from here:
 //
-//  http://charcoaldesign.co.uk/source/cocoa#iversion
 //  https://github.com/nicklockwood/iVersion
 //
 //  This software is provided 'as-is', without any express or implied
@@ -32,6 +31,13 @@
 //
 
 #import "iVersion.h"
+#import <StoreKit/StoreKit.h>
+
+
+#import <Availability.h>
+#if !__has_feature(objc_arc)
+#error This class requires automatic reference counting
+#endif
 
 
 NSString *const iVersionErrorDomain = @"iVersionErrorDomain";
@@ -45,7 +51,7 @@ static NSString *const iVersionLastRemindedKey = @"iVersionLastReminded";
 static NSString *const iVersionMacAppStoreBundleID = @"com.apple.appstore";
 static NSString *const iVersionAppLookupURLFormat = @"http://itunes.apple.com/%@/lookup";
 
-static NSString *const iVersioniOSAppStoreURLFormat = @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=%u";
+static NSString *const iVersioniOSAppStoreURLFormat = @"itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=%u";
 static NSString *const iVersioniOS6AppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%u";
 static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/app/id%u";
 
@@ -84,11 +90,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 @end
 
 
-#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-@interface iVersion () <UIAlertViewDelegate>
-#else
 @interface iVersion ()
-#endif
 
 @property (nonatomic, copy) NSDictionary *remoteVersionsDict;
 @property (nonatomic, strong) NSError *downloadError;
@@ -101,37 +103,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 
 @implementation iVersion
-
-@synthesize remoteVersionsDict = _remoteVersionsDict;
-@synthesize downloadError = _downloadError;
-@synthesize appStoreID = _appStoreID;
-@synthesize remoteVersionsPlistURL = _remoteVersionsPlistURL;
-@synthesize localVersionsPlistPath = _localVersionsPlistPath;
-@synthesize applicationVersion = _applicationVersion;
-@synthesize applicationBundleID = _applicationBundleID;
-@synthesize appStoreCountry = _appStoreCountry;
-@synthesize showOnFirstLaunch = _showOnFirstLaunch;
-@synthesize groupNotesByVersion = _groupNotesByVersion;
-@synthesize checkPeriod = _checkPeriod;
-@synthesize remindPeriod = _remindPeriod;
-@synthesize inThisVersionTitle = _inThisVersionTitle;
-@synthesize updateAvailableTitle = _updateAvailableTitle;
-@synthesize versionLabelFormat = _versionLabelFormat;
-@synthesize okButtonLabel = _okButtonLabel;
-@synthesize ignoreButtonLabel = _ignoreButtonLabel;
-@synthesize remindButtonLabel = _remindButtonLabel;
-@synthesize downloadButtonLabel = _downloadButtonLabel;
-@synthesize disableAlertViewResizing = _disableAlertViewResizing;
-@synthesize onlyPromptIfMainWindowIsAvailable = _onlyPromptIfMainWindowIsAvailable;
-@synthesize checkAtLaunch = _checkAtLaunch;
-@synthesize verboseLogging = _verboseLogging;
-@synthesize previewMode = _previewMode;
-@synthesize updateURL = _updateURL;
-@synthesize versionDetails = _versionDetails;
-@synthesize delegate = _delegate;
-@synthesize visibleLocalAlert = _visibleLocalAlert;
-@synthesize visibleRemoteAlert = _visibleRemoteAlert;
-@synthesize currentlyChecking = _currentlyChecking;
 
 #pragma mark -
 #pragma mark Lifecycle methods
@@ -151,32 +122,29 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     return sharedInstance;
 }
 
-- (NSString *)localizedStringForKey:(NSString *)key
+- (NSString *)localizedStringForKey:(NSString *)key withDefault:(NSString *)defaultString
 {
     static NSBundle *bundle = nil;
     if (bundle == nil)
     {
-        //get localisation bundle
         NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"iVersion" ofType:@"bundle"];
         bundle = [NSBundle bundleWithPath:bundlePath] ?: [NSBundle mainBundle];
-        
-        //get correct lproj folder as this doesn't always happen automatically
-        for (NSString *language in [NSLocale preferredLanguages])
+        if (self.useAllAvailableLanguages)
         {
-            if ([[bundle localizations] containsObject:language])
+            //manually select the desired lproj folder
+            for (NSString *language in [NSLocale preferredLanguages])
             {
-                bundlePath = [bundle pathForResource:language ofType:@"lproj"];
-                bundle = [NSBundle bundleWithPath:bundlePath];
-                break;
+                if ([[bundle localizations] containsObject:language])
+                {
+                    bundlePath = [bundle pathForResource:language ofType:@"lproj"];
+                    bundle = [NSBundle bundleWithPath:bundlePath];
+                    break;
+                }
             }
         }
-        
-        //retain bundle
-        [bundle ah_retain];
     }
-    
-    //return localised string
-    return [bundle localizedStringForKey:key value:nil table:nil];
+    defaultString = [bundle localizedStringForKey:key value:defaultString table:nil];
+    return [[NSBundle mainBundle] localizedStringForKey:key value:defaultString table:nil];
 }
 
 - (iVersion *)init
@@ -216,8 +184,10 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.applicationBundleID = [[NSBundle mainBundle] bundleIdentifier];
         
         //default settings
+        self.useAllAvailableLanguages = YES;
         self.disableAlertViewResizing = NO;
         self.onlyPromptIfMainWindowIsAvailable = YES;
+        self.displayAppUsingStorekitIfAvailable = YES;
         self.checkAtLaunch = YES;
         self.showOnFirstLaunch = NO;
         self.groupNotesByVersion = NO;
@@ -232,17 +202,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.verboseLogging = YES;
         
 #endif
-        
-        //default message text. don't edit these here; if you want to provide your
-        //own message text then configure them using the setters/getters
-        self.inThisVersionTitle = [self localizedStringForKey:@"New in this version"];
-        self.updateAvailableTitle = [self localizedStringForKey:@"New version available"];
-        self.versionLabelFormat = [self localizedStringForKey:@"Version %@"];
-        self.okButtonLabel = [self localizedStringForKey:@"OK"];
-        self.ignoreButtonLabel = [self localizedStringForKey:@"Ignore"];
-        self.remindButtonLabel = [self localizedStringForKey:@"Remind Me Later"];
-        self.downloadButtonLabel = [self localizedStringForKey:@"Download"];
-        
+
         //app launched
         [self performSelectorOnMainThread:@selector(applicationLaunched) withObject:nil waitUntilDone:NO];
     }
@@ -263,6 +223,41 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         
     }
     return _delegate;
+}
+
+- (NSString *)inThisVersionTitle
+{
+    return _inThisVersionTitle ?: [self localizedStringForKey:iVersionInThisVersionTitleKey withDefault:@"New in this version"];
+}
+
+- (NSString *)updateAvailableTitle
+{
+    return _updateAvailableTitle ?: [self localizedStringForKey:iVersionUpdateAvailableTitleKey withDefault:@"New version available"];
+}
+
+- (NSString *)versionLabelFormat
+{
+    return _versionLabelFormat ?: [self localizedStringForKey:iVersionVersionLabelFormatKey withDefault:@"Version %@"];
+}
+
+- (NSString *)okButtonLabel
+{
+    return _okButtonLabel ?: [self localizedStringForKey:iVersionOKButtonKey withDefault:@"OK"];
+}
+
+- (NSString *)ignoreButtonLabel
+{
+    return _ignoreButtonLabel ?: [self localizedStringForKey:iVersionIgnoreButtonKey withDefault:@"Ignore"];
+}
+
+- (NSString *)downloadButtonLabel
+{
+    return _downloadButtonLabel ?: [self localizedStringForKey:iVersionDownloadButtonKey withDefault:@"Download"];
+}
+
+- (NSString *)remindButtonLabel
+{
+    return _remindButtonLabel ?: [self localizedStringForKey:iVersionRemindButtonKey withDefault:@"Remind Me Later"];
 }
 
 - (NSURL *)updateURL
@@ -342,26 +337,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    [_appStoreCountry release];
-    [_remoteVersionsDict release];
-    [_downloadError release];
-    [_remoteVersionsPlistURL release];
-    [_localVersionsPlistPath release];
-    [_applicationVersion release];
-    [_applicationBundleID release];
-    [_inThisVersionTitle release];
-    [_updateAvailableTitle release];
-    [_versionLabelFormat release];
-    [_okButtonLabel release];
-    [_ignoreButtonLabel release];
-    [_remindButtonLabel release];
-    [_downloadButtonLabel release];
-    [_updateURL release];
-    [_versionDetails release];
-    [_visibleLocalAlert release];
-    [_visibleRemoteAlert release];
-    [super ah_dealloc];
 }
 
 #pragma mark -
@@ -403,7 +378,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 - (NSString *)versionDetails:(NSString *)version inDict:(NSDictionary *)dict
 {
-    id versionData = [dict objectForKey:version];
+    id versionData = dict[version];
     if ([versionData isKindOfClass:[NSString class]])
     {
         return versionData;
@@ -566,17 +541,16 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
                                                             message:details
-                                                           delegate:self
+                                                           delegate:(id<UIAlertViewDelegate>)self
                                                   cancelButtonTitle:self.ignoreButtonLabel
                                                   otherButtonTitles:self.downloadButtonLabel, nil];
-            if (self.remindButtonLabel)
+            if ([self.remindButtonLabel length])
             {
                 [alert addButtonWithTitle:self.remindButtonLabel];
             }
             
             self.visibleRemoteAlert = alert;
             [self.visibleRemoteAlert show];
-            [alert release];;
 #else
             self.visibleRemoteAlert = [NSAlert alertWithMessageText:title
                                                       defaultButton:self.downloadButtonLabel
@@ -584,7 +558,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                                                         otherButton:nil
                                           informativeTextWithFormat:@"%@", details];
             
-            if (self.remindButtonLabel)
+            if ([self.remindButtonLabel length])
             {
                 [self.visibleRemoteAlert addButtonWithTitle:self.remindButtonLabel];
             }
@@ -778,7 +752,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                         NSString *latestVersion = [self valueForKey:@"version" inJSON:json];
                         if (releaseNotes && latestVersion)
                         {
-                            versions = [NSDictionary dictionaryWithObject:releaseNotes forKey:latestVersion];
+                            versions = @{latestVersion: releaseNotes};
                         }
                         
                         //get app id
@@ -816,7 +790,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
           
                         error = [NSError errorWithDomain:iVersionErrorDomain
                                                     code:iVersionErrorBundleIdDoesNotMatchAppStore
-                                                userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Application bundle ID does not match expected value of %@", bundleID] forKey:NSLocalizedDescriptionKey]];
+                                                userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Application bundle ID does not match expected value of %@", bundleID]}];
                     }
                 }
                 else if (self.appStoreID || !self.remoteVersionsPlistURL)
@@ -828,15 +802,12 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                     
                     error = [NSError errorWithDomain:iVersionErrorDomain
                                                 code:iVersionErrorApplicationNotFoundOnAppStore
-                                            userInfo:[NSDictionary dictionaryWithObject:@"The application could not be found on the App Store." forKey:NSLocalizedDescriptionKey]];
+                                            userInfo:@{NSLocalizedDescriptionKey: @"The application could not be found on the App Store."}];
                 }
                 else if (!self.appStoreID && self.verboseLogging)
                 {
                     NSLog(@"iVersion could not find your app on iTunes. If your app is not yet on the store or is not intended for App Store release then don't worry about this");
                 }
-                
-                //release json
-                [json release];;
                 
                 //now check plist for alternative release notes
                 if (((self.appStoreID && newerVersionAvailable) || !self.appStoreID || self.previewMode) && self.remoteVersionsPlistURL)
@@ -912,16 +883,16 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             }
             
             //show details
-            if (showDetails && !self.visibleLocalAlert)
+            if (showDetails && !self.visibleLocalAlert && !self.visibleRemoteAlert)
             {
                 
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
                 
-                self.visibleLocalAlert = [[[UIAlertView alloc] initWithTitle:self.inThisVersionTitle
-                                                                     message:self.versionDetails
-                                                                    delegate:self
-                                                           cancelButtonTitle:self.okButtonLabel
-                                                           otherButtonTitles:nil] autorelease];
+                self.visibleLocalAlert = [[UIAlertView alloc] initWithTitle:self.inThisVersionTitle
+                                                                    message:self.versionDetails
+                                                                   delegate:self
+                                                          cancelButtonTitle:self.okButtonLabel
+                                                          otherButtonTitles:nil];
                 [self.visibleLocalAlert show];
 #else
                 self.visibleLocalAlert = [NSAlert alertWithMessageText:self.inThisVersionTitle
@@ -952,12 +923,59 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 - (void)openAppPageInAppStore
 {
+    if (_displayAppUsingStorekitIfAvailable && [SKStoreProductViewController class])
+    {
+        if (self.verboseLogging)
+        {
+            NSLog(@"iVersion will attempt to open the StoreKit in-app product page using the following app store ID: %i", self.appStoreID);
+        }
+        
+        //create store view controller
+        SKStoreProductViewController *productController = [[SKStoreProductViewController alloc] init];
+        productController.delegate = (id<SKStoreProductViewControllerDelegate>)self;
+
+        //load product details
+        NSDictionary *productParameters = @{SKStoreProductParameterITunesItemIdentifier: [@(_appStoreID) description]};
+        [productController loadProductWithParameters:productParameters completionBlock:NULL];
+        
+        //get root view controller
+        UIViewController *rootViewController = nil;
+        id appDelegate = [[UIApplication sharedApplication] delegate];
+        if ([appDelegate respondsToSelector:@selector(viewController)])
+        {
+            rootViewController = [appDelegate valueForKey:@"viewController"];
+        }
+        if (!rootViewController && [appDelegate respondsToSelector:@selector(window)])
+        {
+            UIWindow *window = [appDelegate valueForKey:@"window"];
+            rootViewController = window.rootViewController;
+        }
+        if (!rootViewController)
+        {
+            if (self.verboseLogging)
+            {
+                NSLog(@"iVersion couldn't find root view controller from which to display StoreKit product screen");
+            }
+        }
+        else
+        {
+            //present product view controller
+            [rootViewController presentViewController:productController animated:YES completion:nil];
+            return;
+        }
+    }
+    
     if (self.verboseLogging)
     {
         NSLog(@"iVersion will open the App Store using the following URL: %@", self.updateURL);
     }
     
     [[UIApplication sharedApplication] openURL:self.updateURL];
+}
+
+- (void)productViewControllerDidFinish:(SKStoreProductViewController *)controller
+{
+    [controller dismissModalViewControllerAnimated:YES];
 }
 
 - (void)resizeAlertView:(UIAlertView *)alertView
@@ -975,9 +993,14 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 UILabel *label = (UILabel *)view;
                 if ([label.text isEqualToString:alertView.message])
                 {
-                    label.alpha = 1.0f;
+                    
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6_0
+                    label.lineBreakMode = NSLineBreakByWordWrapping;
+#else
                     label.lineBreakMode = UILineBreakModeWordWrap;
+#endif
                     label.numberOfLines = 0;
+                    label.alpha = 1.0f;
                     [label sizeToFit];
                     offset = label.frame.size.height - frame.size.height;
                     frame.size.height = label.frame.size.height;
@@ -1065,8 +1088,12 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             [self.delegate iVersionUserDidAttemptToDownloadUpdate:latestVersion];
         }
         
-        //go to download page
-        [self openAppPageInAppStore];
+        if (![self.delegate respondsToSelector:@selector(iVersionShouldOpenAppStore)] ||
+            [self.delegate iVersionShouldOpenAppStore])
+        {
+            //go to download page
+            [self openAppPageInAppStore];
+        }
     }
     
     //release alert
@@ -1095,7 +1122,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     while (GetNextProcess(&psn) == noErr)
     {
         CFDictionaryRef cfDict = ProcessInformationCopyDictionary(&psn,  kProcessDictionaryIncludeAllInformationMask);
-        NSString *bundleID = [(NSDictionary *)cfDict objectForKey:(NSString *)kCFBundleIdentifierKey];
+        NSString *bundleID = ((__bridge NSDictionary *)cfDict)[(NSString *)kCFBundleIdentifierKey];
         if ([iVersionMacAppStoreBundleID isEqualToString:bundleID])
         {
             //open app page
@@ -1153,8 +1180,12 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 [self.delegate iVersionUserDidAttemptToDownloadUpdate:latestVersion];
             }
             
-            //launch mac app store
-            [self openAppPageInAppStore];
+            if (![self.delegate respondsToSelector:@selector(iVersionShouldOpenAppStore)] ||
+                [self.delegate iVersionShouldOpenAppStore])
+            {
+                //launch mac app store
+                [self openAppPageInAppStore];
+            }
             break;
         }
         default:

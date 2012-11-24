@@ -1,3 +1,12 @@
+Version 1.10
+
+- Added new localisation system (see README for details)
+- On iOS 6, iVersion can now use the StoreKit APIs to display the product page directly within the app.
+- iVersion now requires the Storekit framework on iOS
+- iVersion now requires ARC. To use iVersion in a non-ARC project, follow the instructions in the README file.
+- Dropped support for 32-bit Macs running Snow Leopard
+- Fixed deprecation warning in iOS 6
+
 Version 1.9.8
 
 - Added verboseLogging option to make it easier to diagnose why a new version isn't being correctly detected

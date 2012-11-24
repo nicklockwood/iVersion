@@ -12,9 +12,9 @@
 
 @interface iVersionMacAppDelegate : NSObject <NSApplicationDelegate, iVersionDelegate>
 
-@property (assign) IBOutlet NSWindow *window;
-@property (assign) IBOutlet NSProgressIndicator *progressIndicator;
-@property (assign) IBOutlet NSTextView *textView;
+@property (weak) IBOutlet NSWindow *window;
+@property (weak) IBOutlet NSProgressIndicator *progressIndicator;
+@property (unsafe_unretained) IBOutlet NSTextView *textView;
 
 - (IBAction)checkForNewVersion:(id)sender;
 

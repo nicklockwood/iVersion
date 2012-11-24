@@ -21,7 +21,7 @@ Supported OS & SDK Versions
 
 * Supported build target - iOS 6.0 / Mac OS 10.8 (Xcode 4.5, Apple LLVM compiler 4.1)
 * Earliest supported deployment target - iOS 5.0 / Mac OS 10.7
-* Earliest compatible deployment target - iOS 3.0 / Mac OS 10.6
+* Earliest compatible deployment target - iOS 4.3 / Mac OS 10.6
 
 NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this OS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
 
@@ -29,7 +29,9 @@ NOTE: 'Supported' means that the library has been tested with this version. 'Com
 ARC Compatibility
 ------------------
 
-iVersion makes use of the ARC Helper library to automatically work with both ARC and non-ARC projects through conditional compilation. There is no need to exclude iVersion files from the ARC validation process, or to convert iVersion using the ARC conversion tool.
+As of version 1.10, iVersion requires ARC. If you wish to use iVersion in a non-ARC project, just add the -fobjc-arc compiler flag to the iVersion.m class. To do this, go to the Build Phases tab in your target settings, open the Compile Sources group, double-click iVersion.m in the list and type -fobjc-arc into the popover.
+
+If you wish to convert your whole project to ARC, comment out the #error line in iVersion.m, then run the Edit > Refactor > Convert to Objective-C ARC... tool in Xcode and make sure all files that you wish to use ARC for (including iVersion.m) are checked.
 
 
 Thread Safety
@@ -41,9 +43,9 @@ iVersion uses threading internally to avoid blocking the UI, but none of the iVe
 Installation
 --------------
 
-To install iVersion into your app, drag the iVersion.h, .m and .bundle files into your project. You can omit the .bundle if you are not interested in localised copy.
+To install iVersion into your app, drag the iVersion.h, .m and .bundle files into your project. You can omit the .bundle if you are not interested in localised copy. On iOS you will also need to add the StoreKit framework.
 
-As of version 1.8, iVersion typically requires no configuration at all and will simply run automatically, using the Application's bundle ID to look it up on the App Store.
+iVersion typically requires no configuration at all and will simply run automatically, using the Application's bundle ID to look it up on the App Store.
 
 **Note:** If you have apps with matching bundle IDs on both the Mac and iOS App Stores (even if they use different capitalisation), the lookup mechanism won't work, so you'll need to set the appStoreID property, which is a numeric ID that can be found in iTunes Connect after you set up an app. This is only applicable to App Store apps.
 
@@ -179,11 +181,15 @@ The button label for the button the user presses if they do not want to download
 
 	@property (nonatomic, copy) NSString *remindButtonLabel;
 
-The button label for the button the user presses if they don't want to download a new update immediately, but do want to be reminded about it in future. Set this to nil if you don't want to display the remind me button - e.g. if you don't have space on screen.
+The button label for the button the user presses if they don't want to download a new update immediately, but do want to be reminded about it in future. Set this to `@""` if you don't want to display the remind me button - e.g. if you don't have space on screen.
 
 	@property (nonatomic, copy) NSString *downloadButtonLabel;
 
 The button label for the button the user presses if they want to download a new update.
+
+    @property (nonatomic, assign) BOOL useAllAvailableLanguages;
+
+By default, iVersion will use all available languages in the iVersion.bundle, even if used in an app that does not support localisation. If you would prefer to restrict iVersion to only use the same set of languages that your application already supports, set this property to NO. (Defaults to YES).
 
     @property (nonatomic, assign) BOOL disableAlertViewResizing;
 
@@ -192,6 +198,10 @@ On iPhone, iVersion includes some logic to resize the alert view to ensure that 
     @property (nonatomic, assign) BOOL onlyPromptIfMainWindowIsAvailable;
 
 This setting is applicable to Mac OS only. By default, on Mac OS the iVersion alert is displayed as sheet on the main window. Some applications do not have a main window, so this approach doesn't work. For such applications, set this property to NO to allow the iVersion alert to be displayed as a regular modal window.
+
+    @property (nonatomic, assign) BOOL displayAppUsingStorekitIfAvailable;
+
+By default, if iVersion is running on iOS 6 or above then when the user presses Dwonload, the app page will be displayed directly within the app instead of linking to the App Store app. If you don't want that, set this property to NO.
 
 	@property (nonatomic, assign) BOOL checkAtLaunch;
 
@@ -241,7 +251,7 @@ Advanced methods
 
 	- (void)openAppPageInAppStore;
 
-This method will open the application page in the Mac or iPhone App Store, depending on which platform is running. You should use this method instead of the updateURL property if you are running on Mac OS as the process for launching the Mac App Store is more complex than merely opening the URL. Note that this method depends on the `appStoreID` which is only retrieved after polling the iTunes server, so if you intend to call this method without first doing an update check, you will need to set the `appStoreID` property yourself beforehand.
+This method will open the application page in the Mac or iPhone App Store, or directly within the app, depending on which platform and OS version is running. You should use this method instead of the updateURL property, as the process for launching the app store is more complex than merely opening the URL in many cases. Note that this method depends on the `appStoreID` which is only retrieved after polling the iTunes server, so if you intend to call this method without first doing an update check, you will need to set the `appStoreID` property yourself beforehand.
 
 	- (void)checkIfNewVersion;
 
@@ -300,20 +310,28 @@ This is called when the user asks to be reminded about a new version. This is us
 	- (void)iVersionUserDidIgnoreUpdate:(NSString *)version;
 	
 This is called when the user presses the ignore in the new version alert. This is useful if you want to log user interaction with iVersion. This method is only called if you are using the standard iVersion alert view and will not be called automatically if you provide a custom alert implementation.
+
+    - (BOOL)iVersionShouldopenAppStore;
+    
+This method is called immediately before iVersion attempts to open the app store, either via a URL or using the StoreKit in-app product view controller. Return NO if you wish to implement your own update page logic.
 	
 
 Localisation
 ---------------
 
-The defaults strings for iVersion are already localised for English, French, German, Italian, Spanish and Japanese.
+The defaults strings for iVersion are already localised for many languages. By default, iVersion will use all the localisations in the iVersion.bundle even in an app that is not localised, or which is only localised to a subset of the languages that iVersion supports.
+
+If you would prefer iVersion to only use the localisations that are enabled in your application (so that if your app only supports English, French and Spanish, iVersion will automatically be localised for those languages, but not for German, even though iVersion includes a German language file), set the `useAllAvailableLanguages` option to NO.
 
 iVersion will automatically use the localised release notes that you've specified on iTunes, if available.
 
-It is not recommended that you modify the strings files in the iVersion.bundle, as it will complicate updating to newer versions of iVersion. If you do want to edit the files, or open them so you can copy the keys into your own strings file, you should note that the iVersion strings files have actually been compiled as binary plists, so you'll need to open them in Xcode and use the Open As > Property List option, or they will appear as gibberish.
+It is not recommended that you modify the strings files in the iVersion.bundle, as it will complicate updating to newer versions of iVersion. The exception to this is if you would like to submit additional languages or improvements or corrections to the localisations in the iVersion project on github (which are greatly appreciated).
 
-If you want to add an additional language, or replace all the built-in strings, the simplest option is to remove the iVersion.bundle from your project and then add the iVersion keys directly to your own Localizable.strings file.
+If you want to add an additional language for iVersion in your app without submitting them back to the github project, you can add these strings directly to the appropriate Localizable.strings file in your project folder. If you wish to replace some or all of the default iVersion strings, the simplest option is to copy just those strings into your own Localizable.strings file and then modify them. iVersion will automatically use strings in the main application bundle in preference to the ones in the iVersion bundle so you can override any string in this way.
 
-If you want to override some of the localised strings but leave the others intact, you can provide localised values for any or all of the message strings by setting the keys directly in code using NSLocalizedString(...), e.g.
+If you do not want to use *any* of the default localisations, you can omit the iVersion.bundle altogether. Note that if you only want to support a subset of languages that iVersion supports, it is not neccesary to delete the other strings files from iVersion.bundle - just set `useAllAvailableLanguages` to NO, and iVersion will only use the languages that your app already supports.
+
+The old method of overriding iVersion's default strings by using individual setter methods (see below) is still supported, however the recommended approach is now to add those strings to your project's Localizable.strings file, which will be detected automatically by iVersion.
 
 	+ (void)initialize
 	{
@@ -324,11 +342,14 @@ If you want to override some of the localised strings but leave the others intac
 		[iVersion sharedInstance].ignoreButtonLabel = NSLocalizedString(@"Ignore", @"iVersion ignore button");
 		[iVersion sharedInstance].remindButtonLabel = NSLocalizedString(@"Remind Me Later", @"iVersion remind button");
 		[iVersion sharedInstance].downloadButtonLabel = NSLocalizedString(@"Download", @"iVersion download button");
-		[iVersion sharedInstance].remoteVersionsPlistURL = @"http://example.com/versions_en.plist";
 	}
 
-If you are using the remote versions Plist, and you need to provide localised release notes, the simplest way to do this is to localise the `remoteVersionsPlistURL` file and provide a different URL for each language.
-
+If you are using the remote versions Plist, and you need to provide localised release notes, the simplest way to do this is to localise the `remoteVersionsPlistURL` file and provide a different URL for each language, like this:
+    
+    + (void)initialize
+	{
+        [iVersion sharedInstance].remoteVersionsPlistURL = NSLocalizedString(@"http://example.com/versions_en.plist", @"remote iVersion plist URL");
+    }
 
 Example Projects
 ---------------
