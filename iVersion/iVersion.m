@@ -127,8 +127,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     static NSBundle *bundle = nil;
     if (bundle == nil)
     {
-        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"iVersion" ofType:@"bundle"];
-        bundle = [NSBundle bundleWithPath:bundlePath] ?: [NSBundle mainBundle];
+        NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"iVersion" ofType:@"bundle"];
+        bundle = [NSBundle bundleWithPath:bundlePath] ?: [NSBundle bundleForClass:[self class]];
         if (self.useAllAvailableLanguages)
         {
             //manually select the desired lproj folder
@@ -144,7 +144,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         }
     }
     defaultString = [bundle localizedStringForKey:key value:defaultString table:nil];
-    return [[NSBundle mainBundle] localizedStringForKey:key value:defaultString table:nil];
+    return [[NSBundle bundleForClass:[self class]] localizedStringForKey:key value:defaultString table:nil];
 }
 
 - (iVersion *)init
@@ -975,7 +975,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)controller
 {
-    [controller dismissModalViewControllerAnimated:YES];
+    [controller dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)resizeAlertView:(UIAlertView *)alertView
