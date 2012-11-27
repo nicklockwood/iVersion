@@ -127,8 +127,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     static NSBundle *bundle = nil;
     if (bundle == nil)
     {
-        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"iVersion" ofType:@"bundle"];
-        bundle = [NSBundle bundleWithPath:bundlePath] ?: [NSBundle mainBundle];
+        NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"iVersion" ofType:@"bundle"];
+        bundle = [NSBundle bundleWithPath:bundlePath] ?: [NSBundle bundleForClass:[self class]];
         if (self.useAllAvailableLanguages)
         {
             //manually select the desired lproj folder
@@ -144,7 +144,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         }
     }
     defaultString = [bundle localizedStringForKey:key value:defaultString table:nil];
-    return [[NSBundle mainBundle] localizedStringForKey:key value:defaultString table:nil];
+    return [[NSBundle bundleForClass:[self class]] localizedStringForKey:key value:defaultString table:nil];
 }
 
 - (iVersion *)init
@@ -552,11 +552,30 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             self.visibleRemoteAlert = alert;
             [self.visibleRemoteAlert show];
 #else
+            
             self.visibleRemoteAlert = [NSAlert alertWithMessageText:title
                                                       defaultButton:self.downloadButtonLabel
                                                     alternateButton:self.ignoreButtonLabel
                                                         otherButton:nil
-                                          informativeTextWithFormat:@"%@", details];
+                                          informativeTextWithFormat:@"%@", self.inThisVersionTitle];
+
+            NSScrollView *scrollview = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, 500, 300)];
+            NSSize contentSize = [scrollview contentSize];
+            [scrollview setBorderType:NSBezelBorder];
+            [scrollview setHasVerticalScroller:YES];
+            [scrollview setHasHorizontalScroller:NO];
+            [scrollview setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];            
+            NSTextView *theTextView = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, contentSize.width, contentSize.height)];
+            [theTextView setMinSize:NSMakeSize(0.0, contentSize.height)];
+            [theTextView setMaxSize:NSMakeSize(FLT_MAX, FLT_MAX)];
+            [theTextView setVerticallyResizable:YES];
+            [theTextView setHorizontallyResizable:NO];
+            [theTextView setAutoresizingMask:NSViewWidthSizable];
+            [[theTextView textContainer] setContainerSize:NSMakeSize(contentSize.width, FLT_MAX)];
+            [[theTextView textContainer] setWidthTracksTextView:YES];
+            [theTextView setString:details];
+            [scrollview setDocumentView:theTextView];
+            [self.visibleRemoteAlert setAccessoryView:scrollview];
             
             if ([self.remindButtonLabel length])
             {
@@ -975,7 +994,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)controller
 {
-    [controller dismissModalViewControllerAnimated:YES];
+    [controller dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)resizeAlertView:(UIAlertView *)alertView

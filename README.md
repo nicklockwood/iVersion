@@ -15,6 +15,8 @@ Or if your app is not on the store, iVersion lets you specify a remote plist fil
 
 iVersion has an additional function, which is to tell users about important new features when they first run an app after downloading a new version.
 
+![Screenshot IOS](http://github.com/Daij-Djan/iVersion/raw/master/screen_ios.png)
+![Screenshot OSX](http://github.com/Daij-Djan/iVersion/raw/master/screen_osx.png)
 
 Supported OS & SDK Versions
 -----------------------------
@@ -44,6 +46,10 @@ Installation
 --------------
 
 To install iVersion into your app, drag the iVersion.h, .m and .bundle files into your project. You can omit the .bundle if you are not interested in localised copy. On iOS you will also need to add the StoreKit framework.
+
+**Alternatively** (**I prefer this** as it keeps sources more separate) you can include the iVersion.xcodeproj in your project (drag it there) and link against the library. Then...<br/>
+…On OSX: Link against the iVersion.framework and add it to your app via a copy phase.<br/> 
+...On IOS: Link against the libiVersion.a and drag the .bundle file to your copy resources build phase
 
 iVersion typically requires no configuration at all and will simply run automatically, using the Application's bundle ID to look it up on the App Store.
 
