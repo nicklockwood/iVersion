@@ -15,6 +15,8 @@ Or if your app is not on the store, iVersion lets you specify a remote plist fil
 
 iVersion has an additional function, which is to tell users about important new features when they first run an app after downloading a new version.
 
+![Screenshot IOS](http://github.com/Daij-Djan/iVersion/raw/master/screen_ios.png)
+![Screenshot OSX](http://github.com/Daij-Djan/iVersion/raw/master/screen_osx.png)
 
 Supported OS & SDK Versions
 -----------------------------
