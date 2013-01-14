@@ -94,6 +94,8 @@ iVersionErrorCode;
 - (void)iVersionUserDidRequestReminderForUpdate:(NSString *)version;
 - (void)iVersionUserDidIgnoreUpdate:(NSString *)version;
 - (BOOL)iVersionShouldOpenAppStore;
+- (void)iVersionDidPresentStoreKitModal;
+- (void)iVersionDidDismissStoreKitModal;
 
 @end
 

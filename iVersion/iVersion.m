@@ -999,6 +999,10 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 #endif            
             //present product view controller
             [rootViewController presentViewController:productController animated:YES completion:nil];
+            if ([self.delegate respondsToSelector:@selector(iVersionDidPresentStoreKitModal)])
+            {
+                [self.delegate iVersionDidPresentStoreKitModal];
+            }
             return;
         }
     }
@@ -1013,20 +1017,11 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)controller
 {
-    if ([controller respondsToSelector:@selector(dismissViewControllerAnimated:completion:)])
+    [controller.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
+    if ([self.delegate respondsToSelector:@selector(iVersionDidDismissStoreKitModal)])
     {
-        [controller dismissViewControllerAnimated:YES completion:NULL];
+        [self.delegate iVersionDidDismissStoreKitModal];
     }
-    
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
-
-    else
-    {
-        [controller dismissModalViewControllerAnimated:YES];
-    }
-
-#endif
-    
 }
 
 - (void)resizeAlertView:(UIAlertView *)alertView

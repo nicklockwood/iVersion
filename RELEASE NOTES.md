@@ -3,6 +3,7 @@ Version 1.10.1
 - Fixed bug where iVersion would potentially display release notes for unreleased versions in the remote version plist if the user's version is not up to date with the latest version in the App Store
 - Fixed deprecation warning when targeting iOS 6 and above
 - iVersion now displays the StoreKit product view controller correctly even if a modally presented view controller has been displayed
+- Added iVersionDidPresentStoreKitModal and iVersionDidDismissStoreKitModal delegate methods
 - Added useAppStoreDetailsIfNoPlistEntryFound option
 - Added Danish translation
 

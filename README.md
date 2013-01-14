@@ -318,6 +318,14 @@ This is called when the user presses the ignore in the new version alert. This i
     - (BOOL)iVersionShouldOpenAppStore;
     
 This method is called immediately before iVersion attempts to open the App Store, either via a URL or using the StoreKit in-app product view controller. Return NO if you wish to implement your own update page logic.
+
+    - (void)iVersionDidPresentStoreKitModal;
+    
+This method is called just after iVersion presents the StoreKit in-app product view controller. It is useful if you want to pause certain functionality in your app, etc.
+    
+    - (void)iVersionDidDismissStoreKitModal;
+
+This method is called when the user dismisses the StoreKit in-app product view controller. This is useful if you want to resume any functionality that you paused when the modal was displayed.
 	
 
 Localisation
