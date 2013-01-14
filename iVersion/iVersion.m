@@ -979,24 +979,11 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         }
         else
         {
-            if ([rootViewController respondsToSelector:@selector(presentedViewController)])
+            while (rootViewController.presentedViewController)
             {
-                while (rootViewController.presentedViewController)
-                {
-                    rootViewController = rootViewController.presentedViewController;
-                }
+                rootViewController = rootViewController.presentedViewController;
             }
             
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
-            
-            else
-            {
-                while (rootViewController.modalViewController)
-                {
-                    rootViewController = rootViewController.modalViewController;
-                }
-            }
-#endif            
             //present product view controller
             [rootViewController presentViewController:productController animated:YES completion:nil];
             if ([self.delegate respondsToSelector:@selector(iVersionDidPresentStoreKitModal)])
