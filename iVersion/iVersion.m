@@ -712,6 +712,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         {
             BOOL newerVersionAvailable = NO;
             NSDictionary *versions = nil;
+            NSString *latest;
             
             //first check iTunes
             NSString *iTunesServiceURL = [NSString stringWithFormat:iVersionAppLookupURLFormat, self.appStoreCountry];
@@ -749,7 +750,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                     {
                         //get version details
                         NSString *releaseNotes = [self valueForKey:@"releaseNotes" inJSON:json];
-                        NSString *latestVersion = [self valueForKey:@"version" inJSON:json];
+                        NSString *latestVersion = latest = [self valueForKey:@"version" inJSON:json];
                         if (releaseNotes && latestVersion)
                         {
                             versions = @{latestVersion: releaseNotes};
@@ -822,13 +823,29 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                     if (data)
                     {
                         NSPropertyListFormat format;
+                        id versionsCheck;
+                        
                         if ([NSPropertyListSerialization respondsToSelector:@selector(propertyListWithData:options:format:error:)])
                         {
-                            versions = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:&format error:&error];
+                            versionsCheck = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:&format error:&error];
                         }
                         else
                         {
-                            versions = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:0 format:&format errorDescription:NULL];
+                            versionsCheck = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:0 format:&format errorDescription:NULL];
+                        }
+                        
+                        if ([versionsCheck respondsToSelector:@selector(objectForKey:)]) {
+                            if ([versionsCheck objectForKey:latest] != nil && [[versionsCheck objectForKey:latest] length] > 0) {
+                                NSMutableDictionary *validVersions = [versionsCheck mutableCopy];
+                                
+                                for (NSString *key in versionsCheck) {
+                                    if ([key compareVersion:latest] == NSOrderedDescending) {
+                                        [validVersions removeObjectForKey:key];
+                                    }
+                                }
+                                
+                                versions = validVersions;
+                            }
                         }
                     }
                     else if (self.verboseLogging)
