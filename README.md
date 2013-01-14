@@ -125,7 +125,7 @@ This should match the iTunes app ID of your application, which you can get from 
 
 	@property (nonatomic, copy) NSString *remoteVersionsPlistURL;
 
-This is the URL of the remotely hosted plist that iVersion will check for release notes. As of iVersion 1.8, you can safely update this file *before* your new release has been approved by Apple and appeared in the store, although be cautious if there are existing versions of your app pointing at the file that use older versions of the iVersion library. For testing purposes, you may wish to create a separate copy of the file at a different address and use a build constant to switch which version the app points at. Set this value to nil if you want to just use the release notes on iTunes. Do not set it to an invalid URL such as example.com because this will waste battery, CPU and bandwidth as the app tries to check the invalid URL each time it launches.
+This is the URL of the remotely hosted plist that iVersion will check for release notes. You can safely update this file *before* your new release has been approved by Apple and appeared in the store. Set this value to nil if you want to just use the release notes on iTunes. Do not set it to an invalid URL such as http://example.com because this will waste battery, CPU and bandwidth as the app tries to check the invalid URL each time it launches. If you do not include a particular version in the plist, iVersion will not display an update alert for that version even if it detects a new version in the App Store, unless you set `useAppStoreDetailsIfNoPlistEntryFound` option to YES.
 
 	@property (nonatomic, copy) NSString *localVersionsPlistPath;
 
@@ -189,7 +189,7 @@ The button label for the button the user presses if they want to download a new 
 
     @property (nonatomic, assign) BOOL useAllAvailableLanguages;
 
-By default, iVersion will use all available languages in the iVersion.bundle, even if used in an app that does not support localisation. If you would prefer to restrict iVersion to only use the same set of languages that your application already supports, set this property to NO. (Defaults to YES).
+By default, iVersion will use all available languages in the iVersion.bundle, even if used in an app that does not support localisation. If you would prefer to restrict iVersion to only use the same set of languages that your application already supports, set this property to NO (YES by default).
 
     @property (nonatomic, assign) BOOL disableAlertViewResizing;
 
@@ -201,7 +201,11 @@ This setting is applicable to Mac OS only. By default, on Mac OS the iVersion al
 
     @property (nonatomic, assign) BOOL displayAppUsingStorekitIfAvailable;
 
-By default, if iVersion is running on iOS 6 or above then when the user presses Dwonload, the app page will be displayed directly within the app instead of linking to the App Store app. If you don't want that, set this property to NO.
+By default, if iVersion is running on iOS 6 or above then when the user presses Download, the app page will be displayed directly within the app instead of linking to the App Store app. If you don't want that, set this property to NO (YES by default).
+
+    @property (nonatomic, assign) BOOL useAppStoreDetailsIfNoPlistEntryFound;
+
+If you are using the remote plist option, by default iVersion will only display an update alert if a release notes entry is found in that plist, even if a new version is detected on the app store. This allows you to delay the announcement of an update, or block the announcement of minor updates by selectivley omitting versions from the plist. If you would prefer iVersion to use the App Store release notes if no plist entry is found, set this option to YES (NO by default).
 
 	@property (nonatomic, assign) BOOL checkAtLaunch;
 
@@ -311,9 +315,9 @@ This is called when the user asks to be reminded about a new version. This is us
 	
 This is called when the user presses the ignore in the new version alert. This is useful if you want to log user interaction with iVersion. This method is only called if you are using the standard iVersion alert view and will not be called automatically if you provide a custom alert implementation.
 
-    - (BOOL)iVersionShouldopenAppStore;
+    - (BOOL)iVersionShouldOpenAppStore;
     
-This method is called immediately before iVersion attempts to open the app store, either via a URL or using the StoreKit in-app product view controller. Return NO if you wish to implement your own update page logic.
+This method is called immediately before iVersion attempts to open the App Store, either via a URL or using the StoreKit in-app product view controller. Return NO if you wish to implement your own update page logic.
 	
 
 Localisation

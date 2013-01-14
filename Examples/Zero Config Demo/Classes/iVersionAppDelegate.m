@@ -12,9 +12,6 @@
 
 @implementation iVersionAppDelegate
 
-@synthesize window;
-@synthesize viewController;
-
 
 //absolutely no configuration whatsoever!
 //the app release notes are retrieved directly
@@ -26,14 +23,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {    
-    [window addSubview:viewController.view];
-    [window makeKeyAndVisible];
+    [_window addSubview:_viewController.view];
+    [_window makeKeyAndVisible];
     return YES;
 }
-
-#pragma mark -
-#pragma mark Memory management
-
-
 
 @end

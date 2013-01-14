@@ -214,6 +214,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ZeroConfig_Prefix.pch;
 				INFOPLIST_FILE = "ZeroConfig-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = ZeroConfig;
 			};
 			name = Debug;
@@ -227,6 +228,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ZeroConfig_Prefix.pch;
 				INFOPLIST_FILE = "ZeroConfig-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = ZeroConfig;
 				VALIDATE_PRODUCT = YES;
 			};

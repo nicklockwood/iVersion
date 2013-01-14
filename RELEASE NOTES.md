@@ -1,8 +1,16 @@
+Version 1.10.1
+
+- Fixed bug where iVersion would potentially display release notes for unreleased versions in the remote version plist if the user's version is not up to date with the latest version in the App Store
+- Fixed deprecation warning when targeting iOS 6 and above
+- iVersion now displays the StoreKit product view controller correctly even if a modally presented view controller has been displayed
+- Added useAppStoreDetailsIfNoPlistEntryFound option
+- Added Danish translation
+
 Version 1.10
 
 - Added new localisation system (see README for details)
 - On iOS 6, iVersion can now use the StoreKit APIs to display the product page directly within the app.
-- iVersion now requires the Storekit framework on iOS
+- iVersion now requires the StoreKit framework on iOS
 - iVersion now requires ARC. To use iVersion in a non-ARC project, follow the instructions in the README file.
 - Dropped support for 32-bit Macs running Snow Leopard
 - Fixed deprecation warning in iOS 6
