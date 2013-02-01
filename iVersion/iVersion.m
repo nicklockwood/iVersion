@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.10.1
+//  Version 1.10.2
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -31,7 +31,6 @@
 //
 
 #import "iVersion.h"
-#import <StoreKit/StoreKit.h>
 
 
 #import <Availability.h>
@@ -51,8 +50,7 @@ static NSString *const iVersionLastRemindedKey = @"iVersionLastReminded";
 static NSString *const iVersionMacAppStoreBundleID = @"com.apple.appstore";
 static NSString *const iVersionAppLookupURLFormat = @"http://itunes.apple.com/%@/lookup";
 
-static NSString *const iVersioniOSAppStoreURLFormat = @"itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=%u";
-static NSString *const iVersioniOS6AppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%u";
+static NSString *const iVersioniOSAppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%u";
 static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/app/id%u";
 
 
@@ -269,15 +267,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
     
-    if ([[UIDevice currentDevice].systemVersion floatValue] >= 6.0)
-    {
-        return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOS6AppStoreURLFormat, (unsigned int)self.appStoreID]];
-    }
-    else
-    {
-        return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOSAppStoreURLFormat, (unsigned int)self.appStoreID]];
-    }
-    
+    return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOSAppStoreURLFormat, (unsigned int)self.appStoreID]];
+
 #else
     
     return [NSURL URLWithString:[NSString stringWithFormat:iVersionMacAppStoreURLFormat, (unsigned int)self.appStoreID]];
@@ -537,7 +528,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
                                                             message:details
                                                            delegate:(id<UIAlertViewDelegate>)self
-                                                  cancelButtonTitle:self.ignoreButtonLabel
+                                                  cancelButtonTitle:[self.ignoreButtonLabel length]? self.ignoreButtonLabel: nil
                                                   otherButtonTitles:self.downloadButtonLabel, nil];
             if ([self.remindButtonLabel length])
             {
@@ -549,7 +540,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 #else
             self.visibleRemoteAlert = [NSAlert alertWithMessageText:title
                                                       defaultButton:self.downloadButtonLabel
-                                                    alternateButton:self.ignoreButtonLabel
+                                                    alternateButton:[self.ignoreButtonLabel length]? self.ignoreButtonLabel: nil
                                                         otherButton:nil
                                           informativeTextWithFormat:@"%@", details];
             
@@ -747,9 +738,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                         NSString *releaseNotes = [self valueForKey:@"releaseNotes" inJSON:json];
                         latestVersion = [self valueForKey:@"version" inJSON:json];
 
-                        if (releaseNotes && latestVersion)
+                        if (latestVersion)
                         {
-                            versions = @{latestVersion: releaseNotes};
+                            versions = @{latestVersion: releaseNotes ?: @""};
                         }
                         
                         //get app id

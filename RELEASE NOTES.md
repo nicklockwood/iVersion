@@ -1,3 +1,10 @@
+Version 1.10.2
+
+- Fixed issues where alert would not appear, even with preview mode enabled, if app has already been released but has no release notes
+- Addressed possible issue on iOS 5.0.x where app store link does not work (unconfirmed).
+- StoreKit framework is no longer included on Mac OS
+- Added podspec
+
 Version 1.10.1
 
 - Fixed bug where iVersion would potentially display release notes for unreleased versions in the remote version plist if the user's version is not up to date with the latest version in the App Store
