@@ -652,7 +652,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 while (YES)
                 {
                     NSRange unicode = [value rangeOfString:@"\\u"];
-                    if (unicode.location == NSNotFound)
+                    if (unicode.location == NSNotFound || unicode.location + unicode.length == 0)
                     {
                         break;
                     }
