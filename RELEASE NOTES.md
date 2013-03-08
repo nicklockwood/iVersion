@@ -1,3 +1,8 @@
+Version 1.10.3
+
+- Fixed potential infinite loop if release notes JSON contains 0x00 characters
+- On Mac OS, release notes are now displayed in a scrolling text field (thanks to Daij-Djan for the suggestion).
+
 Version 1.10.2
 
 - Fixed issues where alert would not appear, even with preview mode enabled, if app has already been released but has no release notes

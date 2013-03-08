@@ -40,9 +40,4 @@
     return YES;
 }
 
-#pragma mark -
-#pragma mark Memory management
-
-
-
 @end

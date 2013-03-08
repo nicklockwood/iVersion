@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.10.2
+//  Version 1.10.3
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -434,6 +434,56 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     return CFBridgingRelease(encoded);
 }
 
+- (id)alertViewWithTitle:(NSString *)title
+                 details:(NSString *)details
+           defaultButton:(NSString *)defaultButton
+            cancelButton:(NSString *)cancelButton
+{
+    cancelButton = [cancelButton length]? cancelButton: nil;
+    
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+    
+    return [[UIAlertView alloc] initWithTitle:title
+                                      message:details
+                                     delegate:(id<UIAlertViewDelegate>)self
+                            cancelButtonTitle:cancelButton ?: defaultButton
+                            otherButtonTitles:cancelButton? defaultButton: nil, nil];
+    
+#else
+    
+    NSAlert *alert = [NSAlert alertWithMessageText:title
+                                     defaultButton:defaultButton
+                                   alternateButton:cancelButton
+                                       otherButton:nil
+                                  informativeTextWithFormat:@"%@", self.inThisVersionTitle];
+
+    NSScrollView *scrollview = [[NSScrollView alloc] initWithFrame:NSMakeRect(0.0, 0.0, 380.0, 15.0)];
+    NSSize contentSize = [scrollview contentSize];
+    [scrollview setBorderType:NSBezelBorder];
+    [scrollview setHasVerticalScroller:YES];
+    [scrollview setHasHorizontalScroller:NO];
+    [scrollview setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    NSTextView *theTextView = [[NSTextView alloc] initWithFrame:NSMakeRect(0.0, 0.0, contentSize.width, contentSize.height)];
+    [theTextView setMinSize:NSMakeSize(0.0, contentSize.height)];
+    [theTextView setMaxSize:NSMakeSize(FLT_MAX, FLT_MAX)];
+    [theTextView setVerticallyResizable:YES];
+    [theTextView setHorizontallyResizable:NO];
+    [theTextView setAutoresizingMask:NSViewWidthSizable];
+    [[theTextView textContainer] setContainerSize:NSMakeSize(contentSize.width, FLT_MAX)];
+    [[theTextView textContainer] setWidthTracksTextView:YES];
+    [theTextView setString:details];
+    [scrollview setDocumentView:theTextView];
+    [theTextView sizeToFit];
+    CGFloat height = MIN(200.0, [[scrollview documentView] frame].size.height) + 3.0;
+    [scrollview setFrame:NSMakeRect(0.0, 0.0, scrollview.frame.size.width, height)];
+    [alert setAccessoryView:scrollview];
+    
+    return alert;
+    
+#endif
+
+}
+
 - (void)downloadedVersionsData
 {
     
@@ -523,32 +573,20 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 title = [title stringByAppendingFormat:@" (%@)", mostRecentVersion];
             }
             
-#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-            
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
-                                                            message:details
-                                                           delegate:(id<UIAlertViewDelegate>)self
-                                                  cancelButtonTitle:[self.ignoreButtonLabel length]? self.ignoreButtonLabel: nil
-                                                  otherButtonTitles:self.downloadButtonLabel, nil];
-            if ([self.remindButtonLabel length])
-            {
-                [alert addButtonWithTitle:self.remindButtonLabel];
-            }
-            
-            self.visibleRemoteAlert = alert;
-            [self.visibleRemoteAlert show];
-#else
-            self.visibleRemoteAlert = [NSAlert alertWithMessageText:title
-                                                      defaultButton:self.downloadButtonLabel
-                                                    alternateButton:[self.ignoreButtonLabel length]? self.ignoreButtonLabel: nil
-                                                        otherButton:nil
-                                          informativeTextWithFormat:@"%@", details];
+            self.visibleRemoteAlert = [self alertViewWithTitle:title
+                                                       details:details
+                                                 defaultButton:self.downloadButtonLabel
+                                                  cancelButton:self.ignoreButtonLabel];
             
             if ([self.remindButtonLabel length])
             {
                 [self.visibleRemoteAlert addButtonWithTitle:self.remindButtonLabel];
             }
             
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+            
+            [self.visibleRemoteAlert show];
+#else
             [self.visibleRemoteAlert beginSheetModalForWindow:[[NSApplication sharedApplication] mainWindow]
                                                 modalDelegate:self
                                                didEndSelector:@selector(remoteAlertDidEnd:returnCode:contextInfo:)
@@ -891,22 +929,16 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             //show details
             if (showDetails && !self.visibleLocalAlert && !self.visibleRemoteAlert)
             {
+                self.visibleLocalAlert = [self alertViewWithTitle:self.inThisVersionTitle
+                                                          details:self.versionDetails
+                                                    defaultButton:self.okButtonLabel
+                                                     cancelButton:nil];
+                
                 
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
                 
-                self.visibleLocalAlert = [[UIAlertView alloc] initWithTitle:self.inThisVersionTitle
-                                                                    message:self.versionDetails
-                                                                   delegate:self
-                                                          cancelButtonTitle:self.okButtonLabel
-                                                          otherButtonTitles:nil];
                 [self.visibleLocalAlert show];
 #else
-                self.visibleLocalAlert = [NSAlert alertWithMessageText:self.inThisVersionTitle
-                                                         defaultButton:self.okButtonLabel
-                                                       alternateButton:nil
-                                                           otherButton:nil
-                                             informativeTextWithFormat:@"%@", self.versionDetails];
-                
                 [self.visibleLocalAlert beginSheetModalForWindow:[[NSApplication sharedApplication] mainWindow]
                                                    modalDelegate:self
                                                   didEndSelector:@selector(localAlertDidEnd:returnCode:contextInfo:)
