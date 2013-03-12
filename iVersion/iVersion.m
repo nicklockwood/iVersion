@@ -188,6 +188,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.checkAtLaunch = YES;
         self.checkPeriod = 0.0f;
         self.remindPeriod = 1.0f;
+        self.updateLevel = 1;
         
 #ifdef DEBUG
         
@@ -576,9 +577,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             self.visibleRemoteAlert = [self alertViewWithTitle:title
                                                        details:details
                                                  defaultButton:self.downloadButtonLabel
-                                                  cancelButton:self.ignoreButtonLabel];
+                                                  cancelButton:self.updateLevel < 2 ? self.ignoreButtonLabel : nil];
             
-            if ([self.remindButtonLabel length])
+            if ([self.remindButtonLabel length] && self.updateLevel < 3)
             {
                 [self.visibleRemoteAlert addButtonWithTitle:self.remindButtonLabel];
             }
@@ -737,6 +738,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             BOOL newerVersionAvailable = NO;
             NSString *latestVersion = nil;
             NSDictionary *versions = nil;
+            int remoteUpdateLevel = self.updateLevel;
             
             //first check iTunes
             NSString *iTunesServiceURL = [NSString stringWithFormat:iVersionAppLookupURLFormat, self.appStoreCountry];
@@ -861,14 +863,28 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                         if (latestVersion)
                         {
                             //remove versions that are greater than latest in app store
-                            plistVersions = [plistVersions mutableCopy];
+                            NSMutableDictionary* plistVersionsTemp = [plistVersions mutableCopy];
                             for (NSString *version in [plistVersions keyEnumerator])
                             {
                                 if ([version compareVersion:latestVersion] == NSOrderedDescending)
                                 {
-                                    [(NSMutableDictionary *)plistVersions removeObjectForKey:version];
+                                    [(NSMutableDictionary *)plistVersionsTemp removeObjectForKey:version];
+                                }
+                                else
+                                {
+                                    NSDictionary* tempVersionDict = [plistVersionsTemp objectForKey:version];
+                                    if([tempVersionDict isKindOfClass:[NSDictionary class]])
+                                    {
+                                        if ([[tempVersionDict objectForKey:@"level"] intValue] > remoteUpdateLevel){
+                                            remoteUpdateLevel = [[tempVersionDict objectForKey:@"level"] intValue];
+                                            NSLog(@"iVersion is changing update level to %d", remoteUpdateLevel);
+                                        }
+                                        [(NSMutableDictionary *)plistVersionsTemp setObject:[tempVersionDict objectForKey:@"details"] forKey:version];
+                                    }
                                 }
                             }
+                            plistVersions = [plistVersionsTemp copy];
+                            
                         }
                         if (!latestVersion || plistVersions[latestVersion] || !_useAppStoreDetailsIfNoPlistEntryFound)
                         {
@@ -883,6 +899,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             }
             [self performSelectorOnMainThread:@selector(setDownloadError:) withObject:error waitUntilDone:YES];
             [self performSelectorOnMainThread:@selector(setRemoteVersionsDict:) withObject:versions waitUntilDone:YES];
+            if(remoteUpdateLevel){
+                self.updateLevel = remoteUpdateLevel;
+            }
             [self performSelectorOnMainThread:@selector(setLastChecked:) withObject:[NSDate date] waitUntilDone:YES];
             [self performSelectorOnMainThread:@selector(downloadedVersionsData) withObject:nil waitUntilDone:YES];
         }

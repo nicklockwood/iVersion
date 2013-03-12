@@ -120,6 +120,10 @@ iVersionErrorCode;
 @property (nonatomic, assign) BOOL groupNotesByVersion;
 @property (nonatomic, assign) float checkPeriod;
 @property (nonatomic, assign) float remindPeriod;
+@property (nonatomic, assign) int updateLevel;
+//1 - Low (Download, Ignore and Remind Me Later (if lenght > 0) buttons appear)
+//2 - Medium (Download and Remind Me Later (if lenght > 0) buttons appear)
+//3 - High (Only Download button apears)
 
 //message text - you may wish to customise these
 @property (nonatomic, copy) NSString *inThisVersionTitle;
