@@ -875,7 +875,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                                     NSDictionary* tempVersionDict = [plistVersionsTemp objectForKey:version];
                                     if([tempVersionDict isKindOfClass:[NSDictionary class]])
                                     {
-                                        if ([[tempVersionDict objectForKey:@"level"] intValue] > remoteUpdateLevel){
+                                        if ([[tempVersionDict objectForKey:@"level"] intValue] > remoteUpdateLevel && [version compareVersion:self.applicationVersion] == NSOrderedDescending){
                                             remoteUpdateLevel = [[tempVersionDict objectForKey:@"level"] intValue];
                                             NSLog(@"iVersion is changing update level to %d", remoteUpdateLevel);
                                         }
