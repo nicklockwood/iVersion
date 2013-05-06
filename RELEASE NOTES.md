@@ -1,3 +1,8 @@
+Version 1.10.4
+
+- Added Portuguese and Russian translations
+- Now uses NSJSONSerializer if available, which solves problem with app store descriptions containing double quotes (iOS 4.x will still use the old parser)
+
 Version 1.10.3
 
 - Fixed potential infinite loop if release notes JSON contains 0x00 characters
