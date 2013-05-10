@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.10.4
+//  Version 1.10.5
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -268,7 +268,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
     
     return [NSURL URLWithString:[NSString stringWithFormat:iVersioniOSAppStoreURLFormat, (unsigned int)self.appStoreID]];
-
+    
 #else
     
     return [NSURL URLWithString:[NSString stringWithFormat:iVersionMacAppStoreURLFormat, (unsigned int)self.appStoreID]];
@@ -455,8 +455,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                                      defaultButton:defaultButton
                                    alternateButton:cancelButton
                                        otherButton:nil
-                                  informativeTextWithFormat:@"%@", self.inThisVersionTitle];
-
+                         informativeTextWithFormat:@"%@", self.inThisVersionTitle];
+    
     NSScrollView *scrollview = [[NSScrollView alloc] initWithFrame:NSMakeRect(0.0, 0.0, 380.0, 15.0)];
     NSSize contentSize = [scrollview contentSize];
     [scrollview setBorderType:NSBezelBorder];
@@ -481,7 +481,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     return alert;
     
 #endif
-
+    
 }
 
 - (void)downloadedVersionsData
@@ -774,7 +774,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 id json = nil;
                 if ([NSJSONSerialization class])
                 {
-                    json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+                    json = [[NSJSONSerialization JSONObjectWithData:data options:0 error:&error][@"results"] lastObject];
                 }
                 else
                 {
@@ -793,7 +793,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                             //get version details
                             NSString *releaseNotes = [self valueForKey:@"releaseNotes" inJSON:json];
                             latestVersion = [self valueForKey:@"version" inJSON:json];
-
+                            
                             if (latestVersion)
                             {
                                 versions = @{latestVersion: releaseNotes ?: @""};

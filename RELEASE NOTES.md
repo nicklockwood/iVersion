@@ -1,3 +1,7 @@
+Version 1.10.5
+
+- Fixed critical bug in NSJSONSerializer implementation
+
 Version 1.10.4
 
 - Added Portuguese and Russian translations
