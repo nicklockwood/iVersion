@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.10.5
+//  Version 1.10.6
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -879,15 +879,15 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                             if (latestVersion)
                             {
                                 //remove versions that are greater than latest in app store
-                                NSMutableDictionary *newPlistVersions = [NSMutableDictionary new];
+                                NSMutableDictionary *versions = [NSMutableDictionary dictionary];
                                 for (NSString *version in plistVersions)
                                 {
                                     if ([version compareVersion:latestVersion] != NSOrderedDescending)
                                     {
-                                        [newPlistVersions setObject:[plistVersions objectForKey:version] forKey:version];
+                                        versions[version] = plistVersions[version];
                                     }
                                 }
-                                plistVersions = (NSDictionary *)newPlistVersions;
+                                plistVersions = versions;
                             }
                             if (!latestVersion || plistVersions[latestVersion] || !_useAppStoreDetailsIfNoPlistEntryFound)
                             {

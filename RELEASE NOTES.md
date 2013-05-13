@@ -1,3 +1,7 @@
+Version 1.10.6
+
+- Fixed crash when plist contains versions later than latest in app store
+
 Version 1.10.5
 
 - Fixed critical bug in NSJSONSerializer implementation
