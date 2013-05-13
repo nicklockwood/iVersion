@@ -879,14 +879,15 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                             if (latestVersion)
                             {
                                 //remove versions that are greater than latest in app store
-                                plistVersions = [plistVersions mutableCopy];
-                                for (NSString *version in [plistVersions keyEnumerator])
+                                NSMutableDictionary *newPlistVersions = [NSMutableDictionary new];
+                                for (NSString *version in plistVersions)
                                 {
-                                    if ([version compareVersion:latestVersion] == NSOrderedDescending)
+                                    if ([version compareVersion:latestVersion] != NSOrderedDescending)
                                     {
-                                        [(NSMutableDictionary *)plistVersions removeObjectForKey:version];
+                                        [newPlistVersions setObject:[plistVersions objectForKey:version] forKey:version];
                                     }
                                 }
+                                plistVersions = (NSDictionary *)newPlistVersions;
                             }
                             if (!latestVersion || plistVersions[latestVersion] || !_useAppStoreDetailsIfNoPlistEntryFound)
                             {
