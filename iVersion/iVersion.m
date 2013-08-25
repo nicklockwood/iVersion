@@ -328,6 +328,70 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 #pragma mark -
 #pragma mark Methods
 
+
+- (void)checkNewVersion:(void(^)(BOOL hasNewVersion, NSDictionary *version, NSError *error))resultCallback
+{
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        BOOL newerVersionAvailable = NO;
+        NSString *latestVersion = nil;
+        NSDictionary *versions = nil;
+        
+        NSString *iTunesServiceURL = [NSString stringWithFormat:iVersionAppLookupURLFormat, self.appStoreCountry];
+        if (self.appStoreID){
+            iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"?id=%u", (unsigned int)self.appStoreID];
+        }
+        else
+        {
+            iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"?bundleId=%@", self.applicationBundleID];
+        }
+        
+        NSError *error = nil;
+        NSURLResponse *response = nil;
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:iTunesServiceURL]
+                                                 cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+                                             timeoutInterval:REQUEST_TIMEOUT];
+        
+        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+        if (data){
+            id json = nil;
+            if ([NSJSONSerialization class]){
+                json = [[NSJSONSerialization JSONObjectWithData:data options:0 error:&error][@"results"] lastObject];
+            }
+            else{
+                //convert to string
+                json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            }
+            
+            if (!error){
+                NSString *bundleID = [self valueForKey:@"bundleId" inJSON:json];
+                if (bundleID)
+                {
+                    //get version details
+                    NSString *releaseNotes = [self valueForKey:@"releaseNotes" inJSON:json];
+                    latestVersion = [self valueForKey:@"version" inJSON:json];
+                    
+                    if (latestVersion){
+                        versions = @{@"version":latestVersion, @"releaseNote": releaseNotes ?: @""};
+                    }
+                    
+                    //check for new version
+                    newerVersionAvailable = ([latestVersion compareVersion:self.applicationVersion] == NSOrderedDescending);
+                    
+                }else{
+                    error = [NSError errorWithDomain:iVersionErrorDomain
+                                                code:iVersionErrorApplicationNotFoundOnAppStore
+                                            userInfo:@{NSLocalizedDescriptionKey: @"The application could not be found on the App Store."}];
+                }            
+            }
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            resultCallback(newerVersionAvailable, versions, error);                        
+        });
+    });
+    
+}
+
 - (NSString *)lastVersion
 {
     return [[NSUserDefaults standardUserDefaults] objectForKey:iVersionLastVersionKey];
