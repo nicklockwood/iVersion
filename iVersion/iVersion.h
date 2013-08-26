@@ -155,4 +155,6 @@ iVersionErrorCode;
 - (BOOL)shouldCheckForNewVersion;
 - (void)checkForNewVersion;
 
+- (void)checkNewVersion:(void(^)(BOOL hasNewVersion, NSDictionary *version, NSError *error))resultCallback;
+
 @end
