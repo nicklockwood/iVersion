@@ -219,6 +219,18 @@ This option will cause iVersion to send detailed logs to the console about the v
 
 If set to YES, iVersion will always display the contents of the local and remote versions plists, irrespective of the version number of the current build. Use this to proofread your release notes during testing, but disable it for the final release.
 
+Affiliate linking
+--------------
+
+You can use the following optional properties to add [affiliate linking](http://www.apple.com/itunes/affiliates/). Currently, only [PHG](http://www.apple.com/itunes/affiliates/resources/documentation/basic_affiliate_link_guidelines_for_the_phg_network.html) is supported.
+
+    @property (nonatomic, strong) NSString *affiliateToken;
+
+Your affiliate token (`at` parameter). 
+
+    @property (nonatomic, strong) NSURL *campaignName;
+
+The campaign name (`ct` parameter).
 
 Advanced properties
 ---------------
