@@ -184,7 +184,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         //default settings
         self.useAllAvailableLanguages = YES;
         self.onlyPromptIfMainWindowIsAvailable = YES;
-        self.displayAppUsingStorekitIfAvailable = YES;
         self.checkAtLaunch = YES;
         self.checkPeriod = 0.0f;
         self.remindPeriod = 1.0f;
@@ -990,6 +989,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 - (void)openAppPageInAppStore
 {
+    
+#if IVERSION_USE_STOREKIT
+    
     if (_displayAppUsingStorekitIfAvailable && [SKStoreProductViewController class])
     {
         if (self.verboseLogging)
@@ -1046,6 +1048,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         }
     }
     
+#endif
+    
     if (self.verboseLogging)
     {
         NSLog(@"iVersion will open the App Store using the following URL: %@", self.updateURL);
@@ -1054,7 +1058,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     [[UIApplication sharedApplication] openURL:self.updateURL];
 }
 
-- (void)productViewControllerDidFinish:(SKStoreProductViewController *)controller
+- (void)productViewControllerDidFinish:(UIViewController *)controller
 {
     [controller.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
     if ([self.delegate respondsToSelector:@selector(iVersionDidDismissStoreKitModal)])

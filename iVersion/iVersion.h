@@ -44,9 +44,13 @@ __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_8)
 
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 #import <UIKit/UIKit.h>
-#import <StoreKit/StoreKit.h>
 #else
 #import <Cocoa/Cocoa.h>
+#endif
+
+
+#if IVERSION_USE_STOREKIT
+#import <StoreKit/StoreKit.h>
 #endif
 
 
@@ -134,7 +138,6 @@ iVersionErrorCode;
 @property (nonatomic, assign) BOOL useAllAvailableLanguages;
 @property (nonatomic, assign) BOOL disableAlertViewResizing;
 @property (nonatomic, assign) BOOL onlyPromptIfMainWindowIsAvailable;
-@property (nonatomic, assign) BOOL displayAppUsingStorekitIfAvailable;
 @property (nonatomic, assign) BOOL useAppStoreDetailsIfNoPlistEntryFound;
 @property (nonatomic, assign) BOOL checkAtLaunch;
 @property (nonatomic, assign) BOOL verboseLogging;

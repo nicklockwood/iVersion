@@ -43,7 +43,7 @@ iVersion uses threading internally to avoid blocking the UI, but none of the iVe
 Installation
 --------------
 
-To install iVersion into your app, drag the iVersion.h, .m and .bundle files into your project. You can omit the .bundle if you are not interested in localised copy. On iOS you will also need to add the StoreKit framework.
+To install iVersion into your app, drag the iVersion.h, .m and .bundle files into your project. You can omit the .bundle if you are not interested in localised copy. If you are using the IVERSION_USE_STOREKIT option (iOS only), you will also need to add the StoreKit framework.
 
 iVersion typically requires no configuration at all and will simply run automatically, using the Application's bundle ID to look it up on the App Store.
 
@@ -326,6 +326,20 @@ This method is called just after iVersion presents the StoreKit in-app product v
     - (void)iVersionDidDismissStoreKitModal;
 
 This method is called when the user dismisses the StoreKit in-app product view controller. This is useful if you want to resume any functionality that you paused when the modal was displayed.
+
+
+StoreKit support
+------------------
+
+By default, iVersion will open the ratings page by launching the App Store app. Optionally, on iOS 6 or above you can set iVersion to display the app page without leaving the app by using the StoreKit framework. To enable this feature, set the following macro value in your prefix.pch file:
+
+    #define IVERSION_USE_STOREKIT 1
+    
+Or, alternatively, you can add `IVERSION_USE_STOREKIT=1` as a preprocessor macro. Note the following caveats to using Storekit:
+
+1. iVersion cannot open the ratings page directly in StoreKit, it can only open the app details page. The user will have to tap the ratings tab before rating.
+
+2. There have been some isolated cases of Apple rejecting apps that link against the StoreKit framework but do not offer in-app purchases. If your app does not already use StoreKit, enabling this feature of iVersion is at your own risk.
 	
 
 Localisation

@@ -1,7 +1,8 @@
 Version 1.11 beta
 
 - iVersion is now disabled by default on iOS 7, as updates are automatic. If you are using a custom version checking URL, you can re-enable it by setting the checkAtLaunch option to YES in your AppDelegate +initialize method.
-- iVersion now complies with the -Wextra warning level
+- No longer requires StoreKit by default (see README for details)
+- Now complies with the -Wextra warning level
 
 Version 1.10.6
 
