@@ -33,7 +33,7 @@
     [iVersion sharedInstance].localVersionsPlistPath = @"versions.plist";
 }
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+- (BOOL)application:(__unused UIApplication *)application didFinishLaunchingWithOptions:(__unused NSDictionary *)launchOptions
 {    
     [window addSubview:viewController.view];
     [window makeKeyAndVisible];

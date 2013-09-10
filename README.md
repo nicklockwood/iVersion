@@ -9,7 +9,7 @@ And if your app is not on the App Store, either because it's an in-house/enterpr
 
 iVersion is a simple, *zero-config* class to allow iPhone and Mac App Store apps to automatically check for updates and inform the user about new features.
 
-iVersion automatically detects when the new version of an app is released on the App Store and informs the user with a helpful alert that links them directly to the app download page.
+iVersion automatically detects when the new version of an app is released on the App Store and informs the user with a helpful alert that links them directly to the app download page (NOTE: as of iOS 7, updates are automatic, so this feature is disabled on iOS 7 and above by default).
 
 Or if your app is not on the store, iVersion lets you specify a remote plist file to check for new releases, and a download URL where users can get the latest release.
 

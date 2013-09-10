@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.10.6
+//  Version 1.11 beta 1
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -156,7 +156,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         if (&UIApplicationWillEnterForegroundNotification)
         {
             [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(applicationWillEnterForeground:)
+                                                     selector:@selector(applicationWillEnterForeground)
                                                          name:UIApplicationWillEnterForegroundNotification
                                                        object:nil];
         }
@@ -188,6 +188,15 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.checkAtLaunch = YES;
         self.checkPeriod = 0.0f;
         self.remindPeriod = 1.0f;
+        
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+        
+        if ([[UIDevice currentDevice].systemVersion floatValue] >= 7.0f)
+        {
+            self.checkAtLaunch = NO;
+        }
+        
+#endif
         
 #ifdef DEBUG
         
@@ -829,7 +838,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                         {
                             if (self.verboseLogging)
                             {
-                                NSLog(@"iVersion found that the application bundle ID (%@) does not match the bundle ID of the app found on iTunes (%@) with the specified App Store ID (%i)", self.applicationBundleID, bundleID, (int)self.appStoreID);
+                                NSLog(@"iVersion found that the application bundle ID (%@) does not match the bundle ID of the app found on iTunes (%@) with the specified App Store ID (%@)", self.applicationBundleID, bundleID, @(self.appStoreID));
                             }
                             
                             error = [NSError errorWithDomain:iVersionErrorDomain
@@ -985,7 +994,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     {
         if (self.verboseLogging)
         {
-            NSLog(@"iVersion will attempt to open the StoreKit in-app product page using the following app store ID: %i", self.appStoreID);
+            NSLog(@"iVersion will attempt to open the StoreKit in-app product page using the following app store ID: %@", @(self.appStoreID));
         }
         
         //create store view controller
@@ -1180,7 +1189,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 #else
 
-- (void)localAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
+- (void)localAlertDidEnd:(__unused NSAlert *)alert returnCode:(__unused NSInteger)returnCode contextInfo:(__unused void *)contextInfo
 {
     //record that details have been viewed
     self.viewedVersionDetails = YES;
@@ -1219,7 +1228,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     if (!_updateURL) [self openAppPageWhenAppStoreLaunched];
 }
 
-- (void)remoteAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
+- (void)remoteAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(__unused void *)contextInfo
 {
     //latest version
     NSString *latestVersion = [self mostRecentVersionInDict:self.remoteVersionsDict];
@@ -1287,6 +1296,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 - (void)applicationLaunched
 {
+    
     if (self.checkAtLaunch)
     {
         [self checkIfNewVersion];
@@ -1297,13 +1307,24 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     }
     else if (self.verboseLogging)
     {
+        
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+        
+        if ([[UIDevice currentDevice].systemVersion floatValue] >= 7.0f)
+        {
+            NSLog(@"The checkAtLaunch option has been disabled because iVersion has detected that it is running on iOS 7. To override this, set the checkAtLaunch option to YES in your AppDelegate +initialize method.");
+            return;
+        }
+        
+#endif
+        
         NSLog(@"iVersion will not check for updates because the checkAtLaunch option is disabled");
     }
 }
 
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 
-- (void)applicationWillEnterForeground:(NSNotification *)notification
+- (void)applicationWillEnterForeground
 {
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground)
     {
