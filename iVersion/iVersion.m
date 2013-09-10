@@ -1070,7 +1070,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 - (void)resizeAlertView:(UIAlertView *)alertView
 {
     if (!self.disableAlertViewResizing && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone &&
-        UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation))
+        UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation) &&
+        [[UIDevice currentDevice].systemVersion floatValue] < 7.0f)
     {
         CGFloat max = alertView.window.bounds.size.height - alertView.frame.size.height - 10.0f;
         CGFloat offset = 0.0f;
