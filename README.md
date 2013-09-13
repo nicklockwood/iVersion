@@ -9,7 +9,7 @@ And if your app is not on the App Store, either because it's an in-house/enterpr
 
 iVersion is a simple, *zero-config* class to allow iPhone and Mac App Store apps to automatically check for updates and inform the user about new features.
 
-iVersion automatically detects when the new version of an app is released on the App Store and informs the user with a helpful alert that links them directly to the app download page (NOTE: as of iOS 7, updates are automatic, so this feature is disabled on iOS 7 and above by default).
+iVersion automatically detects when the new version of an app is released on the App Store and informs the user with a helpful alert that links them directly to the app download page.
 
 Or if your app is not on the store, iVersion lets you specify a remote plist file to check for new releases, and a download URL where users can get the latest release.
 
@@ -19,7 +19,7 @@ iVersion has an additional function, which is to tell users about important new 
 Supported OS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 6.1 / Mac OS 10.8 (Xcode 4.6, Apple LLVM compiler 4.2)
+* Supported build target - iOS 7.0 / Mac OS 10.8 (Xcode 5.0, Apple LLVM compiler 5.0)
 * Earliest supported deployment target - iOS 5.0 / Mac OS 10.7
 * Earliest compatible deployment target - iOS 4.3 / Mac OS 10.6
 
@@ -199,10 +199,6 @@ On iPhone, iVersion includes some logic to resize the alert view to ensure that 
 
 This setting is applicable to Mac OS only. By default, on Mac OS the iVersion alert is displayed as sheet on the main window. Some applications do not have a main window, so this approach doesn't work. For such applications, set this property to NO to allow the iVersion alert to be displayed as a regular modal window.
 
-    @property (nonatomic, assign) BOOL displayAppUsingStorekitIfAvailable;
-
-By default, if iVersion is running on iOS 6 or above then when the user presses Download, the app page will be displayed directly within the app instead of linking to the App Store app. If you don't want that, set this property to NO (YES by default).
-
     @property (nonatomic, assign) BOOL useAppStoreDetailsIfNoPlistEntryFound;
 
 If you are using the remote plist option, by default iVersion will only display an update alert if a release notes entry is found in that plist, even if a new version is detected on the app store. This allows you to delay the announcement of an update, or block the announcement of minor updates by selectivley omitting versions from the plist. If you would prefer iVersion to use the App Store release notes if no plist entry is found, set this option to YES (NO by default).
@@ -255,7 +251,7 @@ Advanced methods
 
 	- (void)openAppPageInAppStore;
 
-This method will open the application page in the Mac or iPhone App Store, or directly within the app, depending on which platform and OS version is running. You should use this method instead of the updateURL property, as the process for launching the app store is more complex than merely opening the URL in many cases. Note that this method depends on the `appStoreID` which is only retrieved after polling the iTunes server, so if you intend to call this method without first doing an update check, you will need to set the `appStoreID` property yourself beforehand.
+This method will open the application page in the Mac or iPhone App Store, or directly within the app, depending on which platform and OS version is running. You should use this method instead of the updateURL property, as the process for launching the app store is more complex than merely opening the URL in many cases. Note that this method depends on the `appStoreID` which is only retrieved after polling the iTunes server, and will return NO if that property is not yet set. If you intend to call this method without first doing an update check, you will need to set the `appStoreID` property yourself beforehand.
 
 	- (void)checkIfNewVersion;
 

@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.11 beta 1
+//  Version 1.11 beta 2
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -110,10 +110,6 @@ iVersionErrorCode;
 //bundle ID is not unique between iOS and Mac app stores
 @property (nonatomic, assign) NSUInteger appStoreID;
 
-//app-specific configuration - you may need to set some of these
-@property (nonatomic, copy) NSString *remoteVersionsPlistURL;
-@property (nonatomic, copy) NSString *localVersionsPlistPath;
-
 //application details - these are set automatically
 @property (nonatomic, copy) NSString *applicationVersion;
 @property (nonatomic, copy) NSString *applicationBundleID;
@@ -136,7 +132,6 @@ iVersionErrorCode;
 
 //debugging and prompt overrides
 @property (nonatomic, assign) BOOL useAllAvailableLanguages;
-@property (nonatomic, assign) BOOL disableAlertViewResizing;
 @property (nonatomic, assign) BOOL onlyPromptIfMainWindowIsAvailable;
 @property (nonatomic, assign) BOOL useAppStoreDetailsIfNoPlistEntryFound;
 @property (nonatomic, assign) BOOL checkAtLaunch;
@@ -144,6 +139,8 @@ iVersionErrorCode;
 @property (nonatomic, assign) BOOL previewMode;
 
 //advanced properties for implementing custom behaviour
+@property (nonatomic, copy) NSString *remoteVersionsPlistURL;
+@property (nonatomic, copy) NSString *localVersionsPlistPath;
 @property (nonatomic, copy) NSString *ignoredVersion;
 @property (nonatomic, strong) NSDate *lastChecked;
 @property (nonatomic, strong) NSDate *lastReminded;
@@ -152,7 +149,7 @@ iVersionErrorCode;
 @property (nonatomic, weak_delegate) id<iVersionDelegate> delegate;
 
 //manually control behaviour
-- (void)openAppPageInAppStore;
+- (BOOL)openAppPageInAppStore;
 - (void)checkIfNewVersion;
 - (NSString *)versionDetails;
 - (BOOL)shouldCheckForNewVersion;
