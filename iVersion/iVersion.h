@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.11 beta 2
+//  Version 1.11 beta 3
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design

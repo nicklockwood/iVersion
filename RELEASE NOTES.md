@@ -2,6 +2,8 @@ Version 1.11 beta
 
 - No longer requires StoreKit by default (see README for details)
 - Removed disableAlertViewResizing property (no longer needed)
+- Added Turkish translation
+- Improved handling on HTTP request errors
 - Now complies with the -Wextra warning level
 
 Version 1.10.6

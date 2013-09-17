@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.11 beta 2
+//  Version 1.11 beta 3
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -775,10 +775,13 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:iTunesServiceURL]
                                                      cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                  timeoutInterval:REQUEST_TIMEOUT];
-            
             NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-            if (data)
+            NSInteger statusCode = ((NSHTTPURLResponse *)response).statusCode;
+            if (data && statusCode == 200)
             {
+                //in case error is garbage...
+                error = nil;
+                
                 id json = nil;
                 if ([NSJSONSerialization class])
                 {
@@ -907,6 +910,12 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                             NSLog(@"iVersion was unable to download the user-specified release notes");
                         }
                     }
+                }
+                else if (statusCode >= 400)
+                {
+                    //http error
+                    NSString *message = [NSString stringWithFormat:@"The server returned a %@ error", @(statusCode)];
+                    error = [NSError errorWithDomain:@"HTTPResponseErrorDomain" code:statusCode userInfo:@{NSLocalizedDescriptionKey: message}];
                 }
             }
             [self performSelectorOnMainThread:@selector(setDownloadError:) withObject:error waitUntilDone:YES];
