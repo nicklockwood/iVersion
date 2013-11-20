@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.11 beta 3
+//  Version 1.11 beta 4
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -48,7 +48,7 @@
 #endif
 
 
-#if IVERSION_USE_STOREKIT
+#if defined(IVERSION_USE_STOREKIT) && IVERSION_USE_STOREKIT
 #import <StoreKit/StoreKit.h>
 #endif
 

@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.11 beta 3
+//  Version 1.11 beta 4
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -79,7 +79,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         {
             return NSOrderedAscending;
         }
-        default:
+        case NSOrderedSame:
         {
             return NSOrderedSame;
         }
@@ -124,20 +124,20 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     if (bundle == nil)
     {
         NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"iVersion" ofType:@"bundle"];
-        bundle = [NSBundle bundleWithPath:bundlePath] ?: [NSBundle mainBundle];
         if (self.useAllAvailableLanguages)
         {
-            //manually select the desired lproj folder
-            for (NSString *language in [NSLocale preferredLanguages])
+            bundle = [NSBundle bundleWithPath:bundlePath];
+            NSString *language = [[NSLocale preferredLanguages] count]? [NSLocale preferredLanguages][0]: @"en";
+            if (![[bundle localizations] containsObject:language])
             {
-                if ([[bundle localizations] containsObject:language])
-                {
-                    bundlePath = [bundle pathForResource:language ofType:@"lproj"];
-                    bundle = [NSBundle bundleWithPath:bundlePath];
-                    break;
-                }
+                language = [language componentsSeparatedByString:@"-"][0];
+            }
+            if ([[bundle localizations] containsObject:language])
+            {
+                bundlePath = [bundle pathForResource:language ofType:@"lproj"];
             }
         }
+        bundle = [NSBundle bundleWithPath:bundlePath] ?: [NSBundle mainBundle];
     }
     defaultString = [bundle localizedStringForKey:key value:defaultString table:nil];
     return [[NSBundle mainBundle] localizedStringForKey:key value:defaultString table:nil];
@@ -397,7 +397,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             newVersionFound = YES;
             if (self.groupNotesByVersion)
             {
-                [details appendFormat:self.versionLabelFormat, version];
+                [details appendString:[self.versionLabelFormat stringByReplacingOccurrencesOfString:@"%@" withString:version]];
                 [details appendString:@"\n\n"];
             }
             [details appendString:[self versionDetails:version inDict:dict]];
@@ -667,11 +667,11 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         if (keyRange.location != NSNotFound)
         {
             NSInteger start = keyRange.location + keyRange.length;
-            NSRange valueStart = [json rangeOfString:@":" options:0 range:NSMakeRange(start, [json length] - start)];
+            NSRange valueStart = [json rangeOfString:@":" options:(NSStringCompareOptions)0 range:NSMakeRange(start, [json length] - start)];
             if (valueStart.location != NSNotFound)
             {
                 start = valueStart.location + 1;
-                NSRange valueEnd = [json rangeOfString:@"," options:0 range:NSMakeRange(start, [json length] - start)];
+                NSRange valueEnd = [json rangeOfString:@"," options:(NSStringCompareOptions)0 range:NSMakeRange(start, [json length] - start)];
                 if (valueEnd.location != NSNotFound)
                 {
                     NSString *value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
@@ -683,7 +683,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                             break;
                         }
                         NSInteger newStart = valueEnd.location + 1;
-                        valueEnd = [json rangeOfString:@"," options:0 range:NSMakeRange(newStart, [json length] - newStart)];
+                        valueEnd = [json rangeOfString:@"," options:(NSStringCompareOptions)0 range:NSMakeRange(newStart, [json length] - newStart)];
                         value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
                         value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
                     }
@@ -785,7 +785,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 id json = nil;
                 if ([NSJSONSerialization class])
                 {
-                    json = [[NSJSONSerialization JSONObjectWithData:data options:0 error:&error][@"results"] lastObject];
+                    json = [[NSJSONSerialization JSONObjectWithData:data options:(NSJSONReadingOptions)0 error:&error][@"results"] lastObject];
                 }
                 else
                 {
@@ -1004,7 +1004,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         return NO;
     }
     
-#if IVERSION_USE_STOREKIT
+#if defined(IVERSION_USE_STOREKIT) && IVERSION_USE_STOREKIT
     
     if (!_updateURL && [SKStoreProductViewController class])
     {
@@ -1204,19 +1204,14 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 - (void)openAppPageWhenAppStoreLaunched
 {
     //check if app store is running
-    ProcessSerialNumber psn = { kNoProcess, kNoProcess };
-    while (GetNextProcess(&psn) == noErr)
+    for (NSRunningApplication *app in [[NSWorkspace sharedWorkspace] runningApplications])
     {
-        CFDictionaryRef cfDict = ProcessInformationCopyDictionary(&psn,  kProcessDictionaryIncludeAllInformationMask);
-        NSString *bundleID = ((__bridge NSDictionary *)cfDict)[(NSString *)kCFBundleIdentifierKey];
-        if ([iVersionMacAppStoreBundleID isEqualToString:bundleID])
+        if ([app.bundleIdentifier isEqualToString:iVersionMacAppStoreBundleID])
         {
             //open app page
             [[NSWorkspace sharedWorkspace] performSelector:@selector(openURL:) withObject:self.updateURL afterDelay:MAC_APP_STORE_REFRESH_DELAY];
-            CFRelease(cfDict);
             return;
         }
-        CFRelease(cfDict);
     }
     
     //try again

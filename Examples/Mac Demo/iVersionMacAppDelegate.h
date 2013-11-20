@@ -8,9 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface iVersionMacAppDelegate : NSObject <NSApplicationDelegate> {
-    NSWindow *__weak window;
-}
+@interface iVersionMacAppDelegate : NSObject <NSApplicationDelegate>
 
 @property (weak) IBOutlet NSWindow *window;
 

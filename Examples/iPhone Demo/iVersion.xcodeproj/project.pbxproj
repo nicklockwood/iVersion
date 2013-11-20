@@ -224,6 +224,13 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				INFOPLIST_FILE = "iVersion-Info.plist";
 				PRODUCT_NAME = iVersion;
+				WARNING_CFLAGS = (
+					"-Weverything",
+					"-Wno-objc-missing-property-synthesis",
+					"-Wno-unused-macros",
+					"-Wno-direct-ivar-access",
+					"-Wno-pedantic",
+				);
 			};
 			name = Debug;
 		};
@@ -238,6 +245,13 @@
 				INFOPLIST_FILE = "iVersion-Info.plist";
 				PRODUCT_NAME = iVersion;
 				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"-Weverything",
+					"-Wno-objc-missing-property-synthesis",
+					"-Wno-unused-macros",
+					"-Wno-direct-ivar-access",
+					"-Wno-pedantic",
+				);
 			};
 			name = Release;
 		};

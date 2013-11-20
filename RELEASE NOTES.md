@@ -5,6 +5,7 @@ Version 1.11 beta
 - Added Turkish translation
 - Improved handling on HTTP request errors
 - Now complies with the -Wextra warning level
+- Removed deprecated methods on Mac OS
 
 Version 1.10.6
 
