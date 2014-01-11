@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.11 beta 4
+//  Version 1.11 beta 5
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -168,6 +168,14 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         
         //get country
         self.appStoreCountry = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
+        if ([self.appStoreCountry isEqualToString:@"150"])
+        {
+            self.appStoreCountry = @"eu";
+        }
+        else if ([[self.appStoreCountry stringByReplacingOccurrencesOfString:@"[A-Za-z]{2}" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, 2)] length])
+        {
+            self.appStoreCountry = @"us";
+        }
         
         //application version (use short version preferentially)
         self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];

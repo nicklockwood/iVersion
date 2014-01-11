@@ -1,5 +1,6 @@
 Version 1.11 beta
 
+- Fixed problem with fetching app ID when device region is set to Europe
 - No longer requires StoreKit by default (see README for details)
 - Removed disableAlertViewResizing property (no longer needed)
 - Added Turkish translation
