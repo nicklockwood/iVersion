@@ -365,6 +365,13 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         {
             NSString *versionsFile = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:self.localVersionsPlistPath];
             versionsDict = [[NSDictionary alloc] initWithContentsOfFile:versionsFile];
+            if (!versionsDict)
+            {
+                // Get the path to versions plist in localized directory
+                NSArray *pathComponents = [self.localVersionsPlistPath componentsSeparatedByString:@"."];
+                versionsFile = ([pathComponents count] == 2) ? [[NSBundle mainBundle] pathForResource:pathComponents[0] ofType:pathComponents[1]] : nil;
+                versionsDict = [[NSDictionary alloc] initWithContentsOfFile:versionsFile];
+            }
         }
     }
     return versionsDict;
