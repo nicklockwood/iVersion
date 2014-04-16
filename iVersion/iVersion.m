@@ -425,7 +425,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 [details appendString:[self.versionLabelFormat stringByReplacingOccurrencesOfString:@"%@" withString:version]];
                 [details appendString:@"\n\n"];
             }
-            [details appendString:[self versionDetails:version inDict:dict]];
+            [details appendString:[self versionDetails:version inDict:dict] ?: @""];
             [details appendString:@"\n"];
             if (self.groupNotesByVersion)
             {
