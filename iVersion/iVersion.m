@@ -1165,7 +1165,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         //record that details have been viewed
         self.viewedVersionDetails = YES;
     }
-    else if (buttonIndex == alertView.cancelButtonIndex)
+    else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:self.ignoreButtonLabel])
     {
         //ignore this version
         self.ignoredVersion = latestVersion;
@@ -1177,7 +1177,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             [self.delegate iVersionUserDidIgnoreUpdate:latestVersion];
         }
     }
-    else if (buttonIndex == 2)
+    else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:self.remindButtonLabel]))
     {
         //remind later
         self.lastReminded = [NSDate date];
