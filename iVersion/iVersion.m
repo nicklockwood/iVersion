@@ -198,6 +198,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.applicationBundleID = [[NSBundle mainBundle] bundleIdentifier];
         
         //default settings
+        self.menuOptionType = iVersionMenuOptionTypeOption;
         self.useAllAvailableLanguages = YES;
         self.onlyPromptIfMainWindowIsAvailable = YES;
         self.checkAtLaunch = YES;
@@ -605,14 +606,40 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                     title = [title stringByAppendingFormat:@" (%@)", mostRecentVersion];
                 }
                 
-                self.visibleRemoteAlert = [self alertViewWithTitle:title
-                                                           details:details
-                                                     defaultButton:self.downloadButtonLabel
-                                                      cancelButton:self.ignoreButtonLabel];
-                
-                if ([self.remindButtonLabel length])
-                {
-                    [self.visibleRemoteAlert addButtonWithTitle:self.remindButtonLabel];
+                switch (self.menuOptionType) {
+                    
+                    case iVersionMenuOptionTypeForce:
+                        
+                        self.visibleRemoteAlert = [self alertViewWithTitle:title
+                                                                   details:details
+                                                             defaultButton:self.downloadButtonLabel
+                                                              cancelButton:nil];
+                        break;
+                        
+                    case iVersionMenuOptionTypeOption:
+                    {
+                        
+                        self.visibleRemoteAlert = [self alertViewWithTitle:title
+                                                                   details:details
+                                                             defaultButton:self.downloadButtonLabel
+                                                              cancelButton:self.ignoreButtonLabel];
+                        
+                        [self conditionallyAddRemindButton];
+                        
+                        break;
+                    }
+                        
+                    case iVersionMenuOptionTypeSkip:
+                    {
+                        self.visibleRemoteAlert = [self alertViewWithTitle:title
+                                                                   details:details
+                                                             defaultButton:self.downloadButtonLabel
+                                                              cancelButton:nil];
+                        [self conditionallyAddRemindButton];
+                        
+                        break;
+                    }
+                        
                 }
                 
 #if TARGET_OS_IPHONE
@@ -631,6 +658,14 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         {
             [self.delegate iVersionDidNotDetectNewVersion];
         }
+    }
+}
+
+- (void) conditionallyAddRemindButton
+{
+    if ([self.remindButtonLabel length])
+    {
+        [self.visibleRemoteAlert addButtonWithTitle:self.remindButtonLabel];
     }
 }
 
