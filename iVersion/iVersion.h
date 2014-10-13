@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.11 beta 6
+//  Version 1.11
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -45,10 +45,13 @@
 #endif
 
 
+#import <TargetConditionals.h>
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+#define IVERSION_EXTERN UIKIT_EXTERN
 #else
 #import <Cocoa/Cocoa.h>
+#define IVERSION_EXTERN APPKIT_EXTERN
 #endif
 
 
@@ -59,27 +62,29 @@
 
 extern NSString *const iVersionErrorDomain;
 
-
 //localisation string keys
-static NSString *const iVersionInThisVersionTitleKey = @"iVersionInThisVersionTitle";
-static NSString *const iVersionUpdateAvailableTitleKey = @"iVersionUpdateAvailableTitle";
-static NSString *const iVersionVersionLabelFormatKey = @"iVersionVersionLabelFormat";
-static NSString *const iVersionOKButtonKey = @"iVersionOKButton";
-static NSString *const iVersionIgnoreButtonKey = @"iVersionIgnoreButton";
-static NSString *const iVersionRemindButtonKey = @"iVersionRemindButton";
-static NSString *const iVersionDownloadButtonKey = @"iVersionDownloadButton";
+IVERSION_EXTERN NSString *const iVersionInThisVersionTitleKey; //iVersionInThisVersionTitle
+IVERSION_EXTERN NSString *const iVersionUpdateAvailableTitleKey; //iVersionUpdateAvailableTitle
+IVERSION_EXTERN NSString *const iVersionVersionLabelFormatKey; //iVersionVersionLabelFormat
+IVERSION_EXTERN NSString *const iVersionOKButtonKey; //iVersionOKButton
+IVERSION_EXTERN NSString *const iVersionIgnoreButtonKey; //iVersionIgnoreButton
+IVERSION_EXTERN NSString *const iVersionRemindButtonKey; //iVersionRemindButton
+IVERSION_EXTERN NSString *const iVersionDownloadButtonKey; //iVersionDownloadButton
 
-typedef NS_ENUM(NSUInteger, iVersionErrorCode) {
-    
+
+typedef NS_ENUM(NSUInteger, iVersionErrorCode)
+{
     iVersionErrorBundleIdDoesNotMatchAppStore = 1,
     iVersionErrorApplicationNotFoundOnAppStore
 };
 
-typedef NS_ENUM(NSInteger, iVersionMenuOptionType) {
-    
-    iVersionMenuOptionTypeForce,
-    iVersionMenuOptionTypeOption,
-    iVersionMenuOptionTypeSkip,
+
+typedef NS_ENUM(NSInteger, iVersionUpdatePriority)
+{
+    iVersionUpdatePriorityDefault = 0,
+    iVersionUpdatePriorityLow = 1,
+    iVersionUpdatePriorityMedium = 2,
+    iVersionUpdatePriorityHigh = 3
 };
 
 
@@ -122,8 +127,6 @@ typedef NS_ENUM(NSInteger, iVersionMenuOptionType) {
 @property (nonatomic, copy) NSString *applicationVersion;
 @property (nonatomic, copy) NSString *applicationBundleID;
 @property (nonatomic, copy) NSString *appStoreCountry;
-@property (nonatomic, readwrite) iVersionMenuOptionType menuOptionType;
-
 
 //usage settings - these have sensible defaults
 @property (nonatomic, assign) BOOL showOnFirstLaunch;
@@ -141,6 +144,7 @@ typedef NS_ENUM(NSInteger, iVersionMenuOptionType) {
 @property (nonatomic, copy) NSString *downloadButtonLabel;
 
 //debugging and prompt overrides
+@property (nonatomic, assign) iVersionUpdatePriority updatePriority;
 @property (nonatomic, assign) BOOL useAllAvailableLanguages;
 @property (nonatomic, assign) BOOL onlyPromptIfMainWindowIsAvailable;
 @property (nonatomic, assign) BOOL useAppStoreDetailsIfNoPlistEntryFound;

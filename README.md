@@ -19,8 +19,8 @@ iVersion has an additional function, which is to tell users about important new 
 Supported OS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 7.0 / Mac OS 10.8 (Xcode 5.0, Apple LLVM compiler 5.0)
-* Earliest supported deployment target - iOS 5.0 / Mac OS 10.7
+* Supported build target - iOS 8.0 / Mac OS 10.9 (Xcode 6.0, Apple LLVM compiler 6.0)
+* Earliest supported deployment target - iOS 6.0 / Mac OS 10.7
 * Earliest compatible deployment target - iOS 4.3 / Mac OS 10.6
 
 NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this OS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
@@ -186,6 +186,10 @@ The button label for the button the user presses if they don't want to download 
 	@property (nonatomic, copy) NSString *downloadButtonLabel;
 
 The button label for the button the user presses if they want to download a new update.
+
+    @property (nonatomic, assign) iVersionUpdatePriority updatePriority;
+
+This is a simple way to hide the ignore/remind buttons if you want to prioritize the update. There are three priority levels: `iVersionUpdatePriorityLow` is the default, and shows download, remind and ignore buttons; `iVersionUpdatePriorityMedium` hides the ignore button; `iVersionUpdatePriorityHigh` hides both the remind and ignore buttons, forcing the user to download the update immediately.
 
     @property (nonatomic, assign) BOOL useAllAvailableLanguages;
 
@@ -400,13 +404,15 @@ The example is for Mac OS, but the same thing can be applied on iOS.
 Release Notes
 ----------------
 
-Version 1.11 beta
+Version 1.11
 
+- Added `updatePriority` property for configuring update priority
+- Fixed bug where setting ignoreLabel and remindLabel to blank would cause wrong behavior
 - Fixed problem with fetching app ID when device region is set to Europe
 - No longer requires StoreKit by default (see README for details)
 - Removed disableAlertViewResizing property (no longer needed)
 - Added Turkish translation
-- Improved handling on HTTP request errors
+- Improved handling of HTTP request errors
 - Now complies with the -Weverything warning level
 - Removed deprecated methods on Mac OS
 

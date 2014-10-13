@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.11 beta 6
+//  Version 1.11
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -51,6 +51,13 @@
 
 NSString *const iVersionErrorDomain = @"iVersionErrorDomain";
 
+NSString *const iVersionInThisVersionTitleKey = @"iVersionInThisVersionTitle";
+NSString *const iVersionUpdateAvailableTitleKey = @"iVersionUpdateAvailableTitle";
+NSString *const iVersionVersionLabelFormatKey = @"iVersionVersionLabelFormat";
+NSString *const iVersionOKButtonKey = @"iVersionOKButton";
+NSString *const iVersionIgnoreButtonKey = @"iVersionIgnoreButton";
+NSString *const iVersionRemindButtonKey = @"iVersionRemindButton";
+NSString *const iVersionDownloadButtonKey = @"iVersionDownloadButton";
 
 static NSString *const iVersionAppStoreIDKey = @"iVersionAppStoreID";
 static NSString *const iVersionLastVersionKey = @"iVersionLastVersionChecked";
@@ -79,21 +86,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 - (NSComparisonResult)compareVersionDescending:(NSString *)version
 {
-    switch ([self compareVersion:version])
-    {
-        case NSOrderedAscending:
-        {
-            return NSOrderedDescending;
-        }
-        case NSOrderedDescending:
-        {
-            return NSOrderedAscending;
-        }
-        case NSOrderedSame:
-        {
-            return NSOrderedSame;
-        }
-    }
+    return (NSComparisonResult)(0 - [self compareVersion:version]);
 }
 
 @end
@@ -198,7 +191,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.applicationBundleID = [[NSBundle mainBundle] bundleIdentifier];
         
         //default settings
-        self.menuOptionType = iVersionMenuOptionTypeOption;
+        self.updatePriority = iVersionUpdatePriorityDefault;
         self.useAllAvailableLanguages = YES;
         self.onlyPromptIfMainWindowIsAvailable = YES;
         self.checkAtLaunch = YES;
@@ -278,7 +271,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     
     if (!self.appStoreID)
     {
-        NSLog(@"Error: No App Store ID was found for this application. If the application is not intended for App Store release then you must specify a custom updateURL.");
+        NSLog(@"iVersion error: No App Store ID was found for this application. If the application is not intended for App Store release then you must specify a custom updateURL.");
     }
     
 #if TARGET_OS_IPHONE
@@ -606,40 +599,16 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                     title = [title stringByAppendingFormat:@" (%@)", mostRecentVersion];
                 }
                 
-                switch (self.menuOptionType) {
-                    
-                    case iVersionMenuOptionTypeForce:
-                        
-                        self.visibleRemoteAlert = [self alertViewWithTitle:title
-                                                                   details:details
-                                                             defaultButton:self.downloadButtonLabel
-                                                              cancelButton:nil];
-                        break;
-                        
-                    case iVersionMenuOptionTypeOption:
-                    {
-                        
-                        self.visibleRemoteAlert = [self alertViewWithTitle:title
-                                                                   details:details
-                                                             defaultButton:self.downloadButtonLabel
-                                                              cancelButton:self.ignoreButtonLabel];
-                        
-                        [self conditionallyAddRemindButton];
-                        
-                        break;
-                    }
-                        
-                    case iVersionMenuOptionTypeSkip:
-                    {
-                        self.visibleRemoteAlert = [self alertViewWithTitle:title
-                                                                   details:details
-                                                             defaultButton:self.downloadButtonLabel
-                                                              cancelButton:nil];
-                        [self conditionallyAddRemindButton];
-                        
-                        break;
-                    }
-                        
+                BOOL showIgnoreButton = [self.ignoreButtonLabel length] && self.updatePriority < iVersionUpdatePriorityMedium;
+                BOOL showRemindButton = [self.remindButtonLabel length] && self.updatePriority < iVersionUpdatePriorityHigh;
+                
+                self.visibleRemoteAlert = [self alertViewWithTitle:title
+                                                           details:details
+                                                     defaultButton:self.downloadButtonLabel
+                                                      cancelButton:showIgnoreButton? self.ignoreButtonLabel: nil];
+                if (showRemindButton)
+                {
+                    [self.visibleRemoteAlert addButtonWithTitle:self.remindButtonLabel];
                 }
                 
 #if TARGET_OS_IPHONE
@@ -658,14 +627,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         {
             [self.delegate iVersionDidNotDetectNewVersion];
         }
-    }
-}
-
-- (void) conditionallyAddRemindButton
-{
-    if ([self.remindButtonLabel length])
-    {
-        [self.visibleRemoteAlert addButtonWithTitle:self.remindButtonLabel];
     }
 }
 
@@ -1303,7 +1264,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 {
     //latest version
     NSString *latestVersion = [self mostRecentVersionInDict:self.remoteVersionsDict];
-    
+
     switch (returnCode)
     {
         case NSAlertAlternateReturn:
