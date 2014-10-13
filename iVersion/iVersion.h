@@ -69,13 +69,18 @@ static NSString *const iVersionIgnoreButtonKey = @"iVersionIgnoreButton";
 static NSString *const iVersionRemindButtonKey = @"iVersionRemindButton";
 static NSString *const iVersionDownloadButtonKey = @"iVersionDownloadButton";
 
-
-typedef enum
-{
+typedef NS_ENUM(NSUInteger, iVersionErrorCode) {
+    
     iVersionErrorBundleIdDoesNotMatchAppStore = 1,
     iVersionErrorApplicationNotFoundOnAppStore
-}
-iVersionErrorCode;
+};
+
+typedef NS_ENUM(NSInteger, iVersionMenuOptionType) {
+    
+    iVersionMenuOptionTypeForce,
+    iVersionMenuOptionTypeOption,
+    iVersionMenuOptionTypeSkip,
+};
 
 
 @interface NSString(iVersion)
@@ -117,6 +122,8 @@ iVersionErrorCode;
 @property (nonatomic, copy) NSString *applicationVersion;
 @property (nonatomic, copy) NSString *applicationBundleID;
 @property (nonatomic, copy) NSString *appStoreCountry;
+@property (nonatomic, readwrite) iVersionMenuOptionType menuOptionType;
+
 
 //usage settings - these have sensible defaults
 @property (nonatomic, assign) BOOL showOnFirstLaunch;
