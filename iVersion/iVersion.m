@@ -772,6 +772,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         @autoreleasepool
         {
             BOOL newerVersionAvailable = NO;
+            BOOL osVersionSupported = NO;
             NSString *latestVersion = nil;
             NSDictionary *versions = nil;
             
@@ -822,11 +823,20 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                     {
                         if ([bundleID isEqualToString:self.applicationBundleID])
                         {
+                            //get supported OS version
+                            NSString *minimumSupportedOSVersion = [self valueForKey:@"minimumOsVersion" inJSON:json];
+                            osVersionSupported = ([[UIDevice currentDevice].systemVersion compare:minimumSupportedOSVersion options:NSNumericSearch] != NSOrderedAscending);
+                            if (!osVersionSupported) {
+                                error = [NSError errorWithDomain:iVersionErrorDomain
+                                                            code:iVersionErrorOSVersionNotSupported
+                                                        userInfo:@{NSLocalizedDescriptionKey: @"Current OS version is not supported."}];
+                            }
+
                             //get version details
                             NSString *releaseNotes = [self valueForKey:@"releaseNotes" inJSON:json];
                             latestVersion = [self valueForKey:@"version" inJSON:json];
                             
-                            if (latestVersion)
+                            if (latestVersion && osVersionSupported)
                             {
                                 versions = @{latestVersion: releaseNotes ?: @""};
                             }
@@ -842,7 +852,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                                     NSLog(@"iVersion found the app on iTunes. The App Store ID is %@", appStoreIDString);
                                 }
                             }
-                            
+
                             //check for new version
                             newerVersionAvailable = ([latestVersion compareVersion:self.applicationVersion] == NSOrderedDescending);
                             if (self.verboseLogging)
@@ -884,9 +894,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                     {
                         NSLog(@"iVersion could not find your app on iTunes. If your app is not yet on the store or is not intended for App Store release then don't worry about this");
                     }
-                    
+
                     //now check plist for alternative release notes
-                    if (((self.appStoreID && newerVersionAvailable) || !self.appStoreID || self.previewMode) && self.remoteVersionsPlistURL)
+                    if (((self.appStoreID && newerVersionAvailable && osVersionSupported) || !self.appStoreID || self.previewMode) && self.remoteVersionsPlistURL)
                     {
                         if (self.verboseLogging)
                         {
