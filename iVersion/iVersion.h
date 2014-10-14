@@ -75,7 +75,8 @@ IVERSION_EXTERN NSString *const iVersionDownloadButtonKey; //iVersionDownloadBut
 typedef NS_ENUM(NSUInteger, iVersionErrorCode)
 {
     iVersionErrorBundleIdDoesNotMatchAppStore = 1,
-    iVersionErrorApplicationNotFoundOnAppStore
+    iVersionErrorApplicationNotFoundOnAppStore,
+    iVersionErrorOSVersionNotSupported
 };
 
 
