@@ -1,8 +1,11 @@
+# Xcode
+*.xccheckout
+*.xcuserstate
 
-Examples/iPhone Demo/iVersion.xcodeproj/project.xcworkspace/xcuserdata/nikosma.xcuserdatad/UserInterfaceState.xcuserstate
-
-Examples/iPhone Demo/iVersion.xcodeproj/xcuserdata/nikosma.xcuserdatad/xcschemes/xcschememanagement.plist
+build/
+Build/
+DerivedData
+xcuserdata
 
 Examples/iPhone Demo/iVersion.xcodeproj/project.xcworkspace/contents.xcworkspacedata
 
-Examples/iPhone Demo/iVersion.xcodeproj/project.xcworkspace/xcshareddata/iVersion.xccheckout
