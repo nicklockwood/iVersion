@@ -1,7 +1,7 @@
 //
 //  iVersion.m
 //
-//  Version 1.11
+//  Version 1.11.1
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -826,7 +826,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                             //get supported OS version
                             NSString *minimumSupportedOSVersion = [self valueForKey:@"minimumOsVersion" inJSON:json];
                             osVersionSupported = ([[UIDevice currentDevice].systemVersion compare:minimumSupportedOSVersion options:NSNumericSearch] != NSOrderedAscending);
-                            if (!osVersionSupported) {
+                            if (!osVersionSupported)
+                            {
                                 error = [NSError errorWithDomain:iVersionErrorDomain
                                                             code:iVersionErrorOSVersionNotSupported
                                                         userInfo:@{NSLocalizedDescriptionKey: @"Current OS version is not supported."}];
@@ -835,7 +836,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                             //get version details
                             NSString *releaseNotes = [self valueForKey:@"releaseNotes" inJSON:json];
                             latestVersion = [self valueForKey:@"version" inJSON:json];
-                            
                             if (latestVersion && osVersionSupported)
                             {
                                 versions = @{latestVersion: releaseNotes ?: @""};

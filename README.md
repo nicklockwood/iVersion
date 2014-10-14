@@ -404,6 +404,10 @@ The example is for Mac OS, but the same thing can be applied on iOS.
 Release Notes
 ----------------
 
+Version 1.11.1
+
+- Added check for minimum supported iOS version, to prevent notifications for updated that device cannot install
+
 Version 1.11
 
 - Added `updatePriority` property for configuring update priority

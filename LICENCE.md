@@ -1,6 +1,6 @@
 iVersion
 
-Version 1.11, September 10th, 2013
+Version 1.11.1, October 14th, 2014
 
 Copyright (C) 2011 Charcoal Design
 
