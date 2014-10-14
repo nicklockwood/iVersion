@@ -825,7 +825,39 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                         {
                             //get supported OS version
                             NSString *minimumSupportedOSVersion = [self valueForKey:@"minimumOsVersion" inJSON:json];
-                            osVersionSupported = ([[UIDevice currentDevice].systemVersion compare:minimumSupportedOSVersion options:NSNumericSearch] != NSOrderedAscending);
+                            
+#if TARGET_OS_IPHONE
+                            
+                            NSString *systemVersion = [UIDevice currentDevice].systemVersion;
+                            
+#else
+                            NSString *systemVersion = nil;
+                            
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1100
+                            
+                            if ([[NSProcessInfo class] respondsToSelector:@selector(processInfo)])
+                            {
+                                NSOperatingSystemVersion version = [NSProcessInfo processInfo];
+                                systemVersion = [NSString stringWithFormat:@"%d.%d.%d", version.majorVersion, version.minorVersion, version.patchVersion];
+                            }
+                            else
+#endif
+                            {
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+                            
+                                SInt32 majorVersion = 0, minorVersion = 0, patchVersion = 0;
+                                Gestalt(gestaltSystemVersionMajor, &majorVersion);
+                                Gestalt(gestaltSystemVersionMinor, &minorVersion);
+                                Gestalt(gestaltSystemVersionBugFix, &patchVersion);
+                                systemVersion = [NSString stringWithFormat:@"%d.%d.%d", majorVersion, minorVersion, patchVersion];
+                                
+#pragma clang diagnostic pop
+                                
+                            }
+#endif
+                            osVersionSupported = ([systemVersion compare:minimumSupportedOSVersion options:NSNumericSearch] != NSOrderedAscending);
                             if (!osVersionSupported)
                             {
                                 error = [NSError errorWithDomain:iVersionErrorDomain
