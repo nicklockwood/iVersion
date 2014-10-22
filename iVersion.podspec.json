@@ -1,6 +1,6 @@
 {
   "name": "iVersion",
-  "version": "1.11.1",
+  "version": "1.11.2",
   "license": {
     "type": "zlib",
     "file": "LICENCE.md"
@@ -12,7 +12,7 @@
   },
   "source": {
     "git": "https://github.com/nicklockwood/iVersion.git",
-    "tag": "1.11.1"
+    "tag": "1.11.2"
   },
   "source_files": "iVersion/iVersion.{h,m}",
   "requires_arc": true,

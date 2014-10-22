@@ -19,7 +19,7 @@ iVersion has an additional function, which is to tell users about important new 
 Supported OS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 8.0 / Mac OS 10.9 (Xcode 6.0, Apple LLVM compiler 6.0)
+* Supported build target - iOS 8.1 / Mac OS 10.10 (Xcode 6.1, Apple LLVM compiler 6.1)
 * Earliest supported deployment target - iOS 6.0 / Mac OS 10.7
 * Earliest compatible deployment target - iOS 4.3 / Mac OS 10.6
 
@@ -404,9 +404,14 @@ The example is for Mac OS, but the same thing can be applied on iOS.
 Release Notes
 ----------------
 
+Version 1.11.2
+
+- Fixed compiler error when building for Mac OS X 10.10
+- Fixed some additional warnings
+
 Version 1.11.1
 
-- Added check for minimum supported iOS version, to prevent notifications for updated that device cannot install
+- Added check for minimum supported iOS version, to prevent notifications for updates that device cannot install
 
 Version 1.11
 
