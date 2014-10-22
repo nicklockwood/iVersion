@@ -31,8 +31,8 @@
 //
 
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wobjc-missing-property-synthesis"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-missing-property-synthesis"
 
 
 #import <Availability.h>
@@ -173,5 +173,5 @@ typedef NS_ENUM(NSInteger, iVersionUpdatePriority)
 @end
 
 
-#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
 

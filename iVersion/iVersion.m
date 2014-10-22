@@ -33,14 +33,16 @@
 #import "iVersion.h"
 
 
-#pragma GCC diagnostic ignored "-Wobjc-missing-property-synthesis"
-#pragma GCC diagnostic ignored "-Wundeclared-selector"
-#pragma GCC diagnostic ignored "-Wdirect-ivar-access"
-#pragma GCC diagnostic ignored "-Wunused-macros"
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wselector"
-#pragma GCC diagnostic ignored "-Wshadow"
-#pragma GCC diagnostic ignored "-Wgnu"
+#pragma clang diagnostic ignored "-Wreceiver-is-weak"
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
+#pragma clang diagnostic ignored "-Wobjc-missing-property-synthesis"
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+#pragma clang diagnostic ignored "-Wdirect-ivar-access"
+#pragma clang diagnostic ignored "-Wunused-macros"
+#pragma clang diagnostic ignored "-Wconversion"
+#pragma clang diagnostic ignored "-Wselector"
+#pragma clang diagnostic ignored "-Wshadow"
+#pragma clang diagnostic ignored "-Wgnu"
 
 
 #import <Availability.h>
@@ -100,7 +102,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 @property (nonatomic, strong) id visibleLocalAlert;
 @property (nonatomic, strong) id visibleRemoteAlert;
 @property (nonatomic, assign) BOOL checkingForNewVersion;
-@property (nonatomic, readonly) id<iVersionDelegate> strongDelegate;
 
 @end
 
@@ -214,7 +215,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 
 - (id<iVersionDelegate>)delegate
 {
-    if (self.strongDelegate == nil)
+    if (_delegate == nil)
     {
         
 #if TARGET_OS_IPHONE
@@ -225,11 +226,6 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         
         _delegate = (id<iVersionDelegate>)[[APP_CLASS sharedApplication] delegate];
     }
-    return self.strongDelegate;
-}
-
-- (id<iVersionDelegate>)strongDelegate
-{
     return _delegate;
 }
 
@@ -558,16 +554,16 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 NSLog(@"iVersion update check failed because an unknown error occured");
             }
             
-            if ([self.strongDelegate respondsToSelector:@selector(iVersionVersionCheckDidFailWithError:)])
+            if ([self.delegate respondsToSelector:@selector(iVersionVersionCheckDidFailWithError:)])
             {
-                [self.strongDelegate iVersionVersionCheckDidFailWithError:self.downloadError];
+                [self.delegate iVersionVersionCheckDidFailWithError:self.downloadError];
             }
             
             //deprecated code path
-            else if ([self.strongDelegate respondsToSelector:@selector(iVersionVersionCheckFailed:)])
+            else if ([self.delegate respondsToSelector:@selector(iVersionVersionCheckFailed:)])
             {
                 NSLog(@"iVersionVersionCheckFailed: delegate method is deprecated, use iVersionVersionCheckDidFailWithError: instead");
-                [self.strongDelegate performSelector:@selector(iVersionVersionCheckFailed:) withObject:self.downloadError];
+                [self.delegate performSelector:@selector(iVersionVersionCheckFailed:) withObject:self.downloadError];
             }
             return;
         }
@@ -578,25 +574,25 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         if (details)
         {
             //inform delegate of new version
-            if ([self.strongDelegate respondsToSelector:@selector(iVersionDidDetectNewVersion:details:)])
+            if ([self.delegate respondsToSelector:@selector(iVersionDidDetectNewVersion:details:)])
             {
-                [self.strongDelegate iVersionDidDetectNewVersion:mostRecentVersion details:details];
+                [self.delegate iVersionDidDetectNewVersion:mostRecentVersion details:details];
             }
             
             //deprecated code path
-            else if ([self.strongDelegate respondsToSelector:@selector(iVersionDetectedNewVersion:details:)])
+            else if ([self.delegate respondsToSelector:@selector(iVersionDetectedNewVersion:details:)])
             {
                 NSLog(@"iVersionDetectedNewVersion:details: delegate method is deprecated, use iVersionDidDetectNewVersion:details: instead");
-                [self.strongDelegate performSelector:@selector(iVersionDetectedNewVersion:details:) withObject:mostRecentVersion withObject:details];
+                [self.delegate performSelector:@selector(iVersionDetectedNewVersion:details:) withObject:mostRecentVersion withObject:details];
             }
             
             //check if ignored
             BOOL showDetails = ![self.ignoredVersion isEqualToString:mostRecentVersion] || self.previewMode;
             if (showDetails)
             {
-                if ([self.strongDelegate respondsToSelector:@selector(iVersionShouldDisplayNewVersion:details:)])
+                if ([self.delegate respondsToSelector:@selector(iVersionShouldDisplayNewVersion:details:)])
                 {
-                    showDetails = [self.strongDelegate iVersionShouldDisplayNewVersion:mostRecentVersion details:details];
+                    showDetails = [self.delegate iVersionShouldDisplayNewVersion:mostRecentVersion details:details];
                     if (!showDetails && self.verboseLogging)
                     {
                         NSLog(@"iVersion did not display the new version because the iVersionShouldDisplayNewVersion:details: delegate method returned NO");
@@ -638,9 +634,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 
             }
         }
-        else if ([self.strongDelegate respondsToSelector:@selector(iVersionDidNotDetectNewVersion)])
+        else if ([self.delegate respondsToSelector:@selector(iVersionDidNotDetectNewVersion)])
         {
-            [self.strongDelegate iVersionDidNotDetectNewVersion];
+            [self.delegate iVersionDidNotDetectNewVersion];
         }
     }
 }
@@ -680,9 +676,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     }
     
     //confirm with delegate
-    if ([self.strongDelegate respondsToSelector:@selector(iVersionShouldCheckForNewVersion)])
+    if ([self.delegate respondsToSelector:@selector(iVersionShouldCheckForNewVersion)])
     {
-        BOOL shouldCheck = [self.strongDelegate iVersionShouldCheckForNewVersion];
+        BOOL shouldCheck = [self.delegate iVersionShouldCheckForNewVersion];
         if (!shouldCheck && self.verboseLogging)
         {
             NSLog(@"iVersion did not check for a new version because the iVersionShouldCheckForNewVersion delegate method returned NO");
@@ -1028,9 +1024,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             
             //get version details
             BOOL showDetails = !!self.versionDetails;
-            if (showDetails && [self.strongDelegate respondsToSelector:@selector(iVersionShouldDisplayCurrentVersionDetails:)])
+            if (showDetails && [self.delegate respondsToSelector:@selector(iVersionShouldDisplayCurrentVersionDetails:)])
             {
-                showDetails = [self.strongDelegate iVersionShouldDisplayCurrentVersionDetails:self.versionDetails];
+                showDetails = [self.delegate iVersionShouldDisplayCurrentVersionDetails:self.versionDetails];
             }
             
             //show details
@@ -1082,13 +1078,13 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.lastReminded = nil;
         
         //log event
-        if ([self.strongDelegate respondsToSelector:@selector(iVersionUserDidAttemptToDownloadUpdate:)])
+        if ([self.delegate respondsToSelector:@selector(iVersionUserDidAttemptToDownloadUpdate:)])
         {
-            [self.strongDelegate iVersionUserDidAttemptToDownloadUpdate:latestVersion];
+            [self.delegate iVersionUserDidAttemptToDownloadUpdate:latestVersion];
         }
         
-        if (![self.strongDelegate respondsToSelector:@selector(iVersionShouldOpenAppStore)] ||
-            [self.strongDelegate iVersionShouldOpenAppStore])
+        if (![self.delegate respondsToSelector:@selector(iVersionShouldOpenAppStore)] ||
+            [self.delegate iVersionShouldOpenAppStore])
         {
             //go to download page
             [self openAppPageInAppStore];
@@ -1101,9 +1097,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.lastReminded = nil;
         
         //log event
-        if ([self.strongDelegate respondsToSelector:@selector(iVersionUserDidIgnoreUpdate:)])
+        if ([self.delegate respondsToSelector:@selector(iVersionUserDidIgnoreUpdate:)])
         {
-            [self.strongDelegate iVersionUserDidIgnoreUpdate:latestVersion];
+            [self.delegate iVersionUserDidIgnoreUpdate:latestVersion];
         }
     }
     else if (buttonIndex == remindButtonIndex)
@@ -1112,9 +1108,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         self.lastReminded = [NSDate date];
         
         //log event
-        if ([self.strongDelegate respondsToSelector:@selector(iVersionUserDidRequestReminderForUpdate:)])
+        if ([self.delegate respondsToSelector:@selector(iVersionUserDidRequestReminderForUpdate:)])
         {
-            [self.strongDelegate iVersionUserDidRequestReminderForUpdate:latestVersion];
+            [self.delegate iVersionUserDidRequestReminderForUpdate:latestVersion];
         }
     }
 
@@ -1200,9 +1196,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 - (void)productViewControllerDidFinish:(UIViewController *)controller
 {
     [controller.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
-    if ([self.strongDelegate respondsToSelector:@selector(iVersionDidDismissStoreKitModal)])
+    if ([self.delegate respondsToSelector:@selector(iVersionDidDismissStoreKitModal)])
     {
-        [self.strongDelegate iVersionDidDismissStoreKitModal];
+        [self.delegate iVersionDidDismissStoreKitModal];
     }
 }
 
