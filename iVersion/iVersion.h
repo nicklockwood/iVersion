@@ -1,7 +1,7 @@
 //
 //  iVersion.h
 //
-//  Version 1.11.3
+//  Version 1.11.4
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -146,6 +146,7 @@ typedef NS_ENUM(NSInteger, iVersionUpdatePriority)
 
 //debugging and prompt overrides
 @property (nonatomic, assign) iVersionUpdatePriority updatePriority;
+@property (nonatomic, assign) BOOL useUIAlertControllerIfAvailable;
 @property (nonatomic, assign) BOOL useAllAvailableLanguages;
 @property (nonatomic, assign) BOOL onlyPromptIfMainWindowIsAvailable;
 @property (nonatomic, assign) BOOL useAppStoreDetailsIfNoPlistEntryFound;
