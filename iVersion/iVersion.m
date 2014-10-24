@@ -1093,11 +1093,12 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     
     if (![alert respondsToSelector:@selector(beginSheetModalForWindow:completionHandler:)])
     {
-        [alert beginSheetModalForWindow:
+        [alert beginSheetModalForWindow:[NSApplication sharedApplication].mainWindow
                           modalDelegate:self
                          didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:)
                             contextInfo:nil];
     }
+    else
     
 #endif
     
