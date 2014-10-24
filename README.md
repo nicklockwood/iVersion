@@ -404,6 +404,11 @@ The example is for Mac OS, but the same thing can be applied on iOS.
 Release Notes
 ----------------
 
+Version 1.11.3
+
+- Fixed critical bug in alert button handling on iOS
+- iVersion will now use UIAlertController on iOS 8+
+
 Version 1.11.2
 
 - Fixed compiler error when building for Mac OS X 10.10
