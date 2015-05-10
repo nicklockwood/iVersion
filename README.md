@@ -221,7 +221,7 @@ If set to YES, iVersion will always display the contents of the local and remote
 
     @property (nonatomic, assign) BOOL useUIAlertControllerIfAvailable;
 
-By default, iVersion will use UIAlertView on iOS to display the rating prompt. UIAlertView was deprecated in iOS8 and replaced by UIAlertController. Unfortunately, unlike UIAlertView, presenting an alert with UIAlertController interferes with the ability of the app to display other controllers, and since iVersion could theoretically display an alert at any point during the app's lifetime, it might clash with the app attempting to present another view controller. For this reason, use of UIAlertController is disabled by default. Uou should only set thus property to YES if you are certain that it won't clash with your app logic (e.g, if you have disabled automatic version prompts, or if your app doesn't use any modal view controllers).
+By default, iVersion will use UIAlertView on iOS to display the rating prompt. UIAlertView was deprecated in iOS8 and replaced by UIAlertController. Unfortunately, unlike UIAlertView, presenting an alert with UIAlertController interferes with the ability of the app to display other controllers, and since iVersion could theoretically display an alert at any point during the app's lifetime, it might clash with the app attempting to present another view controller. For this reason, use of UIAlertController is disabled by default. You should only set this property to YES if you are certain that it won't clash with your app logic (e.g, if you have disabled automatic version prompts, or if your app doesn't use any modal view controllers).
 
 
 Advanced properties
