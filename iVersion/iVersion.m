@@ -1076,6 +1076,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     textView.textContainer.containerSize = NSMakeSize(contentSize.width, FLT_MAX);
     textView.textContainer.widthTracksTextView = YES;
     textView.string = details;
+    textView.editable = NO;
     scrollview.documentView = textView;
     [textView sizeToFit];
     
