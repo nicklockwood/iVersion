@@ -181,6 +181,10 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         {
             self.appStoreCountry = @"us";
         }
+        else if ([self.appStoreCountry isEqualToString:@"GI"])
+        {
+            self.appStoreCountry = @"GB";
+        }
         
         //application version (use short version preferentially)
         self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
