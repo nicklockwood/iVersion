@@ -128,7 +128,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     static NSBundle *bundle = nil;
     if (bundle == nil)
     {
-        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"iVersion" ofType:@"bundle"];
+        NSString *bundlePath = [[NSBundle bundleForClass:[iVersion class]] pathForResource:@"iVersion" ofType:@"bundle"];
         if (self.useAllAvailableLanguages)
         {
             bundle = [NSBundle bundleWithPath:bundlePath];
