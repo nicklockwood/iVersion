@@ -19,7 +19,7 @@ iVersion has an additional function, which is to tell users about important new 
 Supported OS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 8.1 / Mac OS 10.10 (Xcode 6.1, Apple LLVM compiler 6.0)
+* Supported build target - iOS 10.1 / Mac OS 10.11 (Xcode 8.1, Apple LLVM compiler 8.0)
 * Earliest supported deployment target - iOS 6.0 / Mac OS 10.7
 * Earliest compatible deployment target - iOS 4.3 / Mac OS 10.6
 
@@ -407,6 +407,19 @@ The example is for Mac OS, but the same thing can be applied on iOS.
 
 Release Notes
 ----------------
+
+Version 1.11.5
+
+- Updated for iOS 10 and Xcode 8
+- Fixed App Transport Security (ATS) issues
+- Fix for language files when using CocoaPods
+- Fix for Gibraltar App Store link
+- Added Traditional Chinese localization
+- Added Taiwanese localization
+- Added Czech localization
+- Added British English localization
+- Improved Japanese localization
+- Release notes field is no longer editable on macOS
 
 Version 1.11.4
 

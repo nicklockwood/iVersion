@@ -22,8 +22,8 @@
 #pragma mark Application lifecycle
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{    
-    [_window addSubview:_viewController.view];
+{
+    _window.rootViewController = _viewController;
     [_window makeKeyAndVisible];
     return YES;
 }
