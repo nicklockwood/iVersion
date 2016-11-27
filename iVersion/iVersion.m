@@ -68,7 +68,7 @@ static NSString *const iVersionLastCheckedKey = @"iVersionLastChecked";
 static NSString *const iVersionLastRemindedKey = @"iVersionLastReminded";
 
 static NSString *const iVersionMacAppStoreBundleID = @"com.apple.appstore";
-static NSString *const iVersionAppLookupURLFormat = @"http://itunes.apple.com/%@/lookup";
+static NSString *const iVersionAppLookupURLFormat = @"https://itunes.apple.com/%@/lookup";
 
 static NSString *const iVersioniOSAppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%@";
 static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.apple.com/app/id%@";
