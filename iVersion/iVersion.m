@@ -1228,7 +1228,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         [productController loadProductWithParameters:productParameters completionBlock:NULL];
         
         //get root view controller
-        UIWindow *window = [[UIApplication sharedApplication] delegate].window;
+        UIWindow *window = [UIApplication sharedApplication].keyWindow;
         UIViewController *rootViewController = window.rootViewController;
         if (!rootViewController)
         {
